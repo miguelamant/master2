@@ -267,3 +267,7 @@
     color: black;
     font-weight: 500;
 }
+
+.section-title { display:flex; align-items:center; gap:12px; }
+.section-title-top { margin:0; }
+.section-subtitle { opacity:0.8; margin:0 0 8px; }

@@ -1,0 +1,67 @@
+// server/app.js
+import express from "express";
+import cors from "cors";
+import session from "express-session";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { corsOptions } from "./config/cors.js";
+import { sessionConfig } from "./config/session.js";
+import { requestLogger } from "./middleware/requestLogger.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+
+import authRoutes from "./routes/auth.routes.js";
+import menuRoutes from "./routes/menu.routes.js";
+import salesRoutes from "./routes/sales.routes.js";
+import productsRoutes from "./routes/products.routes.js";
+import miscRoutes from "./routes/misc.routes.js";
+import layersRoutes from "./routes/layers.routes.js";
+import personaRoutes from "./routes/persona.routes.js";
+import businessPersonasRoutes from "./routes/businessPersonas.routes.js";
+
+export const app = express();
+
+// Needed behind hosted proxies (Render, etc.) so secure cookies work correctly
+app.set("trust proxy", 1);
+
+// ESM-friendly __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Dev-only CORS (prod is same-origin in the single-service plan)
+if (process.env.NODE_ENV !== "production") {
+    app.use(cors(corsOptions));
+}
+
+app.use(express.json());
+app.use(session(sessionConfig));
+app.use(requestLogger);
+
+// Health check
+app.get("/health", (req, res) => res.send("ok"));
+
+// API routes
+app.use("/api", authRoutes);
+app.use("/api", menuRoutes);
+app.use("/api", salesRoutes);
+app.use("/api", productsRoutes);
+app.use("/api", miscRoutes);
+app.use("/api", layersRoutes);
+app.use("/api", personaRoutes);
+app.use("/api", businessPersonasRoutes);
+
+// Serve React build in production
+if (process.env.NODE_ENV === "production") {
+    const buildPath = path.join(__dirname, "..", "build");
+
+    app.use(express.static(buildPath));
+
+    // React Router fallback, but DO NOT swallow API routes
+    app.get("*", (req, res, next) => {
+        if (req.path.startsWith("/api")) return next();
+        res.sendFile(path.join(buildPath, "index.html"));
+    });
+}
+
+// Error handler last
+app.use(errorHandler);

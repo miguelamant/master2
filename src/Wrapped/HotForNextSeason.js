@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HotTemplate from './HotTemplate';
 import axios from 'axios';
+import { api } from "apiService";
 
 const HotForNextSeason = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -22,7 +23,7 @@ const HotForNextSeason = () => {
 
         const fetchData = async () => {
             try {
-                const res = await axios.get('http://localhost:3007/api/items-not-on-menu', { withCredentials: true });
+                const res = await api.get('/api/items-not-on-menu', { withCredentials: true });
 
                 const seasonalItems = res.data.filter(item =>
                     item.season?.toLowerCase().includes(SEASON.toLowerCase())
@@ -31,7 +32,7 @@ const HotForNextSeason = () => {
                 let withDescriptions;
 
                 try {
-                    const aiRes = await axios.post('http://localhost:3007/api/describe-item', {
+                    const aiRes = await api.post('/api/describe-item', {
                         items: seasonalItems.map(i => ({ name: i.name, category: i.category }))
                     }, { withCredentials: true });
 

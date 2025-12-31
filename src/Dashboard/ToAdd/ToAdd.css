@@ -1,0 +1,885 @@
+.toadd-grid .segment-section,
+.toadd-grid .items-section {
+    background-color: var(--ivory);
+    border-radius: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.segment-bars {
+    display: flex;
+    justify-content: space-around;
+}
+
+.segment-bar {
+    text-align: center;
+}
+
+.bar-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--sandy-brown);
+}
+
+.segment-button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: var(--sandy-brown);
+    color: var(--ivory);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.segment-button:hover {
+    background-color: var(--sandy-brown);
+}
+
+/* Custom Scrollbar Styling */
+.items-list::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.items-list::-webkit-scrollbar-track {
+    background: var(--ivory); /* Track color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.items-list::-webkit-scrollbar-thumb {
+    background: #0E1C3622; /* Gradient color */
+
+    border-radius: 10px; /* Rounded corners */
+
+}
+
+.items-list::-webkit-scrollbar-thumb:hover {
+    background: #0E1C3655; /* Darker gradient on hover */
+}
+
+
+.list-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: var(--oxford-blue);
+    font-weight: bold;
+}
+
+.header-title p {
+    color: var(--sandy-brown);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.header-title h2 {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+.section-order {
+    display: flex;
+    gap: 2rem;
+    font-size: 1.2rem;
+    color: var(--oxford-blue);
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: normal;
+}
+
+.section-order .order-button {
+    transition: color 0.05s ease, font-weight 0.05s ease;
+}
+
+.section-order .order-button:hover {
+    text-decoration: underline;
+    color: var(--sandy-brown);
+}
+
+.section-order .order-button.active {
+    color: var(--sandy-brown);
+    font-weight: bolder;
+}
+
+
+.items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--ivory);
+    margin-bottom: 0.5rem;
+    margin-right: 1rem;
+    padding: 2rem 1rem 2rem 2rem;
+    border-radius: 1.5rem;
+    border: 0.15rem solid var(--sandy-brown);
+    font-weight: bold;
+    color: var(--oxford-blue);
+    font-size: x-large;
+}
+
+.item-name{
+    font-weight: bold;
+    color: var(--oxford-blue);
+    font-size: x-large;
+    margin-right: 1rem;
+}
+
+.item-count {
+    display: flex;
+    justify-content: flex-end;
+    font-size: x-large;
+    font-weight: normal;
+    margin-right: 1rem;
+}
+
+.search-bar {
+    margin-left: auto;
+    margin-right: 1.8rem;
+    display: flex;
+    align-items: center;
+    background-color: #fde3d6; /* Light peach background */
+    border-radius: 1.5rem;
+    padding: 0.5rem 1rem;
+    width: 15rem; /* Adjust width */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 1rem;
+    color: #fa954b;
+    width: 100%;
+}
+
+.search-bar input::placeholder {
+    color: #fa954b;
+    opacity: 0.7;
+}
+
+.item-icons{
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.item-main{
+    display: flex;
+}
+
+.debug-segments{
+    color: black;
+}
+
+.item-diff{
+    font-size: small;
+}
+
+.item-stats{
+    display: flex;
+    align-items: center;
+}
+
+/* Statistics cards container */
+.stats-cards {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Elke individuele kaart */
+.stat-card {
+    background: var(--ivory);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1rem;
+    flex: 1 1 200px; /* min-width 200px, groeit mee */
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.stat-card p {
+    margin: 0.25rem 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Hover effect */
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.stat-card-item{
+    font-size: 1.2rem;
+}
+
+.stat-card-number{
+    font-size: 2rem;
+    color: black;
+    font-weight: 500;
+}
+
+.debug-filterss{
+    color:black;
+}
+
+/* Gekleurde versie (standaard) */
+.icon-ok {
+    filter: grayscale(100%) opacity(30%);
+}
+
+/* Grijs / “wit-outline” versie voor ontbrekende items */
+.icon-missing {
+    /* 100% grayscale + 70% opacity */
+    filter: grayscale(100%) opacity(70%);
+}
+
+/* Donkere versie voor te veel items */
+.icon-extra {
+    /* halve helderheid */
+    filter: grayscale(100%) opacity(30%);
+}
+
+/* Een extra voorbeeld: een blauwe tint */
+.icon-blue {
+    filter: hue-rotate(180deg) saturate(150%);
+}
+
+.segment-icons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 kolommen */
+    gap: 1rem 2rem;                         /* rijen- en kolom-gap */
+}
+
+/* Optioneel: rij-structuur iets compacter maken */
+.segment-row {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+
+}
+
+.segment-label {
+    font-weight: bold;
+    color: var(--oxford-blue);
+}
+
+.segment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.segment-section{
+    display: flex;
+    flex-direction: column;
+}
+
+.section-title{
+    color: var(--sandy-brown);
+    margin-bottom: 0.1rem;
+    font-size: 2.1rem;
+}
+.section-title-top{
+    color: var(--oxford-blue);
+    margin-bottom: 0.1rem;
+}
+
+.section-subtitle{
+    margin-bottom: 1.5rem;
+}
+
+.segment-icon{
+    width: 1.3rem;
+}
+
+.segment-title-name{
+    font-size: small;
+    font-weight: bolder;
+}
+
+.tooltip-wrapper {
+    margin-top: 0.3rem;
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-bubble {
+    visibility: hidden;
+    opacity: 0;
+    width: max-content;
+    max-width: 220px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 0.5rem;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.2s ease-in-out;
+    font-size: 1rem;
+    line-height: 1.2;
+    pointer-events: none;
+    white-space: normal;
+}
+
+.tooltip-wrapper:hover .tooltip-bubble {
+    visibility: visible;
+    opacity: 1;
+}
+
+.add-button {
+    padding: 0.4rem 1.2rem;
+    background-color: var(--sandy-brown);
+    color: white;
+    border: none;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.add-button:hover {
+    background-color: #ff9640; /* iets donkerder tintje van sandy-brown */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.add-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.add-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(250, 149, 75, 0.4); /* highlight ring */
+}
+
+
+.add-price-input {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-price-input input {
+    width: 80px;
+}
+
+.recommended-price {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.confirm-add {
+    background-color: var(--ivory);
+    border-radius: 0.5rem;
+    padding: 0.3rem 1rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: var(--ivory);
+    padding: 2.5rem 2rem 2rem;
+    border-radius: 2rem;
+    width: 100%;
+    max-width: 460px;
+    z-index: 1000;
+    text-align: center;
+    border: 5px solid black;
+    pointer-events: all;
+    font-family: inherit;
+}
+
+.modal-content h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--oxford-blue);
+}
+
+.modal-content p {
+    font-size: 1.2rem;
+    color: var(--oxford-blue);
+    margin: 0.5rem 0 1.5rem;
+}
+
+.modal-buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.modal-buttons button {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #eee;
+    transition: all 0.2s ease-in-out;
+}
+
+.modal-buttons button:hover {
+    background-color: var(--sandy-brown);
+    color: white;
+}
+
+.modal-content input[type="number"] {
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 1.2rem;
+    width: 6rem;
+    margin-bottom: 0.5rem;
+    -moz-appearance: textfield;
+}
+
+.modal-content input[type="number"]::-webkit-inner-spin-button,
+.modal-content input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.add-price-input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.modal-price-label{
+    color: black;
+    font-size: large;
+}
+
+/* Add this to ToAdd.css */
+.segment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;         /* ✅ keep text vertically aligned with icons */
+}
+
+.segment-count {
+    margin-left: 0.5rem;         /* ✅ a bit of spacing after the last icon */
+    font-size: 1rem;          /* ✅ readable but not huge */
+    line-height: 1;
+    color: black;   /* ✅ ensure it isn’t the same as bg */
+    opacity: 1;
+    font-weight: bold;   /* ✅ makes it bold */
+    /* optional: slight deemphasis */
+}
+
+
+.segment-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.0rem;
+    align-items: center;
+}
+
+.segment-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 0.15rem;    /* space for caret */
+}
+
+.segment-icon {
+    width: 1.3rem;           /* your base size */
+    display: block;
+}
+
+/* 1.5x bigger for the last filled icon (optional) */
+.segment-icon-large { width: 1.95rem; } /* 1.5x of 1.3rem */
+
+.hover-list-popover {
+    position: absolute;
+    z-index: 30;
+    transform: translateY(8px);
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    min-width: 350px;
+}
+
+.segment-icons {
+    position: relative; /* so the popover anchors to this container */
+}
+
+.hover-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 220px;
+    overflow: auto;
+}
+
+.hover-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+    font-size: 0.95rem;
+    color: var(--oxford-blue);
+    border-bottom: 1px dashed #eee;
+}
+.hover-list li:last-child {
+    border-bottom: none;
+}
+
+.hover-name { font-weight: 600; }
+.hover-price { opacity: 0.8; }
+
+.hover-empty { color: #999; font-style: italic; }
+
+/*REMOVE BELOW FOR OLD CSS */
+
+
+
+
+
+/* header spans both columns in row 1 */
+.segment-section {
+    grid-column: 1 / -1;   /* columns 1 through 2 */
+    grid-row: 1;
+}
+
+
+/* wrapper: layout only */
+.optionbar-container{
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    position: sticky;
+    top: 0px;
+    max-height: calc(100vh - 24px);
+    overflow: visible;              /* don't clip the inner shadow */
+    margin-right: 0px;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0;                     /* card will provide padding */
+}
+
+/* card: the visual panel */
+.optionbar-container > *:first-child{
+    background: var(--ivory);
+    border-radius: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,.1);
+    padding: 0.5rem;
+    max-height: inherit;            /* keep the scrolling here */
+    overflow: auto;
+}
+
+
+/* --- Layout scaffold for ToAdd page --- */
+/* Ensure other pages stack normally */
+.main-content {
+    display: block;
+}
+
+
+
+
+/* Header card spans both columns */
+.segment-section {
+    grid-column: 1 / -1;
+    grid-row: 1;
+}
+
+/* ToAdd layout grid */
+.top-worst-container {
+    display: grid;                          /* <- must be grid, not flex */
+    grid-template-columns: minmax(0, 1fr) 340px; /* left grows, right fixed */
+    grid-template-rows: auto 1fr;           /* header row, then body */
+    column-gap: 16px;
+    row-gap: 16px;
+    align-items: start;
+}
+
+/* flatten the wrapper so its children become grid items */
+.centre-content { display: contents; }
+
+/* header spans both columns (row 1) */
+.segment-section { grid-column: 1 / -1; grid-row: 1; }
+
+/* list area in left column (row 2) */
+.items-section   { grid-column: 1; grid-row: 2; }
+
+/* Make header text black (and readable) */
+.segment-section .section-header {
+    color: #111;              /* base color for everything inside */
+}
+
+.segment-section .section-header .section-title,
+.segment-section .section-header label,
+.segment-section .section-header button,
+.segment-section .section-header span,
+.segment-section .section-header input {
+    color: #111;
+}
+
+/* PresetInfo text specifically */
+.segment-section .section-header .preset-info__line {
+    color: #111;
+}
+.segment-section .section-header .preset-info__line--muted {
+    color: #444;              /* darker than white, keep muted look */
+    opacity: 1;               /* in case a global opacity is making it too light */
+}
+
+.section-header-3col {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    margin-bottom: 1rem;
+}
+
+.section-header-3col .sh-col {
+    flex: 1 1 0;
+    background: var(--ivory);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 6%);
+    min-width: 0; /* truncation safety */
+}
+
+/* LEFT */
+.willy-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.willy-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.willy-slider {
+    width: 110px;
+}
+.willy-copy { margin-top: 0.5rem; }
+.willy-image-slot {
+    margin-top: 0.5rem;
+    height: 90px;            /* reserve plaats voor image */
+    border: 1px dashed #ddd; /* placeholder */
+    border-radius: 0.75rem;
+    background: #fafafa;
+}
+
+/* MIDDLE */
+.nav-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.preset-name {
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+.mid-copy { margin-top: 0.25rem; }
+
+/* RIGHT */
+.right-copy { margin-top: 0.5rem; }
+
+/* shared */
+.copy-p {
+    margin: 0;
+    color: var(--oxford-blue);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+/* optioneel – maak cards optisch gelijk */
+.section-header-3col .sh-left,
+.section-header-3col .sh-middle,
+.section-header-3col .sh-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.preset-plain-img {
+    width: 100%;
+    height: 140px;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+}
+.preset-plain-img--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    background: #fafafa;
+}
+
+/* make labels black */
+.willy-label,
+.preset-name {
+    color: #000;
+}
+
+/* smaller total count */
+.section-total {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--oxford-blue);
+    margin: 0.25rem 0 0.75rem;
+}
+
+/* willy image above slider */
+.willy-portrait {
+    width: 100%;
+    max-width: 220px;
+    height: 140px;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+    margin-bottom: 0.5rem;
+}
+
+/* preset image on the right (already used earlier) */
+.preset-plain-img {
+    width: 100%;
+    height: 140px;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+}
+
+.preset-plain-img--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    background: #fafafa;
+}
+
+/* Force black text inside the To Add view */
+.toadd-grid h1,
+.toadd-grid h2,
+.toadd-grid h3,
+.toadd-grid h4,
+.toadd-grid p,
+.toadd-grid span,
+.toadd-grid label,
+.toadd-grid li,
+.toadd-grid div,
+.toadd-grid .section-title,
+.toadd-grid .total-count--small,
+.toadd-grid .items-list,
+.toadd-grid .optionbar-container,
+.toadd-grid button,
+.toadd-grid input,
+.toadd-grid .preset-name {
+    color: #000 !important;
+}
+
+/* Keep icons/images unaffected (no color override) */
+.toadd-grid img,
+.toadd-grid svg,
+.toadd-grid path {
+    color: inherit !important; /* don’t force black onto icons */
+}
+
+
+/* ToAdd.css (or your items list css) */
+
+.category-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.kpi-badge { font-weight: 800; font-size: 16px; letter-spacing: .2px; }
+.kpi-badge--green  { color: #137333 !important; }
+.kpi-badge--orange { color: #b45309 !important; }
+.kpi-badge--red    { color: #b91c1c !important; }
+
+
+
+/* Arrow under the last filled icon */
+/*
+.segment-icon-wrapper.with-arrow::after {
+    content: "▼";
+    font-size: 0.7rem;
+    line-height: 1;
+    color: var(--sandy-brown);
+    margin-top: 0.15rem;
+}
+
+.segment-icons > img.segment-icon:last-of-type::after {
+    content: "▼";
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--sandy-brown);    /
+    margin-top: 0.15rem;
+}
+
+.segment-icon-wrapper.with-arrow::after {
+    content: "▼";
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--sandy-brown);
+    margin-top: 0.15rem;
+}
+
+*/

@@ -14,7 +14,7 @@ run following command in the terminal to install and run the demo.
 
     npm run setup 
 
-The server will start on http://localhost:3000 by default. Open your web browser and navigate to this address to view the demo.
+The server will start on http://localhost:3001 by default. Open your web browser and navigate to this address to view the demo.
 
 Logging In
 

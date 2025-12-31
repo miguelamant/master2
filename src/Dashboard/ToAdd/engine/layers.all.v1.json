@@ -1,0 +1,690 @@
+{
+  "version": 1,
+  "layers": [
+    {
+      "layer_id": 1001,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "COLA": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 2.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+
+        "FLAVORED_WATER": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "FUNCTIONAL_DRINKS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "GINGER_DRINKS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "ICE_TEA": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 2.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 4.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_NFC": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "KOMBUCHA": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 0.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [0.00, 0.00, 0.35, 0.15],
+            "hide_if_zero": false
+          }
+        },
+        "LEMONADES": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 3.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "MILK_BASED": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "OTHER": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "PLAIN_WATER": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": false
+          }
+        },
+        "SPECIALS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "SPORTDRINKS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": false
+          }
+        },
+        "TONICS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        }
+      }
+    }
+  ,
+
+    {
+      "layer_id": 2001,
+      "name": "Zero vs With sugar (1D)",
+      "type": "1D",
+      "field": "is_zero",
+      "weight": 1.0,
+      "buckets": {
+        "0": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "1": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        }
+      },
+      "labels": { "0": "with sugar", "1": "zero" }
+    }
+  ,
+    {
+      "layer_id": 2101,
+      "name": "Subcategory × Zero (2D)",
+      "type": "2D",
+      "rows_field": "subcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "rows": [
+        "COLA","ENERGY_DRINKS","FLAVORED_WATER","FUNCTIONAL_DRINKS",
+        "GINGER_DRINKS","ICE_TEA","JUICES_CONCENTRATE","JUICES_NFC",
+        "KOMBUCHA","LEMONADES","MILK_BASED","OTHER",
+        "PLAIN_WATER","SPECIALS","SPORTDRINKS","TONICS"
+      ],
+      "cols": ["0", "1"],
+      "buckets": {
+        "COLA::0":              { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "COLA::1":              { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "ENERGY_DRINKS::0":     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ENERGY_DRINKS::1":     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "FLAVORED_WATER::0":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "FLAVORED_WATER::1":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "FUNCTIONAL_DRINKS::0": { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "FUNCTIONAL_DRINKS::1": { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "GINGER_DRINKS::0":     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "GINGER_DRINKS::1":     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "ICE_TEA::0":           { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ICE_TEA::1":           { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "JUICES_CONCENTRATE::0":{ "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "JUICES_CONCENTRATE::1":{ "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "JUICES_NFC::0":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "JUICES_NFC::1":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "KOMBUCHA::0":          { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "KOMBUCHA::1":          { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "LEMONADES::0":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES::1":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "MILK_BASED::0":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "MILK_BASED::1":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "OTHER::0":             { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "OTHER::1":             { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "PLAIN_WATER::0":       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "PLAIN_WATER::1":       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "SPECIALS::0":          { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "SPECIALS::1":          { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "SPORTDRINKS::0":       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "SPORTDRINKS::1":       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+
+        "TONICS::0":            { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "TONICS::1":            { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    }
+
+  ,
+
+    {
+      "layer_id": 3001,
+      "name": "Carbonation (1D)",
+      "type": "1D",
+      "field": "is_sparkling",
+      "weight": 1.0,
+      "buckets": {
+        "0": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "1": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        }
+      },
+      "labels": { "0": "still", "1": "sparkling" }
+    },
+
+    {
+      "layer_id": 3111,
+      "name": "Ice Tea — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "ICE_TEA" },
+      "rows": ["ICE_TEA_BLACK", "ICE_TEA_GREEN", "ICE_TEA_OTHER", "ICE_TEA_RED", "ICE_TEA_SPECIALS"],
+      "items": {
+        "ICE_TEA_BLACK":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ICE_TEA_GREEN":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ICE_TEA_OTHER":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ICE_TEA_RED":      { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "ICE_TEA_SPECIALS": { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } }
+      }
+    },
+
+    {
+      "layer_id": 3101,
+      "name": "Ice Tea (subsubcategory) × Carbonation",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_sparkling",
+      "weight": 1.0,
+      "rows": ["ICE_TEA_BLACK", "ICE_TEA_GREEN", "ICE_TEA_OTHER", "ICE_TEA_RED", "ICE_TEA_SPECIALS"],
+      "cols": ["0", "1"],
+      "cells": {
+        "ICE_TEA_BLACK::0":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "ICE_TEA_BLACK::1":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "ICE_TEA_GREEN::0":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "ICE_TEA_GREEN::1":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "ICE_TEA_OTHER::0":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "ICE_TEA_OTHER::1":  { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "ICE_TEA_RED::0":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "ICE_TEA_RED::1":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "ICE_TEA_SPECIALS::0": { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "ICE_TEA_SPECIALS::1": { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "still", "1": "sparkling" }
+    },
+
+
+    {
+      "layer_id": 3211,
+      "name": "Lemonades — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "LEMONADES" },
+      "rows": [
+        "LEMONADES_AGRUM",
+        "LEMONADES_AGRUMES_MIX",
+        "LEMONADES_APPLE",
+        "LEMONADES_BERRY",
+        "LEMONADES_LEMON_LIME",
+        "LEMONADES_ORANGE",
+        "LEMONADES_PREBIOTICA",
+        "LEMONADES_TROPICAL"
+      ],
+      "items": {
+        "LEMONADES_AGRUM":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_AGRUMES_MIX":   { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_APPLE":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_BERRY":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_LEMON_LIME":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_ORANGE":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_PREBIOTICA":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "LEMONADES_TROPICAL":      { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } }
+      }
+    },
+
+    {
+      "layer_id": 3201,
+      "name": "Lemonades (subsubcategory) × Carbonation",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_sparkling",
+      "weight": 1.0,
+      "scope": { "subcategory": "LEMONADES" },
+      "rows": [
+        "LEMONADES_AGRUM",
+        "LEMONADES_AGRUMES_MIX",
+        "LEMONADES_APPLE",
+        "LEMONADES_BERRY",
+        "LEMONADES_LEMON_LIME",
+        "LEMONADES_ORANGE",
+        "LEMONADES_PREBIOTICA",
+        "LEMONADES_TROPICAL"
+      ],
+      "cols": ["0", "1"],
+      "cells": {
+        "LEMONADES_AGRUM::0":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_AGRUM::1":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_AGRUMES_MIX::0":   { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_AGRUMES_MIX::1":   { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_APPLE::0":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_APPLE::1":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_BERRY::0":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_BERRY::1":         { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_LEMON_LIME::0":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_LEMON_LIME::1":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_ORANGE::0":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_ORANGE::1":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_PREBIOTICA::0":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_PREBIOTICA::1":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+
+        "LEMONADES_TROPICAL::0":      { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } },
+        "LEMONADES_TROPICAL::1":      { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2, 5, 8], "alpha": [0.45, 0.32, 0.24, 0.18], "beta": [1.00, 0.60, 0.35, 0.15] } }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "still", "1": "sparkling" }
+    },
+
+    {
+      "layer_id": 3311,
+      "name": "Cola — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "COLA" },
+      "rows": ["COLA_CHERRY","COLA_LEMON","COLA_REGULAR","COLA_VANILLA"],
+      "items": {
+        "COLA_CHERRY":  { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_LEMON":   { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_REGULAR": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_VANILLA": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      }
+    },
+
+    {
+      "layer_id": 3301,
+      "name": "Cola (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "COLA" },
+      "rows": ["COLA_CHERRY","COLA_LEMON","COLA_REGULAR","COLA_VANILLA"],
+      "cols": ["0","1"],
+      "cells": {
+        "COLA_CHERRY::0": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_CHERRY::1": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_LEMON::0":  { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_LEMON::1":  { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_REGULAR::0":{ "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_REGULAR::1":{ "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_VANILLA::0":{ "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "COLA_VANILLA::1":{ "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    },
+
+    {
+      "layer_id": 3411,
+      "name": "Ginger drinks — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "GINGER_DRINKS" },
+      "rows": ["GINGER_ALE","GINGER_BEER","GINGER_LEMONADE","GINGER_OTHER"],
+      "items": {
+        "GINGER_ALE":      { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_BEER":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_LEMONADE": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_OTHER":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      }
+    },
+
+    {
+      "layer_id": 3401,
+      "name": "Ginger drinks (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "GINGER_DRINKS" },
+      "rows": ["GINGER_ALE","GINGER_BEER","GINGER_LEMONADE","GINGER_OTHER"],
+      "cols": ["0","1"],
+      "cells": {
+        "GINGER_ALE::0":      { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_ALE::1":      { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_BEER::0":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_BEER::1":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_LEMONADE::0": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_LEMONADE::1": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_OTHER::0":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "GINGER_OTHER::1":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    },
+
+    {
+      "layer_id": 3511,
+      "name": "Tonics — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "TONICS" },
+      "rows": ["TONIC_LEMONADES","TONICS_OTHER","TONIC_WATER"],
+      "items": {
+        "TONIC_LEMONADES": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "TONICS_OTHER":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "TONIC_WATER":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      }
+    },
+
+    {
+      "layer_id": 3501,
+      "name": "Tonics (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "TONICS" },
+      "rows": ["TONIC_LEMONADES", "TONICS_OTHER", "TONIC_WATER"],
+      "cols": ["0", "1"],
+      "cells": {
+        "TONIC_LEMONADES::0": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "TONIC_LEMONADES::1": { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+
+        "TONICS_OTHER::0":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "TONICS_OTHER::1":    { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+
+        "TONIC_WATER::0":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } },
+        "TONIC_WATER::1":     { "curve": { "a": 1, "b": 0.6, "c": 0.35, "d": 0.15, "k1": 1, "k2": 3, "k3": 7 } }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    }
+  ,
+
+    {
+      "layer_id": 3601,
+      "name": "Juices — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "buckets": {
+        "JUICES_CONCENTRATE_APPLE": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE_APPLE_CHERRY": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE_GRAPEFRUIT": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE_MULTI_JUICE": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE_ORANGE": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_CONCENTRATE_TOMATO": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_NFC_MONO_JUICE": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_NFC_SHOTS": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        },
+        "JUICES_NFC_SMOOTHIES": {
+          "curve": {
+            "kind": "geometric4",
+            "ros": 1.0,
+            "knees": [2, 5, 8],
+            "alpha": [0.45, 0.32, 0.24, 0.18],
+            "beta":  [1.00, 0.60, 0.35, 0.15],
+            "hide_if_zero": true
+          }
+        }
+      }
+    },
+    {
+      "layer_id": 7101,
+      "name": "Beers — subcategory (1D)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "scope": { "category": "BEERS" },
+      "rows": [
+        "LAGERS",
+        "NORMAL_BLOND_AMBER",
+        "BLOND_BITTERS",
+        "DARK_BROWN_MALT_SWEETNESS",
+        "DARK_BROWN_COFFEE_ROAST_BITTER",
+        "FRUIT_BEERS",
+        "WHEAT_BEERS",
+        "TABLE_BEER",
+        "SOURS_SAISON_LAMBIC_GUEUZE",
+        "SMOOTHIE_SOUR",
+        "BEERS_OTHER",
+        "BEERS_SPECIAL",
+        "RADLERS",
+        "CIDERS",
+        "SPIRIT_FLAVOURED_BEERS"
+      ],
+      "buckets": {
+        "LAGERS":                            { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "NORMAL_BLOND_AMBER":               { "curve": { "kind": "geometric4", "ros": 5, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "BLOND_BITTERS":                     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "DARK_BROWN_MALT_SWEETNESS":         { "curve": { "kind": "geometric4", "ros": 2, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "DARK_BROWN_COFFEE_ROAST_BITTER":    { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "FRUIT_BEERS":                       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "WHEAT_BEERS":                       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "TABLE_BEER":                        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "SOURS_SAISON_LAMBIC_GUEUZE":        { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "SMOOTHIE_SOUR":                     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "BEERS_OTHER":                       { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "BEERS_SPECIAL":                     { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "RADLERS":                           { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "CIDERS":                            { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } },
+        "SPIRIT_FLAVOURED_BEERS":            { "curve": { "kind": "geometric4", "ros": 1.0, "knees": [2,5,8], "alpha": [0.45,0.32,0.24,0.18], "beta": [1.00,0.60,0.35,0.15] } }
+      }
+    }
+
+
+  ],
+
+  "defaults": {
+    "kMax": 1,
+    "thresholdAbs": 0.5,
+    "topN": 7
+  }
+}
+
+

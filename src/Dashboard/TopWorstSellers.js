@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './TopWorstSellers.css';
 import Optionbar from './Optionbar';
+import { api } from "apiService";
 
 // Import category icons
 import beerIcon from './Icons/beer.svg';
@@ -29,7 +30,7 @@ import springIcon from './Icons/spring.svg';
 import locallyIcon from './Icons/locallyproduced.svg';
 import belgiumIcon from './Icons/madeinbelgium.svg';
 import globalIcon from './Icons/globallysourced.svg';
-import {highlightOptions, locationOptions, seasonOptions, segmentOptions} from "./Icons/optionbarOptions";
+import {highlightOptions, locationOptions, seasonOptions, segmentOptions} from "./optionbarOptions";
 
 
 // Map category names to icons
@@ -79,7 +80,7 @@ const TopWorstSellers = () => {
 
     // Fetch business address info
     useEffect(() => {
-        axios.get('http://localhost:3007/api/business-info', { withCredentials: true })
+        api.get('/api/business-info', { withCredentials: true })
             .then(res => setBusinessCity(res.data.city || ''))
             .catch(err => console.error('Business-info error', err));
     }, []);
@@ -88,8 +89,8 @@ const TopWorstSellers = () => {
     useEffect(() => {
         setLoading(true);
         Promise.all([
-            axios.get('http://localhost:3007/api/sales', { withCredentials: true }),
-            axios.get('http://localhost:3007/api/sales/last-year', { withCredentials: true }),
+            api.get('/api/sales', { withCredentials: true }),
+            api.get('/api/sales/last-year', { withCredentials: true }),
         ])
             .then(([currentRes, lastYearRes]) => {
                 const lastYearMap = new Map(

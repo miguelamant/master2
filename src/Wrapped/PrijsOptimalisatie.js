@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './PrijsOptimalisatie.css';
 import axios from 'axios';
+import { api } from "apiService";
 
 const PrijsOptimalisatie = () => {
     const [items, setItems] = useState([]);
@@ -11,7 +12,7 @@ const PrijsOptimalisatie = () => {
         const fetchItems = async () => {
             try {
                 const res = await axios.get(
-                    `${process.env.REACT_APP_API_URL || 'http://localhost:3007'}/api/menu-items`,
+                    `${process.env.REACT_APP_API_URL || ''}/api/menu-items`,
                     { withCredentials: true }
                 );
 

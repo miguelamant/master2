@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HotTemplate from './HotTemplate';
 import axios from 'axios';
+import { api } from "apiService";
 
 const HotForYou = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -33,8 +34,8 @@ const HotForYou = () => {
         const fetchData = async () => {
             try {
                 const [countsRes, itemsRes] = await Promise.all([
-                    axios.get('http://localhost:3007/api/menu-counts', { withCredentials: true }),
-                    axios.get('http://localhost:3007/api/items-not-on-menu', { withCredentials: true }),
+                    api.get('/api/menu-counts', { withCredentials: true }),
+                    api.get('/api/items-not-on-menu', { withCredentials: true }),
                 ]);
 
                 const countsByCategory = countsRes.data.reduce((acc, { category, count_on_menu }) => {
@@ -60,7 +61,7 @@ const HotForYou = () => {
                 let withDescriptions = prioritized;
 
                 try {
-                    const res = await axios.post('http://localhost:3007/api/describe-item', {
+                    const res = await api.post('/api/describe-item', {
                         items: prioritized.map(i => ({ name: i.name, category: i.category }))
                     }, { withCredentials: true });
 

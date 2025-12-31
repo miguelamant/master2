@@ -31,8 +31,9 @@ body {
 }
 
 .logo img {
-    width: 3.5rem;
-    margin-right: 8px;
+    width: 18rem;
+    margin-right: 0px;
+    margin-left: 10rem;
 }
 
 .main-text {
@@ -41,6 +42,7 @@ body {
     justify-content: space-evenly;
     color: var(--oxford-blue);
     height: 100%;
+    margin-top:-10rem;
 }
 h1 {
     font-size: 1.75rem;
@@ -56,7 +58,12 @@ p {
 
 .why-billy {
     font-size: 1.75rem;
-    margin-top: 2rem;
+    margin-top: 0rem;
+}
+
+.logo-text {
+    font-size: 3rem;
+    margin-top: 5rem;
 }
 
 .features {
@@ -72,7 +79,7 @@ p {
 /* Right Section */
 .login-container {
     flex: 1;
-    background-color: #0C1C3D;
+    background-color: black ;/*#0C1C3D*/
     color: white;
     padding: 1rem 3rem;
     display: flex;

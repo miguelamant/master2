@@ -1,0 +1,1135 @@
+[
+  {
+    "index": 0,
+    "name": "All Refreshments — by Subcategory",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 8,
+      "ICE_TEA": 17,
+      "JUICES_CONCENTRATE": 8,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 5,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 7
+    }
+  },
+  {
+    "index": 1,
+    "name": "Zero sugar — all",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 0,
+      "ICE_TEA": 0,
+      "JUICES_CONCENTRATE": 0,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 0,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 4
+    }
+  },
+  {
+    "index": 2,
+    "name": "With sugar — all",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 8,
+      "ICE_TEA": 17,
+      "JUICES_CONCENTRATE": 8,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 5,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 3
+    }
+  },
+  {
+    "index": 3,
+    "name": "Sparkling — all",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 8,
+      "ICE_TEA": 0,
+      "JUICES_CONCENTRATE": 4,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 5,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 7
+    }
+  },
+  {
+    "index": 4,
+    "name": "Still — all",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 0,
+      "ICE_TEA": 17,
+      "JUICES_CONCENTRATE": 4,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 0,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 0
+    }
+  },
+  {
+    "index": 5,
+    "name": "Ice Tea — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ICE_TEA"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "ICE_TEA_BLACK": 6,
+      "ICE_TEA_GREEN": 7,
+      "ICE_TEA_OTHER": 4,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0
+    }
+  },
+  {
+    "index": 6,
+    "name": "Lemonades — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "LEMONADES"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "LEMONADES_AGRUM": 3,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 1,
+      "LEMONADES_TROPICAL": 1
+    }
+  },
+  {
+    "index": 7,
+    "name": "Tonics — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "TONICS"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "TONIC_LEMONADES": 2,
+      "TONICS_OTHER\n": 5,
+      "TONIC_WATER": 0
+    }
+  },
+  {
+    "index": 8,
+    "name": "Colas — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "COLA"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "COLA_CHERRY": 0,
+      "COLA_LEMON": 0,
+      "COLA_REGULAR": 0,
+      "COLA_VANILLA": 0
+    }
+  },
+  {
+    "index": 9,
+    "name": "Ginger — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "SPORTDRINKS"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "SPORTDRINKS_BLUE": 0,
+      "SPORTDRINKS_GREEN": 0,
+      "SPORTDRINKS_ORANGE": 0,
+      "SPORTDRINKS_RED": 0,
+      "SPORTDRINKS_YELLOW": 0
+    }
+  },
+  {
+    "index": 10,
+    "name": "Waters — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "PLAIN_WATER"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "PLAIN_WATER": 0
+    }
+  },
+  {
+    "index": 11,
+    "name": "Energy & Sports — overview",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ENERGY_DRINKS",
+          "SPORTS_DRINKS"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 0,
+      "ICE_TEA": 0,
+      "JUICES_CONCENTRATE": 0,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 0,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 0
+    }
+  },
+  {
+    "index": 12,
+    "name": "Juices — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "JUICES",
+          "NFC_JUICE",
+          "SMOOTHIES"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 13,
+    "name": "Fermented — overview",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "KOMBUCHA"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 0,
+      "ICE_TEA": 0,
+      "JUICES_CONCENTRATE": 0,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 0,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 0
+    }
+  },
+  {
+    "index": 14,
+    "name": "Ice Tea — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ICE_TEA"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "ICE_TEA_BLACK": 0,
+      "ICE_TEA_GREEN": 0,
+      "ICE_TEA_OTHER": 0,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0
+    }
+  },
+  {
+    "index": 15,
+    "name": "Ice Tea — With sugar",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ICE_TEA"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "ICE_TEA_BLACK": 6,
+      "ICE_TEA_GREEN": 7,
+      "ICE_TEA_OTHER": 4,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0
+    }
+  },
+  {
+    "index": 16,
+    "name": "Ice Tea — Still",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ICE_TEA"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "ICE_TEA_BLACK": 6,
+      "ICE_TEA_GREEN": 7,
+      "ICE_TEA_OTHER": 4,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0
+    }
+  },
+  {
+    "index": 17,
+    "name": "Ice Tea — Sparkling",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ICE_TEA"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "ICE_TEA_BLACK": 0,
+      "ICE_TEA_GREEN": 0,
+      "ICE_TEA_OTHER": 0,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0
+    }
+  },
+  {
+    "index": 18,
+    "name": "Lemonades — Still",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "LEMONADES"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "LEMONADES_AGRUM": 0,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 0,
+      "LEMONADES_TROPICAL": 0
+    }
+  },
+  {
+    "index": 19,
+    "name": "Lemonades — Sparkling",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "LEMONADES"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "LEMONADES_AGRUM": 3,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 1,
+      "LEMONADES_TROPICAL": 1
+    }
+  },
+  {
+    "index": 20,
+    "name": "Lemonades — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "LEMONADES"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "LEMONADES_AGRUM": 0,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 0,
+      "LEMONADES_TROPICAL": 0
+    }
+  },
+  {
+    "index": 21,
+    "name": "Lemonades — With sugar",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "LEMONADES"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "LEMONADES_AGRUM": 3,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 1,
+      "LEMONADES_TROPICAL": 1
+    }
+  },
+  {
+    "index": 22,
+    "name": "Tonics (sparkling)",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subsubcategory_in": [
+          "TONICS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "COLA_CHERRY": 0,
+      "COLA_LEMON": 0,
+      "COLA_REGULAR": 0,
+      "COLA_VANILLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FERMENTED_PREBIOTICA": 0,
+      "FLAVORED_WATER": 0,
+      "GINGER_DRINKS": 0,
+      "HEALTH_DRINKS_FUNCTIONAL_WATER": 0,
+      "HEALTH_DRINKS_HYBRIDS": 0,
+      "ICE_TEA_BLACK": 0,
+      "ICE_TEA_GREEN": 0,
+      "ICE_TEA_OTHER": 0,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0,
+      "JUICES_CONCENTRATE_MONO_JUICE": 0,
+      "JUICES_CONCENTRATE_MULTI_JUICE": 0,
+      "JUICES_NFC_MONO_JUICE": 0,
+      "JUICES_NFC_SHOTS": 0,
+      "JUICES_NFC_SMOOTHIES": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES_AGRUM": 0,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 0,
+      "LEMONADES_TROPICAL": 0,
+      "MILK_BASED_CHOCOLATE": 0,
+      "MILK_BASED_FRUITS": 0,
+      "MILK_BASED_MILK\n": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS_BLUE": 0,
+      "SPORTDRINKS_GREEN": 0,
+      "SPORTDRINKS_ORANGE": 0,
+      "SPORTDRINKS_RED": 0,
+      "SPORTDRINKS_YELLOW": 0,
+      "TONIC_LEMONADES": 0,
+      "TONICS_OTHER\n": 0,
+      "TONIC_WATER": 0
+    }
+  },
+  {
+    "index": 23,
+    "name": "Tonics — Zero (sparkling)",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "TONICS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "TONIC_LEMONADES": 1,
+      "TONICS_OTHER\n": 3,
+      "TONIC_WATER": 0
+    }
+  },
+  {
+    "index": 24,
+    "name": "Colas — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "COLAS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 25,
+    "name": "Colas — With sugar",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "COLAS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 26,
+    "name": "Ginger Ale — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "GINGER_ALE"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 27,
+    "name": "Ginger Ale — With sugar",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "GINGER_ALE"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 28,
+    "name": "Ginger Beer — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "GINGER_BEER"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 29,
+    "name": "Sparkling Waters",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "SODA_WATER",
+          "MINERAL_WATER"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 30,
+    "name": "Still Waters",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "SODA_WATER",
+          "MINERAL_WATER"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 31,
+    "name": "Flavoured Waters — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "FLAVOURED_WATER"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 32,
+    "name": "Energy Drinks — Zero",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ENERGY_DRINKS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "ENERGY_DRINKS": 0
+    }
+  },
+  {
+    "index": 33,
+    "name": "Energy Drinks — With sugar",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "ENERGY_DRINKS"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {
+      "ENERGY_DRINKS": 0
+    }
+  },
+  {
+    "index": 34,
+    "name": "Sports Drinks — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "SPORTS_DRINKS"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 35,
+    "name": "Juices — NFC only",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "NFC_JUICE"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 36,
+    "name": "Juices — Classic (with sugar)",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "JUICES"
+        ]
+      },
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 0
+        }
+      ]
+    },
+    "counts": {}
+  },
+  {
+    "index": 37,
+    "name": "Smoothies — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "SMOOTHIES"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 38,
+    "name": "Kombucha — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "KOMBUCHA"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "FERMENTED_PREBIOTICA": 0,
+      "KOMBUCHA": 0
+    }
+  },
+  {
+    "index": 39,
+    "name": "Kombucha — Ginger",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subsubcategory_in": [
+          "KOMBUCHA_GINGER"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {
+      "COLA_CHERRY": 0,
+      "COLA_LEMON": 0,
+      "COLA_REGULAR": 0,
+      "COLA_VANILLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FERMENTED_PREBIOTICA": 0,
+      "FLAVORED_WATER": 0,
+      "GINGER_DRINKS": 0,
+      "HEALTH_DRINKS_FUNCTIONAL_WATER": 0,
+      "HEALTH_DRINKS_HYBRIDS": 0,
+      "ICE_TEA_BLACK": 0,
+      "ICE_TEA_GREEN": 0,
+      "ICE_TEA_OTHER": 0,
+      "ICE_TEA_RED": 0,
+      "ICE_TEA_SPECIALS": 0,
+      "JUICES_CONCENTRATE_MONO_JUICE": 0,
+      "JUICES_CONCENTRATE_MULTI_JUICE": 0,
+      "JUICES_NFC_MONO_JUICE": 0,
+      "JUICES_NFC_SHOTS": 0,
+      "JUICES_NFC_SMOOTHIES": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES_AGRUM": 0,
+      "LEMONADES_AGRUMES_MIX": 0,
+      "LEMONADES_APPLE": 0,
+      "LEMONADES_BERRY": 0,
+      "LEMONADES_LEMON_LIME": 0,
+      "LEMONADES_ORANGE": 0,
+      "LEMONADES_TROPICAL": 0,
+      "MILK_BASED_CHOCOLATE": 0,
+      "MILK_BASED_FRUITS": 0,
+      "MILK_BASED_MILK\n": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS_BLUE": 0,
+      "SPORTDRINKS_GREEN": 0,
+      "SPORTDRINKS_ORANGE": 0,
+      "SPORTDRINKS_RED": 0,
+      "SPORTDRINKS_YELLOW": 0,
+      "TONIC_LEMONADES": 0,
+      "TONICS_OTHER\n": 0,
+      "TONIC_WATER": 0
+    }
+  },
+  {
+    "index": 40,
+    "name": "Mate — overview",
+    "params": {
+      "groupBy": "subsubcategory",
+      "section": "refreshments",
+      "within": {
+        "subcategory_in": [
+          "MATE"
+        ]
+      },
+      "filters": {},
+      "predicates": []
+    },
+    "counts": {}
+  },
+  {
+    "index": 41,
+    "name": "Family-friendly — Still & Zero",
+    "params": {
+      "groupBy": "subcategory",
+      "section": "refreshments",
+      "within": {},
+      "filters": {},
+      "predicates": [
+        {
+          "field": "is_sparkling",
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "field": "is_zero",
+          "op": "eq",
+          "value": 1
+        }
+      ]
+    },
+    "counts": {
+      "COLA": 0,
+      "ENERGY_DRINKS": 0,
+      "FLAVORED_WATER": 0,
+      "FUNCTIONAL_DRINKS": 0,
+      "GINGER_DRINKS": 0,
+      "ICE_TEA": 0,
+      "JUICES_CONCENTRATE": 0,
+      "JUICES_NFC": 0,
+      "KOMBUCHA": 0,
+      "LEMONADES": 0,
+      "MILK_BASED": 0,
+      "OTHER": 0,
+      "PLAIN_WATER": 0,
+      "SPECIALS": 0,
+      "SPORTDRINKS": 0,
+      "TONICS": 0
+    }
+  }
+]

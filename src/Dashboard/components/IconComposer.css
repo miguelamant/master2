@@ -1,0 +1,49 @@
+.ic {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ic-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+
+/* Base fills the box */
+.ic-base {}
+
+/* Badges: render as smaller SVGs placed at corners */
+/* IconComposer.css */
+
+/* ... keep your existing base ... */
+
+.ic-badge { width: 42%; height: 42%; filter: drop-shadow(0 0 1px rgba(0,0,0,.35)); }
+
+/* corner anchors (uniform style) */
+.ic-tr { top: -6%; right: -6%; left: auto; bottom: auto; }
+.ic-br { bottom: -6%; right: -6%; top: auto; left: auto; }
+.ic-bl { bottom: -6%; left: -6%; top: auto; right: auto; }
+.ic-tl { top: -6%; left: -6%; right: auto; bottom: auto; }
+
+/* DELETE this older block if present (it interferes):
+.ic .ic-tl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42%;
+  height: 42%;
+  transform: translate(-10%, -10%);
+  pointer-events: none;
+}
+*/
+
+
+/* optional: subtle outline so badges stay visible on dark bases */
+.ic-badge { filter: drop-shadow(0 0 1px rgba(0,0,0,.35)); }
+
+
+
+/* top-left corner */
+.ic-tl { top: -6%; left: -6%; right: auto; bottom: auto; }

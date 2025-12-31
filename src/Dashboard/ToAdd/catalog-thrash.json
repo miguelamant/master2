@@ -1,0 +1,33 @@
+{
+  "presets": {
+
+    "1001": { "category": "refreshments", "layers": [1100] },
+    "1002": { "category": "refreshments", "layers": [1111] },
+    "1003": { "category": "refreshments", "layers": [1101] },
+    "1004": { "category": "refreshments", "layers": [1010,1012,1444] },
+    "1005": { "category": "refreshments", "layers": [1010,1011,1111]},
+    "1006": { "category": "refreshments", "layers": [1020]},
+    "1007": { "category": "refreshments", "layers": [1020,1021,1111]},
+    "1008": { "category": "refreshments", "layers": [1030,1031,1111]},
+    "1009": { "category": "refreshments", "layers": [1060]},
+    "1010": { "category": "refreshments", "layers": [1040,1041,1111]},
+    "1011": { "category": "refreshments", "layers": [1050,1051,1111]},
+
+
+    "2001": { "category": "beers", "layers": [2222] },
+    "2002": { "category": "beers", "layers": [2100] },
+    "2003": { "category": "beers", "layers": [2102,2222] },
+    "2004": { "category": "beers", "layers": [2004,2444] },
+    "2005": { "category": "beers", "layers": [2004] },
+    "2006": { "category": "beers", "layers": [2014] },
+    "2007": { "category": "beers", "layers": [2024] },
+    "2008": { "category": "beers", "layers": [2034] },
+    "2009": { "category": "beers", "layers": [2044] },
+    "2010": { "category": "beers", "layers": [2054] },
+    "2011": { "category": "beers", "layers": [2064] },
+    "2012": { "category": "beers", "layers": [2074] },
+    "2013": { "category": "beers", "layers": [2005] },
+    "2014": { "category": "beers", "layers": [2105] }
+  }
+}
+

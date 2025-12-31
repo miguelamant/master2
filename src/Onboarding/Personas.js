@@ -21,6 +21,8 @@ const personas = [
     { name: "Fijn-proever", description: "Geniet van verfijnde gerechten en unieke smaken, met oog voor kwaliteit en presentatie.", image: Fijnproever },
     { name: "Gezondheidsbewuste", description: "Gaat voor gezonde opties zoals salades en caloriearme gerechten, passend bij een gezonde levensstijl.", image: Gezondheidsbewuste },
     { name: "Milieubewuste", description: "Kiest voor lokale, biologische en duurzame producten. Waardeert een lage ecologische voetafdruk.", image: Milieubewuste },
+    { name: "Sporter", description: "Houdt van exclusieve, luxe ervaringen. Perfect voor speciale gelegenheden met premium opties.", image: Luxezoeker },
+    { name: "Feestbeest", description: "Kiest voor lokale, biologische en duurzame producten. Waardeert een lage ecologische voetafdruk.", image: Milieubewuste },
     { name: "Luxezoeker", description: "Houdt van exclusieve, luxe ervaringen. Perfect voor speciale gelegenheden met premium opties.", image: Luxezoeker },
 ];
 

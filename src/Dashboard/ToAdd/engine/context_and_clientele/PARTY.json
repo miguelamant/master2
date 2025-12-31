@@ -1,0 +1,109 @@
+{
+  "layers": [
+    {
+      "layer_id": 1001,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "COLA": {
+          "bucket": [
+            1.0,
+            0.85,
+            0.001,
+            0.0
+          ]
+        },
+        "LEMONADES": {
+          "bucket": [
+            0.95,
+            0.8,
+            0.58,
+            0.46
+          ]
+        },
+        "ICE_TEA": {
+          "bucket": [
+            0.9,
+            0.75,
+            0.54,
+            0.0
+          ]
+        },
+        "JUICES_CONCENTRATE": {
+          "bucket": [
+            0.7,
+            0.5,
+            0.48,
+            0.36
+          ]
+        },
+        "PLAIN_WATER": {
+          "bucket": [
+            0.65,
+            0.52,
+            0.001,
+            0.0
+          ]
+        },
+        "TONICS": {
+          "bucket": [
+            0.6,
+            0.44,
+            0.001,
+            0.0
+          ]
+        },
+        "GINGER_DRINKS": {
+          "bucket": [
+            0.56,
+            0.4,
+            0.001,
+            0.0
+          ]
+        },
+        "SPORTDRINKS": {
+          "bucket": [
+            0.42,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "MILK_BASED": {
+          "bucket": [
+            0.34,
+            0.3,
+            0.001,
+            0.0
+          ]
+        },
+        "JUICES_NFC": {
+          "bucket": [
+            0.32,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "KOMBUCHA": {
+          "bucket": [
+            0.27,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "SPECIALS": {
+          "bucket": [
+            0.26,
+            0.24,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    }
+  ]
+}

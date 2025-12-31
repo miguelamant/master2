@@ -51,3 +51,73 @@
     text-align: center;
     margin-top: auto;
 }
+
+.logout-button {
+    width: 60%;
+    padding: 10px;
+    background-color: var(--sandy-brown);
+    color: var(--ivory);
+    border: none;
+    cursor: pointer;
+    border-radius: 2rem;
+}
+
+.logout-button:hover {
+    background-color: var(--oxford-blue);
+}
+
+/* inline row for icon + label + lock */
+.sidebar-item-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.sidebar-item-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+}
+
+.sidebar-item-lock {
+    width: 14px;
+    height: 14px;
+    margin-left: auto;   /* pushes lock to the right edge */
+    opacity: 0.9;
+    display: inline-block;
+}
+
+/* locked state: non-interactive look */
+.sidebar-list-item.locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: auto; /* keep hover for tooltip */
+}
+
+/* don’t apply the hover/active colors to locked items */
+.sidebar-list-item.locked:hover,
+.sidebar-list-item.locked.active {
+    background-color: transparent;
+    color: var(--oxford-blue);
+}
+
+/* keep the lock visible */
+.sidebar-list-item.locked .sidebar-item-lock {
+    opacity: 0.9;
+}
+.get-started-button {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    background: grey; /* sky-500 */
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s ease, transform .02s ease;
+}
+.get-started-button:hover { filter: brightness(1.05); }
+.get-started-button:active { transform: translateY(1px); }
+

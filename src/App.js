@@ -87,21 +87,10 @@ function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/welcomepage" element={<WelcomePage />} />
                     <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/typehoreca" element={<TypeHoreca />} />
-                    <Route path="/zitplaatsen" element={<Zitplaatsen />} />
-                    <Route path="/kenmerken" element={<Kenmerken />} />
-                    <Route path="/leeftijdsverdeling" element={<Leeftijdsverdeling />} />
-                    <Route path="/profielverdeling" element={<Profielverdeling />} />
+
                     <Route path="/personas" element={<Personas />} />
                     <Route path="/clienteleanalysis" element={<ClienteleAnalysis />} />
-                    <Route path="/toerisme" element={<ToerismeAnalysis />} />
-                    <Route path="/uploadmenu" element={<UploadMenu />} />
-                    <Route path="/menufrequency" element={<MenuFrequency />} />
-                    <Route path="/promoties" element={<Promoties />} />
-                    <Route path="/marketingstrategy" element={<MarketingStrategy />} />
-                    <Route path="/belangrijker1" element={<Belangrijker1 />} />
-                    <Route path="/belangrijker2" element={<Belangrijker2 />} />
-                    <Route path="/belangrijker3" element={<Belangrijker3 />} />
+
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/welcome" element={<LandingPage />} />
 
@@ -135,3 +124,20 @@ function App() {
 }
 
 export default App;
+
+/*                    <Route path="/toerisme" element={<ToerismeAnalysis />} />
+                    <Route path="/uploadmenu" element={<UploadMenu />} />
+                    <Route path="/menufrequency" element={<MenuFrequency />} />
+                    <Route path="/promoties" element={<Promoties />} />
+                    <Route path="/marketingstrategy" element={<MarketingStrategy />} />
+                    <Route path="/belangrijker1" element={<Belangrijker1 />} />
+                    <Route path="/belangrijker2" element={<Belangrijker2 />} />
+                    <Route path="/belangrijker3" element={<Belangrijker3 />} />
+
+                    <Route path="/typehoreca" element={<TypeHoreca />} />
+                    <Route path="/zitplaatsen" element={<Zitplaatsen />} />
+                    <Route path="/kenmerken" element={<Kenmerken />} />
+                    <Route path="/leeftijdsverdeling" element={<Leeftijdsverdeling />} />
+                    <Route path="/profielverdeling" element={<Profielverdeling />} />
+
+                    */

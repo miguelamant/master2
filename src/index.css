@@ -45,10 +45,11 @@
 
 /* Kleurvariabelen */
 :root {
-  --sandy-brown: #FA954B; /* Vervang door de juiste hexkleur als nodig */
+  --sandy-brown: #D3D3D3; /* Vervang door de juiste hexkleur als nodig FA954B*/
   --ivory: #F9FBF2;
   --light-cyan: #D7F9FF;
   --jordy-blue: #AFCBFF;
-  --oxford-blue: #0E1C36;
-  --bice-blue: #3A6EA5;
+  --oxford-blue:black ; /*#0E1C36*/
+  --bice-blue:black;
+  /*--bice-blue: #3A6EA5;*/
 }

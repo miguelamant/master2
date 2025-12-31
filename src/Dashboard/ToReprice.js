@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ToReprice.css';
 import Optionbar from "./Optionbar";
-import { segmentOptions, locationOptions, seasonOptions, highlightOptions } from './Icons/optionbarOptions';
+import { segmentOptions, locationOptions, seasonOptions, highlightOptions } from './optionbarOptions';
 import pacman from './Icons/pacman.svg';
 import pricesens from './Icons/pricesensitivity.svg';
 import euro from './Icons/euro.svg';
 import axios from 'axios';
-
+import { api } from "apiService";
 const ToReprice = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -57,8 +57,8 @@ const ToReprice = () => {
     useEffect(() => {
         const fetchAll = async () => {
             try {
-                const res = await axios.get(
-                    `${process.env.REACT_APP_API_URL || 'http://localhost:3007'}/api/menu-items`,
+                const res = await api.get(
+                    `${process.env.REACT_APP_API_URL || ''}/api/menu-items`,
                     { withCredentials: true }
                 );
 
@@ -130,7 +130,7 @@ const ToReprice = () => {
         const updatedPrice = Number(((selectedItem.lowPrice + selectedItem.highPrice) / 2).toFixed(2));
 
         try {
-            const res = await fetch('http://localhost:3007/api/menu-items', {
+            const res = await fetch('/api/menu-items', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

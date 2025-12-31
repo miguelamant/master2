@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import TopTemplate from './TopTemplate';
 import axios from 'axios';
+import { api } from "apiService";
 
 const StijgersDrank = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3007/api/sales/growth', { withCredentials: true })
+        api.get('/api/sales/growth', { withCredentials: true })
             .then(res => {
                 const sorted = [...res.data].sort((a, b) => b.growth_abs - a.growth_abs);
 

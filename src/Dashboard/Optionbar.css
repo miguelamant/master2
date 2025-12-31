@@ -1,32 +1,35 @@
 /* Optionbar.css */
+
+/* Container: wider + roomier padding */
 .optionbar-container {
     background-color: var(--ivory);
-    padding: 1.5rem;
-    padding-right: 0.4rem;
     border-radius: 2rem;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 25rem;
-    /* Make container fill viewport minus header/nav offsets */
-    max-height: calc(100vh - 4rem);
+    padding: 1.5rem 1.75rem;     /* ↑ a bit more padding */
+    width: 24rem;                /* was 15rem → ~33% wider */
+    max-width: 22rem;            /* guardrail */
+    margin: 2rem 2rem 2rem 0;    /* keep space from right edge */
+    box-shadow: none;
+
     display: flex;
     flex-direction: column;
+    font-family: 'Quicksand', sans-serif;
 }
 
 .optionbar-title {
     font-size: 2rem;
     font-weight: bold;
     color: var(--sandy-brown);
-    margin-bottom: 1rem;
-    flex: 0 0 auto;
+    margin: 0 0 1rem 0;
 }
 
+/* Scroll region */
 .optionbar-scrollable {
-    /* Fill remaining height */
     flex: 1 1 auto;
     overflow-y: auto;
     padding-right: 0.5rem;
 }
 
+/* Lists */
 .optionbar-list {
     list-style: none;
     padding: 0;
@@ -36,55 +39,90 @@
 .option-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
+    gap: 0.65rem;                 /* a touch more breathing room */
     color: var(--oxford-blue);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.55rem;
+    padding: 0.55rem 0.85rem;     /* larger hit box */
+    border-radius: 0.5rem;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+.option-item:hover {
+    background-color: var(--sandy-brown);
+    color: var(--ivory);
+}
+
+/* ✔ Consistent checkbox sizing across browsers */
 .option-item input[type="checkbox"] {
-    width: 1.2rem;
-    height: 1.2rem;
+    -webkit-appearance: auto;
+    appearance: auto;
+    width: 1.15rem;               /* fixed size */
+    height: 1.15rem;
+    min-width: 1.15rem;
+    min-height: 1.15rem;
     accent-color: var(--oxford-blue);
+    flex: 0 0 1.15rem;            /* prevent flex shrink/expand */
 }
 
+/* ✔ Consistent icon sizing */
+.option-icon {
+    width: 24px;                  /* fixed and equal */
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    flex: 0 0 24px;               /* lock size in flex row */
+}
+
+/* Label follows hover color */
 .option-label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-weight: bold;
     font-size: 1.1rem;
-    color: var(--oxford-blue);
+    color: inherit;
     cursor: pointer;
 }
 
-.option-icon {
-    width: 32px;
-    height: 32px;
-}
-
+/* Divider */
 .optionbar-divider {
-    margin: 0.8rem 0;
+    margin: 0.9rem 0;
     border: none;
     height: 1px;
     background-color: var(--sandy-brown);
 }
 
-/* Custom Scrollbar Styling for Scrollable Options */
-.optionbar-scrollable::-webkit-scrollbar {
-    width: 8px;
-}
-
+/* Scrollbar */
+.optionbar-scrollable::-webkit-scrollbar { width: 8px; }
 .optionbar-scrollable::-webkit-scrollbar-track {
     background: var(--ivory);
     border-radius: 10px;
 }
-
 .optionbar-scrollable::-webkit-scrollbar-thumb {
     background: #0E1C3622;
     border-radius: 10px;
 }
-
 .optionbar-scrollable::-webkit-scrollbar-thumb:hover {
     background: #0E1C3655;
+}
+/* spacing tweaks */
+.optionbar-container {
+    /* was: padding: 1.5rem 1.75rem; */
+    padding: 15rem 15rem 15rem 225rem;  /* ← a bit more left padding */
+    /* was: margin: 2rem 2rem 2rem 0; */
+    margin: 0rem 2rem 2rem 0;                /* ← smaller top margin */
+}
+/* place these at the end of Optionbar.css */
+.optionbar-container {
+    margin-top: -0.2rem !important;   /* smaller top margin */
+}
+
+.optionbar-card {
+    padding-left: 0.5rem !important; /* more left padding you’ll actually see */
+    padding-top: 0.5rem !important;
+}
+
+/* (optional) if the scroll area also needs a nudge */
+.optionbar-scrollable {
+    padding-left: 0.25rem;
 }

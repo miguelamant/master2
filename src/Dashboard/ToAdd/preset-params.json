@@ -1,0 +1,2316 @@
+{
+  "1001": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":1
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":1
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+      "hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": 0
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 10,
+      "alpha": 0.1,
+      "min_sku": 7,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1002": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1003": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1004": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1005": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1101": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1102": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1103": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1104": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_CHERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_LEMON": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_REGULAR": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_VANILLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1105": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_BLUE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_YELLOW": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1106": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1107": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1108": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FUNCTIONAL_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1201": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1202": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1203": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1204": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1301": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1302": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1303": {
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1304": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1401": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_CHERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_LEMON": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_REGULAR": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "COLA_VANILLA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "FLAVORED_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "GINGER_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "HEALTH_DRINKS_FUNCTIONAL_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "HEALTH_DRINKS_HYBRIDS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_BLACK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ICE_TEA_SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE_MONO_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE_MULTI_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_MONO_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_SHOTS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_SMOOTHIES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUM": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_AGRUMES_MIX": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_APPLE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_BERRY": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_LEMON_LIME": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_PREBIOTICA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "LEMONADES_TROPICAL": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED_CHOCOLATE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED_FRUITS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "MILK_BASED_MILK": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "PLAIN_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPECIALS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_BLUE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_GREEN": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_ORANGE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_RED": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "SPORTDRINKS_YELLOW": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1402": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_LEMONADES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONICS_OTHER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "TONIC_WATER": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1501": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1502": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1601": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1602": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1603": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1701": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1702": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1703": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1801": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1802": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "ENERGY_DRINKS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1803": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1901": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_MONO_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_SHOTS": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_NFC_SMOOTHIES": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1902": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE_MONO_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "JUICES_CONCENTRATE_MULTI_JUICE": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "1903": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  },
+  "2001": {
+    "_defaults": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    },
+    "KOMBUCHA": {
+      "ros": 1,
+      "alpha": 0.5,
+      "min_sku": 0,
+      "max_sku": null,
+"hide_if_zero":0
+
+    }
+  }
+}

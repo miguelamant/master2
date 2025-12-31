@@ -1,0 +1,1145 @@
+{
+  "version": 1,
+  "layers": [
+    {
+      "layer_id": 3100,
+      "name": "Zero vs With alcohol (TEST)",
+      "type": "1D",
+      "field": "is_zero",
+      "weight": 1.0,
+      "buckets": {
+        "0": { "bucket": [0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60,0.60] },
+        "1": { "bucket": [0.60, 0.40, 0.25, 0.12, 0.05] }
+      },
+      "labels": { "0": "With alcohol", "1": "Zero" }
+    },
+
+    {
+      "layer_id": 3101,
+      "name": "Subcategory × Sparkling (TEST)",
+      "type": "2D",
+      "rows_field": "subcategory",
+      "cols_field": "is_sparkling",
+      "weight": 1.0,
+      "rows": ["COLA", "LEMONADES", "PLAIN_WATER", "TONICS"],
+      "cols": ["0", "1"],
+      "buckets": {
+        "COLA::0":       { "bucket": [0.20, 0.12, 0.06, 0.03] },
+        "COLA::1":       { "bucket": [0.35, 0.22, 0.10, 0.05] },
+
+        "LEMONADES::0":  { "bucket": [0.25, 0.15, 0.08, 0.04] },
+        "LEMONADES::1":  { "bucket": [0.40, 0.25, 0.12, 0.06] },
+
+        "PLAIN_WATER::0":{ "bucket": [0.10, 0.06, 0.03] },
+        "PLAIN_WATER::1":{ "bucket": [0.05, 0.03, 0.01] },
+
+        "TONICS::0":     { "bucket": [0.30, 0.18, 0.10, 0.05] },
+        "TONICS::1":     { "bucket": [0.25, 0.15, 0.08, 0.04] }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "Still", "1": "Sparkling" }
+    },
+    {
+      "layer_id": 3110,
+      "name": "Trendy flavours (rollups) — label buckets",
+      "type": "1D",
+      "field": "label",
+      "weight": 1.0,
+
+      "buckets": {
+        "IPA (all)": {
+          "bucket": [0.8, 0.8, 0.8, 0.8, 0.40, 0.25, 0.14, 0.08]
+        },
+        "Smoothie sour": {
+          "bucket": [0.8, 0.8, 0.8, 0.8, 0.12, 0.08, 0.04, 0.02]
+        },
+        "Fruited & Radler/Shandy": {
+          "bucket": [0.8, 0.8, 0.8, 0.8, 0.18, 0.12, 0.06, 0.03]
+        },
+        "Other flavours (Zero)": {
+          "bucket": [0.8, 0.8, 0.8, 0.8, 0.08, 0.05, 0.03, 0.01]
+        },
+        "Other flavours (With alcohol)": {
+          "bucket": [0.8, 0.8, 0.8, 0.8, 0.30, 0.20, 0.10, 0.05]
+        }
+      },
+
+      "labels": {}
+    },
+
+    {
+      "layer_id": 1111,
+      "name": "Zero vs Non-zero",
+      "type": "1D",
+      "field": "is_zero",
+      "weight": 1.0,
+      "buckets": {
+        "0": { "bucket": [0.75,0.7,0.65,0.6,0.55,0.5,0.45,0.4,0.35,0.3,0.25,0.2] },
+        "1": { "bucket": [0.80, 0.55,0.5,0.45,0.4,0.35,0.24, 0.12, 0.06] }
+      },
+      "labels": { "0": "With sugar", "1": "Zero" }
+    },
+
+
+    {
+      "layer_id": 1444,
+      "name": "Carbonation (1D)",
+      "type": "1D",
+      "field": "is_sparkling",
+      "weight": 1.0,
+      "buckets": {
+        "0": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "1": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        }
+      },
+      "labels": { "0": "still", "1": "sparkling" }
+    },
+
+    {
+      "layer_id": 1100,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "COLA": {
+          "bucket": [0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01]
+        },
+        "FLAVORED_WATER": {
+          "bucket": [0.01]
+        },
+        "FUNCTIONAL_DRINKS": {
+          "bucket": [0.11, 0.01]
+        },
+        "GINGER_DRINKS": {
+          "bucket": [0.14, 0.01]
+        },
+        "ICE_TEA": {
+          "bucket": [0.23, 0.01]
+        },
+        "JUICES_CONCENTRATE": {
+          "bucket": [0.9,0.8,0.7,0.45, 0.01]
+        },
+        "JUICES_NFC": {
+          "bucket": [0.01]
+        },
+        "KOMBUCHA": {
+          "bucket": [0.9,0.8,0.7,0.45, 0.44, 0.43, 0.42,0.01]
+        },
+        "LEMONADES": {
+          "bucket": [0.23, 0.21, 0.1,0.01]
+        },
+        "MILK_BASED": {
+          "bucket": [0.9,0.8,0.7,0.45, 0.43, 0.42, 0.41,0.01]
+        },
+        "OTHER": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "PLAIN_WATER": {
+          "bucket": [0.8,0.14,0.01]
+        },
+        "SPECIALS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "SPORTDRINKS": {
+          "bucket": [0.01]
+        },
+        "TONICS": {
+          "bucket": [0.01]
+        }
+      }
+    }
+  ,
+
+
+
+
+
+
+    {
+      "layer_id": 1101,
+      "name": "Subcategory × Zero (2D)",
+      "type": "2D",
+      "rows_field": "subcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "rows": [
+        "COLA","ENERGY_DRINKS","FLAVORED_WATER","FUNCTIONAL_DRINKS",
+        "GINGER_DRINKS","ICE_TEA","JUICES_CONCENTRATE","JUICES_NFC",
+        "KOMBUCHA","LEMONADES","MILK_BASED","OTHER",
+        "PLAIN_WATER","SPECIALS","SPORTDRINKS","TONICS"
+      ],
+      "cols": ["0", "1"],
+      "buckets": {
+        "COLA::0":              { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA::1":              { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "ENERGY_DRINKS::0":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ENERGY_DRINKS::1":     { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "FLAVORED_WATER::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "FLAVORED_WATER::1":    { "bucket": [0.88,0.78,0.68,0.58]},
+
+        "FUNCTIONAL_DRINKS::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "FUNCTIONAL_DRINKS::1": { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "GINGER_DRINKS::0":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_DRINKS::1":     { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "ICE_TEA::0":           { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA::1":           { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "JUICES_CONCENTRATE::0":{ "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "JUICES_CONCENTRATE::1":{ "bucket": [0.88,0.78,0.68,0.58] },
+
+        "JUICES_NFC::0":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "JUICES_NFC::1":        { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "KOMBUCHA::0":          { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "KOMBUCHA::1":          { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "LEMONADES::0":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES::1":         { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "MILK_BASED::0":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "MILK_BASED::1":        { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "OTHER::0":             { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "OTHER::1":             { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "PLAIN_WATER::0":       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "PLAIN_WATER::1":       { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "SPECIALS::0":          { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SPECIALS::1":          { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "SPORTDRINKS::0":       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SPORTDRINKS::1":       { "bucket": [0.88,0.78,0.68,0.58] },
+
+        "TONICS::0":            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONICS::1":            { "bucket": [0.88,0.78,0.68,0.58]}
+      },
+      "row_labels": {},
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    }
+  ,
+
+    {
+      "layer_id": 1010,
+      "name": "Ice Tea — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "ICE_TEA" },
+      "rows": ["ICE_TEA_BLACK", "ICE_TEA_GREEN", "ICE_TEA_OTHER", "ICE_TEA_RED", "ICE_TEA_SPECIALS"],
+      "items": {
+        "ICE_TEA_BLACK": { "bucket": [0.93, 0.55, 0.30, 0.17, 0.08] },
+        "ICE_TEA_GREEN": { "bucket": [0.87, 0.52, 0.29, 0.16, 0.08] },
+        "ICE_TEA_OTHER":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_RED":      { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_SPECIALS": { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      }
+    },
+    {
+      "layer_id": 1012,
+      "name": "Ice Tea × Carbonation",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_sparkling",
+      "weight": 1.0,
+      "rows": ["ICE_TEA_BLACK", "ICE_TEA_GREEN", "ICE_TEA_OTHER", "ICE_TEA_RED", "ICE_TEA_SPECIALS"],
+      "cols": ["0", "1"],
+      "cells": {
+        "ICE_TEA_BLACK::0": { "bucket": [0.86, 0.50, 0.28, 0.15, 0.07] },
+        "ICE_TEA_BLACK::1": { "bucket": [0.95, 0.57, 0.31, 0.17, 0.08] },
+
+        "ICE_TEA_GREEN::0": { "bucket": [0.80, 0.47, 0.26, 0.14, 0.07] },
+        "ICE_TEA_GREEN::1": { "bucket": [0.90, 0.53, 0.29, 0.16, 0.08] },
+
+        "ICE_TEA_OTHER::0":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_OTHER::1":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+
+        "ICE_TEA_RED::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_RED::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+
+        "ICE_TEA_SPECIALS::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_SPECIALS::1": { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "still", "1": "sparkling" }
+    },
+    {
+      "layer_id": 1011,
+      "name": "Ice Tea × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "rows": ["ICE_TEA_BLACK", "ICE_TEA_GREEN", "ICE_TEA_OTHER", "ICE_TEA_RED", "ICE_TEA_SPECIALS"],
+      "cols": ["0", "1"],
+      "cells": {
+        "ICE_TEA_BLACK::0": { "bucket": [0.88, 0.52, 0.29, 0.16, 0.08] },
+        "ICE_TEA_BLACK::1": { "bucket": [0.94, 0.56, 0.31, 0.17, 0.08] },
+
+        "ICE_TEA_GREEN::0": { "bucket": [0.82, 0.48, 0.27, 0.15, 0.07] },
+        "ICE_TEA_GREEN::1": { "bucket": [0.90, 0.53, 0.29, 0.16, 0.08] },
+
+        "ICE_TEA_OTHER::0":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_OTHER::1":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+
+        "ICE_TEA_RED::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_RED::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+
+        "ICE_TEA_SPECIALS::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "ICE_TEA_SPECIALS::1": { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "With Sugar", "1": "Zero" }
+    },
+
+    {
+      "layer_id": 1020,
+      "name": "Lemonades — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "LEMONADES" },
+      "rows": [
+        "LEMONADES_AGRUM",
+        "LEMONADES_AGRUMES_MIX",
+        "LEMONADES_APPLE",
+        "LEMONADES_BERRY",
+        "LEMONADES_LEMON",
+        "LEMONADES_LEMON_LIME",
+        "LEMONADES_ORANGE",
+        "LEMONADES_PREBIOTICA",
+        "LEMONADES_TROPICAL"
+      ],
+      "items": {
+        "LEMONADES_AGRUM":        { "bucket": [0.80, 0.47, 0.26, 0.14, 0.07] },
+        "LEMONADES_AGRUMES_MIX": { "bucket": [0.68, 0.41, 0.23, 0.13, 0.06] },
+        "LEMONADES_APPLE":         { "bucket": [0.72, 0.43, 0.24, 0.13, 0.06] },
+        "LEMONADES_BERRY":        { "bucket": [0.78, 0.46, 0.26, 0.14, 0.07] },
+        "LEMONADES_LEMON":        { "bucket": [0.92, 0.54, 0.30, 0.17, 0.08] },
+        "LEMONADES_LEMON_LIME":   { "bucket": [0.90, 0.53, 0.29, 0.16, 0.08] },
+        "LEMONADES_ORANGE":       { "bucket": [0.86, 0.50, 0.28, 0.15, 0.07] },
+        "LEMONADES_PREBIOTICA":   { "bucket": [0.30, 0.18, 0.10, 0.06, 0.03] },
+        "LEMONADES_TROPICAL":      { "bucket": [0.76, 0.45, 0.25, 0.14, 0.07] }
+      }
+    },
+
+    {
+      "layer_id": 1021,
+      "name": "Lemonades (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "LEMONADES" },
+      "rows": [
+        "LEMONADES_AGRUM",
+        "LEMONADES_AGRUMES_MIX",
+        "LEMONADES_APPLE",
+        "LEMONADES_BERRY",
+        "LEMONADES_LEMON_LIME",
+        "LEMONADES_ORANGE",
+        "LEMONADES_PREBIOTICA",
+        "LEMONADES_TROPICAL"
+      ],
+      "cols": ["0", "1"],
+      "cells": {
+        "LEMONADES_AGRUM::0":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_AGRUM::1":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_AGRUMES_MIX::0":   { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_AGRUMES_MIX::1":   { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_APPLE::0":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_APPLE::1":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_BERRY::0":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_BERRY::1":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_LEMON_LIME::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_LEMON_LIME::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_ORANGE::0":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_ORANGE::1":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_PREBIOTICA::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_PREBIOTICA::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_TROPICAL::0":      { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LEMONADES_TROPICAL::1":      { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "row_labels": {},
+      "col_labels": { "0": "With Sugar", "1": "Zero" }
+    },
+
+    {
+      "layer_id": 1030,
+      "name": "Cola — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "COLA" },
+      "rows": ["COLA_CHERRY","COLA_LEMON","COLA_REGULAR","COLA_VANILLA"],
+      "items": {
+        "COLA_CHERRY":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_LEMON":   { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_REGULAR": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_VANILLA": { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      }
+    },
+    {
+      "layer_id": 1031,
+      "name": "Cola (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "COLA" },
+      "rows": ["COLA_CHERRY","COLA_LEMON","COLA_REGULAR","COLA_VANILLA"],
+      "cols": ["0","1"],
+      "cells": {
+        "COLA_CHERRY::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_CHERRY::1": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_LEMON::0":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_LEMON::1":  { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_REGULAR::0":{ "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_REGULAR::1":{ "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_VANILLA::0":{ "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "COLA_VANILLA::1":{ "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    },
+    {
+      "layer_id": 1040,
+      "name": "Ginger drinks — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "GINGER_DRINKS" },
+      "rows": ["GINGER_ALE","GINGER_BEER","GINGER_LEMONADE","GINGER_OTHER"],
+      "items": {
+        "GINGER_ALE":      { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_BEER":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_LEMONADE": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_OTHER":    { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      }
+    },
+    {
+      "layer_id": 1041,
+      "name": "Ginger drinks (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "GINGER_DRINKS" },
+      "rows": ["GINGER_ALE","GINGER_BEER","GINGER_LEMONADE","GINGER_OTHER"],
+      "cols": ["0","1"],
+      "cells": {
+        "GINGER_ALE::0":      { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_ALE::1":      { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_BEER::0":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_BEER::1":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_LEMONADE::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_LEMONADE::1": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_OTHER::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "GINGER_OTHER::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    },
+
+    {
+      "layer_id": 1051,
+      "name": "Tonics (subsubcategory) × Zero",
+      "type": "2D",
+      "rows_field": "subsubcategory",
+      "cols_field": "is_zero",
+      "weight": 1.0,
+      "scope": { "subcategory": "TONICS" },
+      "rows": ["TONIC_LEMONADES", "TONICS_OTHER", "TONIC_WATER"],
+      "cols": ["0", "1"],
+      "cells": {
+        "TONIC_LEMONADES::0": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONIC_LEMONADES::1": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONICS_OTHER::0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONICS_OTHER::1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONIC_WATER::0":     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONIC_WATER::1":     { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      },
+      "col_labels": { "0": "with sugar", "1": "zero" }
+    }
+  ,
+    {
+      "layer_id": 1050,
+      "name": "Tonics — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "TONICS" },
+      "rows": ["TONIC_LEMONADES","TONICS_OTHER","TONIC_WATER"],
+      "items": {
+        "TONIC_LEMONADES": { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONICS_OTHER":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TONIC_WATER":     { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      }
+    },
+
+    {
+      "layer_id": 1060,
+      "name": "Juices — subsubcategory (1D)",
+      "type": "1D",
+      "field": "subsubcategory",
+      "weight": 1.0,
+      "scope": { "subcategory": "JUICES_CONCENTRATE" },
+      "rows": ["JUICES_CONCENTRATE_APPLE","JUICES_CONCENTRATE_APPLE_CHERRY","JUICES_CONCENTRATE_GRAPEFRUIT","JUICES_CONCENTRATE_MULTI_JUICE","JUICES_CONCENTRATE_ORANGE","JUICES_CONCENTRATE_TOMATO"],
+      "buckets": {
+        "JUICES_CONCENTRATE_APPLE": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_CONCENTRATE_APPLE_CHERRY": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_CONCENTRATE_GRAPEFRUIT": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_CONCENTRATE_MULTI_JUICE": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_CONCENTRATE_ORANGE": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_CONCENTRATE_TOMATO": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_NFC_MONO_JUICE": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_NFC_SHOTS": {
+          "bucket": [0.34,0.25]
+        },
+        "JUICES_NFC_SMOOTHIES": {
+          "bucket": [0.34,0.25]
+        }
+      }
+    },
+    {
+      "layer_id": 2222,
+      "name": "Zero vs Non-zero",
+      "type": "1D",
+      "field": "is_zero",
+      "weight": 1.0,
+      "buckets": {
+        "0": { "bucket": [0.75,0.7,0.65,0.6,0.55,0.5,0.45,0.4,0.35,0.3,0.25,0.2] },
+        "1": { "bucket": [0.80, 0.55,0.5,0.45,0.4,0.35,0.24, 0.12, 0.06] }
+      },
+      "labels": { "0": "With alcohol", "1": "Zero" }
+    },
+
+    {
+      "layer_id": 2001,
+      "name": "Beers x zero",
+      "type": "2D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BEERS::0": {
+          "bucket": [
+            1.0,
+            1.0,
+            0.9,
+            0.9,
+            0.9,
+            0.9,
+            0.9,
+            0.9,0.9,0.9,0.9,0.9,
+            0.0
+          ]
+        },
+        "BEERS::1": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2100,
+      "name": "Beers — subcategory (1D)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "scope": { "category": "BEERS" },
+      "rows": [
+        "LAGERS",
+        "NORMAL_BLOND_AMBER",
+        "BLOND_BITTERS",
+        "DARK_BROWN_MALT_SWEETNESS",
+        "DARK_BROWN_COFFEE_ROAST_BITTER",
+        "FRUIT_BEERS",
+        "WHEAT_BEERS",
+        "TABLE_BEER",
+        "SOURS_SAISON_LAMBIC_GUEUZE",
+        "SMOOTHIE_SOUR",
+        "BEERS_OTHER",
+        "BEERS_SPECIAL",
+        "RADLERS",
+        "CIDERS",
+        "SPIRIT_FLAVOURED_BEERS"
+      ],
+      "buckets": {
+        "LAGERS":                            { "bucket": [0.8,0.4,0.01] },
+        "NORMAL_BLOND_AMBER":               { "bucket": [0.8,0.12,0.01] },
+        "BLOND_BITTERS":                     { "bucket": [0.2,0.12,0.01] },
+        "DARK_BROWN_MALT_SWEETNESS":         { "bucket": [0.3,0.12,0.01] },
+        "DARK_BROWN_COFFEE_ROAST_BITTER":    { "bucket": [0.41,0.12,0.01] },
+        "FRUIT_BEERS":                       { "bucket": [0.43,0.12,0.01] },
+        "WHEAT_BEERS":                       { "bucket": [0.46,0.12,0.01] },
+        "TABLE_BEER":                        { "bucket": [0.78,0.12,0.01] },
+        "SOURS_SAISON_LAMBIC_GUEUZE":        { "bucket": [0.66,0.12,0.01] },
+        "SMOOTHIE_SOUR":                     { "bucket": [0.13,0.12,0.01] },
+        "BEERS_OTHER":                       { "bucket": [0.79,0.12,0.01] },
+        "BEERS_SPECIAL":                     { "bucket": [0.68,0.12,0.01] },
+        "RADLERS":                           { "bucket": [0.8,0.8,0.8,0.8,0.8,0.01] },
+        "CIDERS":                            { "bucket": [0.3,0.12,0.01] },
+        "SPIRIT_FLAVOURED_BEERS":            { "bucket": [0.12,0.12,0.01] }
+      }
+    }
+  ,
+    {
+      "layer_id": 2101,
+      "name": "Beers — subcategory x zero (2D)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "scope": { "category": "BEERS" },
+      "rows": [
+        "LAGERS",
+        "NORMAL_BLOND_AMBER",
+        "BLOND_BITTERS",
+        "DARK_BROWN_MALT_SWEETNESS",
+        "DARK_BROWN_COFFEE_ROAST_BITTER",
+        "FRUIT_BEERS",
+        "WHEAT_BEERS",
+        "TABLE_BEER",
+        "SOURS_SAISON_LAMBIC_GUEUZE",
+        "SMOOTHIE_SOUR",
+        "BEERS_OTHER",
+        "BEERS_SPECIAL",
+        "RADLERS",
+        "CIDERS",
+        "SPIRIT_FLAVOURED_BEERS"
+      ],
+      "buckets": {
+        "LAGERS:0":                            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "NORMAL_BLOND_AMBER:0":               { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BLOND_BITTERS:0":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "DARK_BROWN_MALT_SWEETNESS:0":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "DARK_BROWN_COFFEE_ROAST_BITTER:0":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "FRUIT_BEERS:0":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "WHEAT_BEERS:0":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TABLE_BEER:0":                        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SOURS_SAISON_LAMBIC_GUEUZE:0":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SMOOTHIE_SOUR:0":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BEERS_OTHER:0":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BEERS_SPECIAL:0":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "RADLERS:0":                           { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "CIDERS:0":                            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SPIRIT_FLAVOURED_BEERS:0":            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "LAGERS:1":                            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "NORMAL_BLOND_AMBER:1":               { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BLOND_BITTERS:1":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "DARK_BROWN_MALT_SWEETNESS:1":         { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "DARK_BROWN_COFFEE_ROAST_BITTER:1":    { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "FRUIT_BEERS:1":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "WHEAT_BEERS:1":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "TABLE_BEER:1":                        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SOURS_SAISON_LAMBIC_GUEUZE:1":        { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SMOOTHIE_SOUR:1":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BEERS_OTHER:1":                       { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "BEERS_SPECIAL:1":                     { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "RADLERS:1":                           { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "CIDERS:1":                            { "bucket": [0.15,0.14,0.13,0.12,0.11] },
+        "SPIRIT_FLAVOURED_BEERS:1":            { "bucket": [0.15,0.14,0.13,0.12,0.11] }
+      }
+    }
+
+
+
+    ,
+    {
+      "layer_id": 2100,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BLOND_BITTERS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "DARK_BROWN_MALT_SWEETNESS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "FRUIT_BEERS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "LAGERS": {
+          "bucket":[0.15,0.14,0.13,0.12,0.11]
+        },
+        "NORMAL_BLOND_AMBER": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "RADLERS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "SOURS_SAISON_LAMBIC_GUEUZE": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "WHEAT_BEERS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        }
+      }
+    },
+    {
+      "layer_id": 2102,
+      "name": "Subcategory non-alcoholic",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BLOND_BITTERS": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_MALT_SWEETNESS": {
+          "bucket": [
+            0.9,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "FRUIT_BEERS": {
+          "bucket": [
+            0.85,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "LAGERS": {
+          "bucket": [
+            0.8,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "NORMAL_BLOND_AMBER": {
+          "bucket": [
+            0.75,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "RADLERS": {
+          "bucket": [
+            0.7,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "WHEAT_BEERS": {
+          "bucket": [
+            0.65,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2004,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BEERS · 0.6–5.5%": { "bucket": [0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.5,0.42] },
+        "BEERS · 5.6–7.5%": { "bucket": [0.95, 0.001, 0.001, 0.0] },
+        "BEERS · 7.6% +":  { "bucket": [0.9, 0.001, 0.001, 0.0] }
+      }
+    }
+    ,
+    {
+      "layer_id": 2444,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "[0.5, 5.5]": { "bucket": [0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.5,0.42] },
+        "[5.6, 7.5]": { "bucket": [0.95, 0.001, 0.001, 0.0] },
+        "[7.6, 100]":  { "bucket": [0.9, 0.001, 0.001, 0.0] }
+      }
+    }
+  ,
+    {
+      "layer_id": 2014,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+
+        "NORMAL_BLOND_AMBER · 0.6–5.5%": {
+          "bucket": [0.8,0.8,0.8,0.8,0.7,0.6,0.15,0.14,0.13,0.12,0.11]
+        },
+        "NORMAL_BLOND_AMBER · 5.6–7.5%": {
+          "bucket": [0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.15,0.14,0.13,0.12,0.11]
+        },
+        "NORMAL_BLOND_AMBER · 7.6%+": {
+          "bucket": [0.8,0.15,0.14,0.13,0.12,0.11]
+        }
+      }
+    },
+    {
+      "layer_id": 2024,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BLOND_BITTERS · 0.6–5.5%": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "BLOND_BITTERS · 5.6–7.5%": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "BLOND_BITTERS · 7.6%+": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        }
+      }
+    },
+    {
+      "layer_id": 2034,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 0.6-5.5%": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 5.6-7.5%": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 7.6%+": {
+          "bucket": [0.15,0.14,0.13,0.12,0.11]
+        }
+      }
+    },
+    {
+      "layer_id": 2044,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 0.6-5.5%": {
+          "bucket": [
+            1.0,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 5.6-7.5%": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_COFFEE_ROAST_BITTER · 7.6%+": {
+          "bucket": [
+            0.9,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2054,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "DARK_BROWN_MALT_SWEETNESS · 0.6-5.5%": {
+          "bucket": [
+            0.85,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_MALT_SWEETNESS · 5.6-7.5%": {
+          "bucket": [
+            0.8,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_MALT_SWEETNESS · 7.6%+": {
+          "bucket": [
+            0.75,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2064,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "FRUIT_BEERS · 0.6-5.5%": {
+          "bucket": [
+            1.0,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "FRUIT_BEERS · 5.6-7.5%": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "FRUIT_BEERS · 7.6%+": {
+          "bucket": [
+            0.9,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2074,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "SOURS_SAISON_LAMBIC_GUEUZE · 0.6-5.5%": {
+          "bucket": [
+            0.85,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "SOURS_SAISON_LAMBIC_GUEUZE · 5.6-7.5%": {
+          "bucket": [
+            0.8,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "SOURS_SAISON_LAMBIC_GUEUZE · 7.6%+": {
+          "bucket": [
+            0.75,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2005,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BEERS · ABBEY": {
+          "bucket": [
+            1.0,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "BEERS · NORMAL": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "BEERS · TRAPPIST": {
+          "bucket": [
+            0.9,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2105,
+      "name": "Subcategory (overview)",
+      "type": "1D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BLOND_BITTERS · Normal/Abbey": {
+          "bucket": [
+            1.0,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "BLOND_BITTERS · Trappist": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_MALT_SWEETNESS · Normal/Abbey": {
+          "bucket": [
+            0.9,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "DARK_BROWN_MALT_SWEETNESS · Trappist": {
+          "bucket": [
+            0.85,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "FRUIT_BEERS · Normal/Abbey": {
+          "bucket": [
+            0.8,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "FRUIT_BEERS · Trappist": {
+          "bucket": [
+            0.75,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "NORMAL_BLOND_AMBER · Normal/Abbey": {
+          "bucket": [
+            0.7,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "NORMAL_BLOND_AMBER · Trappist": {
+          "bucket": [
+            0.65,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "SOURS_SAISON_LAMBIC_GUEUZE · Normal/Abbey": {
+          "bucket": [
+            0.6,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "SOURS_SAISON_LAMBIC_GUEUZE · Trappist": {
+          "bucket": [
+            0.55,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "layer_id": 2222,
+      "name": "Subcategory (overview)",
+      "type": "2D",
+      "field": "subcategory",
+      "weight": 1.0,
+      "buckets": {
+        "BEERS::0": {
+          "bucket": [
+            1.0,
+            0.001,
+            0.001,
+            0.0
+          ]
+        },
+        "BEERS::1": {
+          "bucket": [
+            0.95,
+            0.001,
+            0.001,
+            0.0
+          ]
+        }
+      }
+    }
+
+  ],
+
+  "defaults": {
+    "kMax": 1,
+    "thresholdAbs": 0.5,
+    "topN": 7
+  }
+}
+
+

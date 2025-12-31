@@ -16,28 +16,31 @@
 
 .clientele-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns layout */
-    gap: 1.5rem 2rem; /* Space between rows and columns */
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
     width: 100%;
     max-width: 800px;
 }
 
 .clientele-persona-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 40px 1fr;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.75rem 1rem;
 }
 
 .clientele-persona-info {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    min-width: 180px;
 }
 
 .clientele-persona-image {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .clientele-persona-label {
@@ -47,46 +50,82 @@
     text-align: left;
 }
 
-.clientele-slider-horizontal {
-    width: 15rem;
-    margin-left: auto;
-    height: 8px;
-    background: #F9D8B4;
-    border-radius: 10px;
+.clientele-percent-inline {
+    justify-self: end;
+    font-weight: 600;
+    color: var(--oxford-blue);
+    line-height: 1;
+}
+
+/* Clean slider (no gradient) */
+.clientele-slider-horizontal.clean {
+    width: 100%;
+    height: 16px; /* taller for easier grab */
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
     outline: none;
-    appearance: none;
+    margin: 0; /* allow thumb to reach edges */
+    padding: 0;
 }
 
-/* Slider track styling */
-.clientele-slider-horizontal::-webkit-slider-runnable-track {
-    background: #F9D8B4;
+/* track */
+.clientele-slider-horizontal.clean::-webkit-slider-runnable-track {
+    height: 16px;
+    background: transparent;
+    border: 2px solid #E59E47; /* warm orange border */
+    border-radius: 9999px;
+}
+.clientele-slider-horizontal.clean::-moz-range-track {
+    height: 16px;
+    background: transparent;
+    border: 2px solid #E59E47;
+    border-radius: 9999px;
+}
+
+/* solid orange track */
+.clientele-slider-horizontal.clean::-webkit-slider-runnable-track {
+    background: #FA954B;   /* orange */
+    height: 8px;
+    border-radius: 10px;
+}
+.clientele-slider-horizontal.clean::-moz-range-track {
+    background: #FA954B;   /* orange */
     height: 8px;
     border-radius: 10px;
 }
 
-.clientele-slider-horizontal::-moz-range-track {
-    background: #F9D8B4;
-    height: 8px;
-    border-radius: 10px;
-}
-
-/* Thumb styling */
-.clientele-slider-horizontal::-webkit-slider-thumb {
+/* keep the thumb as-is (optional) */
+.clientele-slider-horizontal.clean::-webkit-slider-thumb {
     width: 20px;
     height: 20px;
-    background: var(--sandy-brown);
+    background: #fff;
+    border: 3px solid #FA954B; /* nice contrast on orange */
     border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid var(--ivory);
     appearance: none;
-    margin-top: -6px; /* Centers thumb on track */
+    margin-top: -6px; /* center on track */
 }
-
-.clientele-slider-horizontal::-moz-range-thumb {
+.clientele-slider-horizontal.clean::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: var(--sandy-brown);
+    background: #fff;
+    border: 3px solid #FA954B;
     border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid var(--ivory);
 }
+
+
+/* Button area */
+.start-button-container {
+    margin-top: 1.5rem;
+}
+
+.start-button {
+    background: #E59E47;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.start-button:disabled { opacity: 0.6; cursor: default; }

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './PrijsVergelijking.css';
 import axios from 'axios';
+import { api } from "apiService";
 
 const PrijsVergelijking = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3007/api/price-comparison', { withCredentials: true })
+        api.get('/api/price-comparison', { withCredentials: true })
             .then(res => {
                 setData({
                     title: "Prijsvergelijking",

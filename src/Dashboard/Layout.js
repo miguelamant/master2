@@ -7,16 +7,16 @@ import WrappedDashboard from "./WrappedDashboard";
 import Menu from "./Menu";
 import './Layout.css';
 import '../index.css';
-import ToAdd from "./ToAdd";
+import ToAdd from './ToAdd';
 
-// Stub components voor de overige opties
-const ToAddComponent    = () => <div><h2>To Add Component</h2><p>Coming soon...</p></div>;
-const ToRemoveComponent = () => <div><h2>To Remove Component</h2><p>Coming soon...</p></div>;
+const ToRemoveComponent = () => (
+    <div><h2>To Remove Component</h2><p>Coming soon...</p></div>
+);
 
 const Layout = ({ children }) => {
-    const [selectedOption, setSelectedOption] = useState('stats');
+    const [selectedOption, setSelectedOption] = useState('beers');
 
-    let MainContent;
+    let MainContent = null;
     switch (selectedOption) {
         case 'stats':
             MainContent = <TopWorstSellers />;
@@ -24,9 +24,35 @@ const Layout = ({ children }) => {
         case 'wrapped':
             MainContent = <WrappedDashboard />;
             break;
-        case 'to-add':
-            MainContent = <ToAdd />;
+
+        // existing
+        case 'beers':
+            MainContent = <ToAdd section="beers" />;
             break;
+        case 'refreshments':
+            MainContent = <ToAdd section="refreshments" />;
+            break;
+
+        // NEW sections
+        case 'liquors':
+            MainContent = <ToAdd section="liquors" />;
+            break;
+        case 'wines':
+            MainContent = <ToAdd section="wines" />;
+            break;
+        case 'hotdrinks':
+            MainContent = <ToAdd section="hotdrinks" />; // FE token; map as you like
+            break;
+        case 'meals':
+            MainContent = <ToAdd section="meals" />;
+            break;
+        case 'snacks':
+            MainContent = <ToAdd section="snacks" />;
+            break;
+        case 'cocktails':
+            MainContent = <ToAdd section="cocktails" />;
+            break;
+
         case 'to-remove':
             MainContent = <ToRemoveComponent />;
             break;
@@ -37,7 +63,7 @@ const Layout = ({ children }) => {
             MainContent = <Menu />;
             break;
         default:
-            MainContent = <div />;
+            MainContent = <ToAdd section="beers" />;
     }
 
     return (
@@ -46,7 +72,6 @@ const Layout = ({ children }) => {
                 selectedOption={selectedOption}
                 onSelectionChange={setSelectedOption}
             />
-
             <div className="main-content">
                 {MainContent}
                 {children}

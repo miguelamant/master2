@@ -1,0 +1,32 @@
+.willy-switch {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    justify-items: center;
+}
+
+.willy-round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: #fff;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.willy-round-btn:hover {
+    box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+}
+
+.willy-round-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+.willy-image {
+    display: block;
+}
