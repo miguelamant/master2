@@ -57,57 +57,24 @@ const LandingPage = () => {
         <div className="container">
             <div className="content">
                 <div className="logo">
-                    <span className="logo-text">Willy's Menu Check</span>
-                    <img src={BillyLogo} alt="Billy Logo"/>
+                    <span className="logo-text">Willy's Assortment Check</span>
+
 
                 </div>
                 <div className="main-text">
-                    <div className="text-upper">
-                        <p>Fictief voorbeeld</p>
-                        <h1>
-                            Menu score: <span style={{color: '#FF8C00', fontWeight: '700'}}>18</span>/24.
-                        </h1>
-                        <br/>
-                    </div>
 
                     <div className="text-bottom">
-                        <h2 className="">
-                            Bieren: <span style={{color: '#FF8C00', fontWeight: '700'}}>10</span>/13
-                        </h2>
-                        <br/>
-                        <ul className="features">
-                            <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> want jouw 3 alcoholvrije
-                                bieren geen bitter, wit of fruit alcoholvrij bier.
-                            </li>
-                            <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> want je hebt geen winterbier.
-                            </li>
-                            <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> voor jouw 3 bittere bieren
-                                maar geen zwaarder of lichter bitter bier.
-                            </li>
-                        </ul>
-                    </div>
 
-                    <div className="text-bottom">
-                        <h2 className="">
-                            Fris: <span style={{color: '#FF8C00', fontWeight: '700'}}>8</span>/11.
-                        </h2>
-                        <br/>
+
                         <ul className="features">
                             <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> je hebt twee iced teas, maar
-                                geen iced tea green.
+                                <span style={{color: 'black', fontWeight: '700'}}>Zekerheid </span> dat je de lokale klanten houdt.
                             </li>
+                            <br/>
                             <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> je hebt vier lemonades, maar
-                                geen suikervrije lemonade.
+                                <span style={{color: 'black', fontWeight: '700'}}>Geen hoofdpijn </span>  of discussie, alles helder voor het hele team.
                             </li>
-                            <li>
-                                <span style={{color: 'red', fontWeight: '700'}}>-1</span> je hebt geen frisdrank op
-                                basis van gember.
-                            </li>
+
                         </ul>
                     </div>
                 </div>

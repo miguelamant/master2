@@ -1,8 +1,256 @@
 import { presetImg } from './utils/presetImages';
 
 export const PRESET_FILTERS_REFRESHMENTS = [
+        {
+            id: 2814,
+            name: <> Sporter - lvl 4 </>,
+            section: "refreshments",
+            groupBy: "subcategory",
+            showOnlyRollups: true,
+            within: {
+                category: "REFRESHMENTS",
+            },
+            predicates: [],
+            includeEmpty: true,
+            ui: {
+                columns: 3  ,              // 2 or 3
+                showItemsInline: false,  // default false
+                aggregateTop: {
+                    enabled: true,
+                    columns: [
+                        { title: "Protein", iconToken: "SPORTER" },
+                        { title: "Cafeine", iconToken: "SPORTER" },
+                        { title: "Electrolytes", iconToken: "SPORTER" },
 
-    {
+                        // if columns=3, add a third
+                    ],
+                },
+            },
+            rollups: [
+                // 1) With protein
+            // Refreshments filter (grouped on subcategory) with the mappings you described.
+// NOTE: replace the subcategory enum strings below with your exact values
+// (e.g. "MILK_BASED" vs "MILK-BASED" etc.)
+
+
+                    {
+                        match: { baseIn: ["MILK_BASED"] },
+                        into: "PROTEIN",
+                        keepZero: true,
+                    },
+
+                    // Sportdrinks -> electrolytes
+                    {
+                        match: { baseIn: ["PROTEIN_WATER"] },
+                        into: "PROTEIN_WATER_SPORT",
+                        keepZero: true,
+                    },
+
+                    // Sportdrinks -> electrolytes
+                    {
+                        match: { baseIn: ["LEMONADES"] },
+                        into: "PROTEIN_LEMONADE_SPORT",
+                        predicates: [{ field: "is_protein", op: "eq", value: 1 }],
+                        keepZero: true,
+                    },
+
+
+                    // Energy drinks -> caffeine drinks
+                    {
+                        match: { baseIn: ["ENERGY_DRINKS"] },
+                        into: "CLASSIC_ENERGY_DRINK",
+                        keepZero: true,
+                    },
+
+                // Energy drinks -> caffeine drinks
+                {
+                    match: { baseIn: ["COLA"] },
+                    predicates: [{ field: "caffeine", op: "gte", value: 1 }],
+                    into: "COLAS",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["ICE_TEA"] },
+                    predicates: [{ field: "caffeine", op: "gte", value: 1 }],
+                    into: "ICE_TEA",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["LEMONADES"] },
+                    predicates: [{ field: "caffeine", op: "eq", value: 1 }],
+                    into: "LEMONADES",
+                    keepZero: true,
+                },
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["SPORTDRINKS"] },
+                    into: "WITH_ELECTROLYTES",
+                    keepZero: true,
+                },
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["VITAMIN_WATER"] },
+                    into: "VITAMIN_WATER_HEALTH",
+                    keepZero: true,
+                },
+
+            ],
+
+                forceShow: [],
+            sortPriority: [
+                "PROTEIN",
+                "PROTEIN_WATER_SPORT",
+                "PROTEIN_LEMONADE_SPORT",
+                "CLASSIC_ENERGY_DRINK",
+                "COLAS",
+                "ICE_TEA",
+                "LEMONADES",
+                "WITH_ELECTROLYTES",
+                "VITAMIN_WATER_HEALTH",
+            ],
+
+            info: {
+                image: presetImg("Fijn-proever.png"),
+                line1: <>De verdeling <strong> van sport vs normaal</strong> <br/> van jouw</>,
+                line2: <> <strong> non-alcoholische bieren </strong> is</>
+            }
+        }
+,
+        {
+            id: 2813,
+            name: <>Sporter vs healthy vs trendy - lvl 4 </>,
+            section: "refreshments",
+            showOnlyRollups: true,
+            groupBy: "subcategory",
+            within: {
+                category: "REFRESHMENTS",
+            },
+            predicates: [],
+            includeEmpty: true,
+            ui: {
+                columns: 3  ,              // 2 or 3
+                showItemsInline: false,  // default false
+                aggregateTop: {
+                    enabled: true,
+                    columns: [
+                        { title: "Sporter", iconToken: "SPORTER" },
+                        { title: "Healthy", iconToken: "HEALTH" },
+                        { title: "Trendy", iconToken: "TRENDY" },
+
+                        // if columns=3, add a third
+                    ],
+                },
+            },
+            rollups: [
+                // 1) With protein
+                // Refreshments filter (grouped on subcategory) with the mappings you described.
+// NOTE: replace the subcategory enum strings below with your exact values
+// (e.g. "MILK_BASED" vs "MILK-BASED" etc.)
+
+
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["LEMONADES"] },
+                    into: "PROTEIN_DRINKS",
+                    predicates: [{ field: "is_protein", op: "eq", value: 1 }],
+                    keepZero: true,
+                },
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["SPORTDRINKS"] },
+                    into: "WITH_ELECTROLYTES",
+                    keepZero: true,
+                },
+
+                // Energy drinks -> caffeine drinks
+                {
+                    match: { baseIn: ["ENERGY_DRINKS"] },
+                    into: "CAFFEINE_DRINKS",
+                    keepZero: true,
+                },
+
+                //HEALTHY
+
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["VITAMIN_WATER","VITAMIN_DRINKS"] },
+                    into: "VITAMIN_WATER_HEALTH",
+                    keepZero: true,
+                },
+
+                // Kombucha -> probiotica
+                {
+                    match: { baseIn: ["KOMBUCHA"] },
+                    into: "PROBIOTICA",
+                    keepZero: true,
+                },
+
+                // Lemonades & Ice teas -> ONLY if is_prebiotic = true
+                // (all other lemonades/ice-teas are left out because they won't match any rollup)
+
+                {
+                    match: { baseIn: ["LEMONADES", "ICE_TEA"] },
+                    predicates: [{ field: "is_prebiotic", op: "eq", value: 1 }],
+                    into: "PREBIOTIC",
+                    keepZero: true,
+                },
+
+                {
+                    match: { baseIn: ["JELLY_DRINKS"] },
+                    into: "TRENDY1",
+                    keepZero: true,
+                },
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["PROTEIN_WATER"] },
+                    into: "TRENDY2",
+                    keepZero: true,
+                },
+
+                // Sportdrinks -> electrolytes
+                {
+                    match: { baseIn: ["LEMONADES"] },
+                    into: "TRENDY3",
+                    predicates: [{ field: "is_protein", op: "eq", value: 1 }],
+                    keepZero: true,
+                },
+
+
+            ],
+
+            forceShow: [],
+            sortPriority: [
+                "PROTEIN_DRINKS",
+                "WITH_ELECTROLYTES",
+                "CAFFEINE_DRINKS",
+                "VITAMIN_WATER_HEALTH",
+                "PROBIOTICA",
+                "PREBIOTIC",
+                "TRENDY1",
+                "TRENDY2",
+                "TRENDY3",
+            ],
+
+
+
+
+
+
+            info: {
+                image: presetImg("Fijn-proever.png"),
+                line1: <>De verdeling <strong> van sport vs normaal</strong> <br/> van jouw</>,
+                line2: <> <strong> non-alcoholische bieren </strong> is</>
+            }
+        }
+        ,
+
+        {
         id: 1001,
         name: <> <strong> </strong>!<br/> Iedereen die op zoek is naar iets verfrissends. </>,
         section: "refreshments",
@@ -215,8 +463,9 @@ export const PRESET_FILTERS_REFRESHMENTS = [
                 "LEMONADES_APPLE",
                 "LEMONADES_BERRY",
                 "LEMONADES_LEMON_LIME",
+                "LEMONADES_LEMON",
                 "LEMONADES_ORANGE",
-                "LEMONADES_TROPICAL"
+
             ],
             info: {
                 image: presetImg("Fijn-proever.png"),
@@ -233,30 +482,123 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             section: "refreshments",
             groupBy: "subsubcategory",
             within: { subcategory_in: ["LEMONADES"] },
+            showOnlyRollups: true,
             predicates: [],
-            partitionBy: [
-                { field: "is_zero", value: 1, label: "Zero" },
-                { field: "is_zero", value: 0, label: "With sugar" }
+            includeEmpty: false,
+            ui: {
+                columns: 2,
+                aggregateTop: {
+                    enabled: true,
+                    deterministic: true, // ✅ NEW
+                    unassigned: "hide", // "append" (default) | "hide"
+                    columns: [
+                        {
+                            title: "Sugar-free lemonades",
+                            iconToken: "SUGAR_FREE",
+                            buckets: [
+                                "LEMONADES_AGRUM · Zero",
+                                "LEMONADES_LEMON_LIME · Zero",
+                                "LEMONADES_ORANGE · Zero",
+                                "LEMONADES_LEMON · Zero",
+                            ],
+                        },
+                        {
+                            title: "Sugar containing",
+                            iconToken: "SUGAR",
+                            buckets: [
+                                "LEMONADES_AGRUM · With sugar",
+                                "LEMONADES_LEMON_LIME · With sugar",
+                                "LEMONADES_ORANGE · With sugar",
+                                "LEMONADES_LEMON · With sugar"
+                            ],
+                        },
+                    ],
+                },
+            },
+
+            rollups: [
+                // LEMONADES_AGRUM
+                {
+                    match: { baseIn: ["LEMONADES_AGRUM"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 1 }],
+                    into: "LEMONADES_AGRUM · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["LEMONADES_AGRUM"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 0 }],
+                    into: "LEMONADES_AGRUM · With sugar",
+                    keepZero: true,
+                },
+
+                // LEMONADES_LEMON_LIME
+                {
+                    match: { baseIn: ["LEMONADES_LEMON_LIME"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 1 }],
+                    into: "LEMONADES_LEMON_LIME · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["LEMONADES_LEMON_LIME"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 0 }],
+                    into: "LEMONADES_LEMON_LIME · With sugar",
+                    keepZero: true,
+                },
+
+                // LEMONADES_ORANGE
+                {
+                    match: { baseIn: ["LEMONADES_ORANGE"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 1 }],
+                    into: "LEMONADES_ORANGE · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["LEMONADES_ORANGE"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 0 }],
+                    into: "LEMONADES_ORANGE · With sugar",
+                    keepZero: true,
+                },
+
+                // LEMONADES_LEMON
+                {
+                    match: { baseIn: ["LEMONADES_LEMON"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 1 }],
+                    into: "LEMONADES_LEMON · Zero",
+                    keepZero: false,
+                },
+                {
+                    match: { baseIn: ["LEMONADES_LEMON"] },
+                    predicates: [{ field: "is_zero", op: "eq", value: 0 }],
+                    into: "LEMONADES_LEMON · With sugar",
+                    keepZero: false,
+                },
             ],
+
 
             // ensure these render even when empty
             forceShow: [
                 "LEMONADES_AGRUM · Zero",
-                "LEMONADES_AGRUM · With sugar",
                 "LEMONADES_LEMON_LIME · Zero",
-                "LEMONADES_LEMON_LIME · With sugar",
                 "LEMONADES_ORANGE · Zero",
-                "LEMONADES_ORANGE · With sugar"
+                "LEMONADES_LEMON · Zero",
+
+                "LEMONADES_AGRUM · With sugar",
+                "LEMONADES_LEMON_LIME · With sugar",
+                "LEMONADES_ORANGE · With sugar",
+                "LEMONADES_LEMON · With sugar"
             ],
 
             // preferred ordering in the grid
             sortPriority: [
                 "LEMONADES_AGRUM · Zero",
-                "LEMONADES_AGRUM · With sugar",
                 "LEMONADES_LEMON_LIME · Zero",
-                "LEMONADES_LEMON_LIME · With sugar",
                 "LEMONADES_ORANGE · Zero",
-                "LEMONADES_ORANGE · With sugar"
+                "LEMONADES_LEMON · Zero",
+
+                "LEMONADES_AGRUM · With sugar",
+                "LEMONADES_LEMON_LIME · With sugar",
+                "LEMONADES_ORANGE · With sugar",
+                "LEMONADES_LEMON · With sugar"
             ],
 
             info: {
@@ -324,14 +666,117 @@ export const PRESET_FILTERS_REFRESHMENTS = [
                 { field: "is_zero", value: 1, label: "Zero" },
                 { field: "is_zero", value: 0, label: "With sugar" }
             ],
-            forceShow: [
-                "GINGER_ALE · With sugar",
-                "GINGER_BEER · With sugar",
-                "GINGER_ALE · Zero",
-                "GINGER_BEER · Zero",
+            ui: {
+                columns: 2,
+                aggregateTop: {
+                    enabled: true,
+                    deterministic: true,
+                    unassigned: "append",
+                    columns: [
+                        {
+                            title: "Sugar-free",
+                            iconToken: "SUGAR_FREE",
+                            buckets: [
+                                "GINGER_ALE · Zero",
+                                "GINGER_BEER · Zero",
+                                "GINGER_LEMON · Zero",
+                                "GINGER_LEMONADES_OTHER · Zero",
+                            ],
+                        },
+                        {
+                            title: "With sugar",
+                            iconToken: "SUGAR",
+                            buckets: [
+                                "GINGER_ALE · With sugar",
+                                "GINGER_BEER · With sugar",
+                                "GINGER_LEMON · With sugar",
+                                "GINGER_LEMONADES_OTHER · With sugar",
+                            ],
+                        },
+                    ],
+                },
 
+                // ✅ Row aggregates (and deterministic row layout)
+                aggregateRows: {
+                    enabled: true,
+                    deterministic: true,
+                    unassigned: "append",
+                    rows: [
+                        {
+                            title: "Ginger ale",
+                            iconToken: "GINGER_ALE",
+                            buckets: ["GINGER_ALE · Zero", "GINGER_ALE · With sugar"],
+                        },
+                        {
+                            title: "Ginger beer",
+                            iconToken: "GINGER_BEER",
+                            buckets: ["GINGER_BEER · Zero", "GINGER_BEER · With sugar"],
+                        },
+                        {
+                            title: "Ginger + lemon",
+                            iconToken: "GINGER_LEMON",
+                            buckets: ["GINGER_LEMON · Zero", "GINGER_LEMON · With sugar"],
+                        },
+                        {
+                            title: "Other ginger lemonades",
+                            iconToken: "GINGER_LEMONADES_OTHER",
+                            buckets: ["GINGER_LEMONADES_OTHER · Zero", "GINGER_LEMONADES_OTHER · With sugar"],
+                        },
+                    ],
+                },
+            },
 
+            rollups: [
+                // ---- GINGER_ALE ----
+                {
+                    match: { baseIn: ["GINGER_ALE"], partitionLabel: "Zero" },
+                    into: "GINGER_ALE · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["GINGER_ALE"], partitionLabel: "With sugar" },
+                    into: "GINGER_ALE · With sugar",
+                    keepZero: true,
+                },
+
+                // ---- GINGER_BEER ----
+                {
+                    match: { baseIn: ["GINGER_BEER"], partitionLabel: "Zero" },
+                    into: "GINGER_BEER · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["GINGER_BEER"], partitionLabel: "With sugar" },
+                    into: "GINGER_BEER · With sugar",
+                    keepZero: true,
+                },
+
+                // ---- GINGER_LEMON ----
+                {
+                    match: { baseIn: ["GINGER_LEMON"], partitionLabel: "Zero" },
+                    into: "GINGER_LEMON · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["GINGER_LEMON"], partitionLabel: "With sugar" },
+                    into: "GINGER_LEMON · With sugar",
+                    keepZero: true,
+                },
+
+                // ---- GINGER_LEMONADES_OTHER ----
+                {
+                    match: { baseIn: ["GINGER_LEMONADES_OTHER"], partitionLabel: "Zero" },
+                    into: "GINGER_LEMONADES_OTHER · Zero",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["GINGER_LEMONADES_OTHER"], partitionLabel: "With sugar" },
+                    into: "GINGER_LEMONADES_OTHER · With sugar",
+                    keepZero: true,
+                },
             ],
+
+
             info: {
                 image: presetImg("Fijn-proever.png"),
                 line1: <>De verdeling tussen <strong> smaken en suikergehaltes </strong> <br/> voor je </>,
@@ -427,15 +872,39 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             // We want counts per subcategory across ALL refreshments
             groupBy: "subcategory",
             within: {},
+            includeEmpty: false,
+            showOnlyRollups: true,
+            ui: {
+                columns: 3,
+                aggregateTop: {
+                    enabled: true,
+                    deterministic: true, // ✅ NEW
+                    unassigned: "hide", // "append" (default) | "hide"
+                    columns: [
+                        {
+                            title: "KIDS",
+                            iconToken: "WINTER",
+                            buckets: [
+                                "JELLY_DRINKS",
+                            ],
+                        },
+                        {
+                            title: "ALL_AGES",
+                            iconToken: "SPRING",
+                            buckets: [
 
-            // no preset-level predicates; we’ll do the split via partitionBy
-            predicates: [],
-
-            // Split into Prebiotica vs No prebiotica
-            partitionBy: [
-                { field: "is_prebiotic", value: 1, label: "With prebiotics" },
-                { field: "is_prebiotic", value: 0, label: "No prebiotics" },
-            ],
+                            ],
+                        },
+                        {
+                            title: "ADULT",
+                            iconToken: "SUMMER",
+                            buckets: [
+                                "GINGER_DRINKS","TONICS",
+                            ],
+                        },
+                    ],
+                },
+            },
 
             // Rollups:
             // 1) KOMBUCHA should be rolled up as one bucket (regardless of 0/1)
@@ -446,44 +915,33 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             rollups: [
                 // KOMBUCHA total (regardless of partition)
                 {
-                    match: { baseIn: ["KOMBUCHA"] },
-                    into: "KOMBUCHA (total)",
+                    match: { baseIn: ["TONICS"] },
+                    into: "TONICS",
                     keepZero: true
                 },
 
                 // VITAMIN_WATER total (regardless of partition)
                 {
-                    match: { baseIn: ["VITAMIN_WATER"] },
-                    into: "VITAMIN_WATER (total)",
+                    match: { baseIn: ["GINGER_DRINKS"] },
+                    into: "GINGER_DRINKS",
                     keepZero: true
                 },
 
-                // Remaining WITH prebiotica (exclude kombucha + vitamin water)
+
+                // VITAMIN_WATER total (regardless of partition)
                 {
-                    match: {
-                        partitionLabel: "With prebiotics",
-                        baseNotIn: ["KOMBUCHA", "VITAMIN_WATER"]
-                    },
-                    into: "Prebiotic drinks",
+                    match: { baseIn: ["JELLY_DRINKS"] },
+                    into: "JELLY_DRINKS",
                     keepZero: true
                 },
 
-                // Remaining WITHOUT prebiotica (exclude kombucha + vitamin water)
-                {
-                    match: {
-                        partitionLabel: "No prebiotics",
-                        baseNotIn: ["KOMBUCHA", "VITAMIN_WATER"]
-                    },
-                    into: "ALL OTHER - No prebiotics",
-                    keepZero: true
-                }
+
+
             ],
 
             // Make sure your totals always show up even when empty
             forceShow: [
-                "KOMBUCHA (total)",
-                "VITAMIN_WATER (total)",
-                "Prebiotic drinks",
+
 
             ],
 
@@ -505,11 +963,38 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             groupBy: "subcategory",
             within: {},
             predicates: [],
+            showOnlyRollups: true,
+            ui: {
+                columns: 3,
+                aggregateTop: {
+                    enabled: true,
+                    deterministic: true, // ✅ NEW
+                    unassigned: "hide", // "append" (default) | "hide"
+                    columns: [
+                        {
+                            title: "CHEAP",
+                            iconToken: "CHEAP",
+                            buckets: [
 
-            partitionBy: [
-                { field: "is_protein", value: 1, label: "With protein" },
-                { field: "is_protein", value: 0, label: "Without protein" },
-            ],
+                            ],
+                        },
+                        {
+                            title: "NORMAL",
+                            iconToken: "NORMAL",
+                            buckets: [
+
+                            ],
+                        },
+                        {
+                            title: "PREMIUM",
+                            iconToken: "PREMIUM",
+                            buckets: [
+
+                            ],
+                        },
+                    ],
+                },
+            },
 
             rollups: [
                 // Fixed buckets (regardless of partition)
@@ -552,11 +1037,101 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             // Force ONLY the final buckets you actually want to display
             forceShow: [
-                "VITAMIN_WATER (total)",
-                "SPORTDRINKS (total)",
-                "ENERGY_DRINKS (total)",
-                "Protein drinks",
-                "Other refreshments",
+
+            ],
+
+            info: {
+                image: presetImg("Fijn-proever.png"),
+                line1: <>De verdeling tussen <strong> sport </strong> en normaal, <br/> voor jouw </>,
+                line2: <> <strong> dranken </strong> is <strong>  </strong> </>
+            }
+        },
+
+        {
+            id: 1016,
+            name: <>
+                <strong>taste</strong>!<br/>
+                Toon sport/energy/vitamin apart, en bundel de rest op protein.
+            </>,
+            section: "refreshments",
+            groupBy: "subcategory",
+            within: {},
+            predicates: [],
+            showOnlyRollups: true,
+            ui: {
+                columns: 3,
+                aggregateTop: {
+                    enabled: true,
+                    deterministic: true, // ✅ NEW
+                    unassigned: "hide", // "append" (default) | "hide"
+                    columns: [
+                        {
+                            title: "SWEET",
+                            iconToken: "CHEAP",
+                            buckets: [
+
+                            ],
+                        },
+                        {
+                            title: "SOUR",
+                            iconToken: "NORMAL",
+                            buckets: [
+
+                            ],
+                        },
+                        {
+                            title: "BITTER",
+                            iconToken: "PREMIUM",
+                            buckets: [
+
+                            ],
+                        },
+                    ],
+                },
+            },
+
+            rollups: [
+                // Fixed buckets (regardless of partition)
+                {
+                    match: { baseIn: ["VITAMIN_WATER"] },
+                    into: "VITAMIN_WATER (total)",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["SPORTDRINKS"] },
+                    into: "SPORTDRINKS (total)",
+                    keepZero: true,
+                },
+                {
+                    match: { baseIn: ["ENERGY_DRINKS"] },
+                    into: "ENERGY_DRINKS (total)",
+                    keepZero: true,
+                },
+
+                // Remaining WITH protein (exclude the fixed buckets)
+                {
+                    match: {
+                        partitionLabel: "With protein",
+                        baseNotIn: ["VITAMIN_WATER", "SPORTDRINKS", "ENERGY_DRINKS"],
+                    },
+                    into: "Protein drinks",
+                    keepZero: true,
+                },
+
+                // Remaining WITHOUT protein (exclude the fixed buckets)
+                {
+                    match: {
+                        partitionLabel: "Without protein", // ✅ was "No protein"
+                        baseNotIn: ["VITAMIN_WATER", "SPORTDRINKS", "ENERGY_DRINKS"],
+                    },
+                    into: "Other refreshments",
+                    keepZero: true,
+                },
+            ],
+
+            // Force ONLY the final buckets you actually want to display
+            forceShow: [
+
             ],
 
             info: {
@@ -565,6 +1140,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         }
+
 
 
 

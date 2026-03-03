@@ -1,0 +1,197 @@
+/* Shared distribution styling + editor styles */
+
+.dist-container {
+  padding: 1.2rem 1.2rem 0 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  color: var(--oxford-blue);
+}
+
+.dist-editor { width: 100%; --dist-left-col: 220px; --dist-col-gap: 14px; }
+.dist-editor img, .dist-editor svg { max-width: 100%; max-height: 100%; }
+
+/* Legend pulled into black header */
+.dist-legend {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  justify-content: center;
+  font-family: "Quicksand", sans-serif;
+  color: #fff;
+  position: relative;
+  top: -42px;          /* ✅ sits inside black header, but LOWER than before */
+  margin-bottom: -28px;/* ✅ still doesn't consume extra space */
+  z-index: 20;
+}
+.dist-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  opacity: 0.95;
+  white-space: nowrap;
+}
+.dist-legend-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: invert(1);
+  opacity: 0.95;
+}
+
+/* âœ… One wrapper that always centers all content */
+.dist-inner {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Compare rows */
+.dist-compare-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 28px 0 18px 0; /* ✅ more space before first bar */
+}
+
+.dist-compare-row {
+  display: grid;
+  grid-template-columns: var(--dist-left-col) 1fr;
+  gap: var(--dist-col-gap);
+  align-items: center;
+}
+
+.dist-compare-info { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
+
+.dist-badge {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #fff; border: 2px solid rgba(0,0,0,0.08);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: "Quicksand", sans-serif; font-weight: 900; color: var(--oxford-blue);
+}
+.dist-left-icon { width: 40px; height: 40px; object-fit: contain; }
+.dist-compare-name { font-family: "Quicksand", sans-serif; font-size: 16px; font-weight: 800; color: var(--oxford-blue); }
+
+.dist-compare-barwrap { position: relative; height: 64px; }
+.dist-compare-bar {
+  position: absolute; left: 0; right: 0; top: 44px;
+  transform: translateY(-50%);
+  height: 10px; border-radius: 999px; overflow: hidden;
+  background: rgba(0,0,0,0.06);
+}
+
+/* Markers */
+.dist-marker {
+  position: absolute; top: 0px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  z-index: 4; user-select: none;
+}
+.dist-marker.target { cursor: grab; }
+.dist-marker.target:active { cursor: grabbing; }
+.dist-marker-icon { width: 18px; height: 18px; object-fit: contain; }
+.dist-marker-pct { font-family: "Quicksand", sans-serif; font-weight: 900; font-size: 12px; color: var(--oxford-blue); line-height: 1; }
+.dist-marker-line { width: 2px; height: 22px; border-radius: 999px; }
+.dist-marker-line.current { background: rgba(15,23,42,0.55); }
+.dist-marker-line.target { background: #111827; }
+
+/* Tooltip */
+.dist-tip { position: relative; display: inline-block; }
+.dist-tip-pop {
+  position: absolute; left: 0; top: 46px;
+  min-width: 220px; max-width: 300px;
+  background: #fff; border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px; padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  opacity: 0; transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+  z-index: 50;
+}
+.dist-tip:hover .dist-tip-pop { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.dist-tip-pop-row { display: flex; gap: 10px; align-items: flex-start; }
+.dist-tip-icon { width: 26px; height: 26px; object-fit: contain; margin-top: 2px; }
+.dist-tip-title { font-family: "Quicksand", sans-serif; font-weight: 900; margin-bottom: 2px; color: var(--oxford-blue); }
+.dist-tip-body { font-family: "Quicksand", sans-serif; font-size: 13px; color: var(--oxford-blue); opacity: 0.9; }
+
+/* Stacked section */
+.dist-stack-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* âœ… Centered stacked block width (feels like â€œbar widthâ€, but centered) */
+.dist-stack-center {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+@media (max-width: 950px) { .dist-stack-center { max-width: 100%; } }
+
+.dist-stack-row { margin-bottom: 16px; }
+.dist-stack-label { font-family: "Quicksand", sans-serif; font-weight: 900; color: var(--oxford-blue); margin-bottom: 8px; }
+
+.dist-stackbar {
+  position: relative; width: 100%; height: 18px;
+  border-radius: 999px; overflow: hidden;
+  background: rgba(0,0,0,0.06);
+  display: flex;
+}
+.dist-stackbar.current { height: 16px; opacity: 0.55; }
+.dist-seg { height: 100%; }
+
+/* % inside bar */
+.dist-stackbar-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.dist-stackbar-pct {
+  position: absolute; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Quicksand", sans-serif; font-weight: 900; font-size: 12px;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  white-space: nowrap;
+}
+
+/* Divider handles */
+.dist-divider {
+  position: absolute; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 28px;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid rgba(0,0,0,0.12);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  cursor: col-resize;
+  z-index: 6;
+  display: flex; align-items: center; justify-content: center;
+}
+.dist-divider-grip { font-size: 10px; line-height: 1; color: rgba(0,0,0,0.65); }
+
+/* Icons below target */
+.dist-stackbar-icons-below { position: relative; height: 34px; margin-top: 6px; }
+.dist-stackbar-icon {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  border: 2px solid;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Quicksand", sans-serif; font-weight: 900; font-size: 13px;
+}
+.dist-stackbar-icon img { width: 18px; height: 18px; object-fit: contain; }
+
+/* Button smaller */
+.start-button-container { margin-top: 1rem; text-align: center; }
+.start-button.small {
+  background: #E59E47;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 18px;
+}

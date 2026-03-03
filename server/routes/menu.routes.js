@@ -105,10 +105,11 @@ const router = Router();
 
 /* ===== /api/menu-items (GET & POST) ===== */
 // ===== handler: query menu items with filters, paging, ordering =====
+// ===== handler: query menu items with filters, paging, ordering =====
 const handleMenuItems = async (req, res) => {
   const businessId = req.session.user.id;
-  const isGet   = req.method === 'GET';
-  const body    = isGet ? {} : (req.body || {});
+  const isGet = req.method === "GET";
+  const body = isGet ? {} : (req.body || {});
 
   // Build a unified filters object (strip paging/sorting keys)
   const baseFilters = (() => {
@@ -118,91 +119,124 @@ const handleMenuItems = async (req, res) => {
     return src;
   })();
 
-  // NEW: accept `within` and `predicates`
-  const within      = isGet ? {} : (body.within || {});
-  const predicates  = isGet ? [] : (body.predicates || []);
+  // accept `within` and `predicates` (POST-only in your design)
+  const within     = isGet ? {} : (body.within || {});
+  const predicates = isGet ? [] : (body.predicates || []);
 
   // Merge within into filters so applyFilters can constrain scope tables
   const effectiveFilters = { ...baseFilters, ...within };
 
-  const page     = Number(isGet ? req.query.page     : body.page)     || 1;
-  const pageSize = Math.min(Number(isGet ? req.query.pageSize : body.pageSize) || 100, 500);
-  let   orderBy  = (isGet ? req.query.orderBy : body.orderBy) || 'products.name';
+  const page = Number(isGet ? req.query.page : body.page) || 1;
+  const pageSize = Math.min(Number(isGet ? req.query.pageSize : body.pageSize) || 100, 3000);
+  const orderBy = (isGet ? req.query.orderBy : body.orderBy) || "products.name";
 
-  // We need product joins for the list + hover; include cats/subcats/subsubcats so filters work
-  const includeProducts          = true;
-  const includeCategories        = true;
-  const includeSubcategories     = true;
-  const includeSubsubcategories  = true;
+  // ✅ IMPORTANT: since we rely on applyFilters() for .select(),
+  // we must tell it to include all the joins we need.
+  const includeProducts = true;
+  const includeCategories = true;
+  const includeSubcategories = true;
+  const includeSubsubcategories = true;
+
+  // Supabase/PostgREST safe per-request chunk
+  const SUPABASE_CHUNK = 1000;
 
   try {
-    let q = supabase.from('menu_items');
+    // Build the reusable base query (NO .range here)
+    const buildBaseQuery = () => {
+      let q = supabase.from("menu_items");
 
-    // apply object filters (including merged `within`)
-    q = applyFilters(q, effectiveFilters, {
-      includeProducts,
-      includeCategories,
-      includeSubcategories,
-      includeSubsubcategories
-    });
+      // applyFilters() will do the .select(...) + joins
+      q = applyFilters(q, effectiveFilters, {
+        includeProducts,
+        includeCategories,
+        includeSubcategories,
+        includeSubsubcategories,
+      });
 
-    q = q.eq('business_id', businessId);
+      q = q.eq("business_id", businessId);
 
-    // NEW: apply explicit predicates (e.g., is_sparkling eq 1)
-    q = applyPredicates(q, Array.isArray(predicates) ? predicates : []);
+      // apply explicit predicates
+      q = applyPredicates(q, Array.isArray(predicates) ? predicates : []);
 
-    // support orderBy like 'products.name'
-    let foreignTable;
-    let col = orderBy || 'products.name';
-    if (col.startsWith('products.')) {
-      col = col.split('.').slice(1).join('.');
-      foreignTable = 'products';
+      // orderBy like 'products.name'
+      let foreignTable;
+      let col = orderBy || "products.name";
+      if (col.startsWith("products.")) {
+        col = col.split(".").slice(1).join(".");
+        foreignTable = "products";
+      }
+      q = q.order(col, { ascending: true, foreignTable });
+
+      return q;
+    };
+
+    // paging window we want
+    const fromWanted = (page - 1) * pageSize;
+    const toWanted   = fromWanted + pageSize - 1;
+
+    // fetch in chunks
+    let allRows = [];
+    for (let chunkFrom = fromWanted; chunkFrom <= toWanted; chunkFrom += SUPABASE_CHUNK) {
+      const chunkTo = Math.min(chunkFrom + SUPABASE_CHUNK - 1, toWanted);
+
+      const { data: chunkRows, error } = await buildBaseQuery().range(chunkFrom, chunkTo);
+
+      if (error) {
+        console.error("[menu-items] Supabase ERROR:", error);
+        return res.status(500).json({ error: "Database error", message: error.message });
+      }
+
+      if (!chunkRows?.length) break;
+
+      allRows.push(...chunkRows);
+
+      // if less returned than requested, we reached the end
+      if (chunkRows.length < (chunkTo - chunkFrom + 1)) break;
     }
-    q = q.order(col, { ascending: true, foreignTable });
 
-    // paging
-    const from = (page - 1) * pageSize;
-    const to   = from + pageSize - 1;
-    q = q.range(from, to);
-
-    const { data, error } = await q;
-    if (error) {
-      console.error('[menu-items] Supabase ERROR:', error);
-      return res.status(500).json({ error: 'Database error', message: error.message });
-    }
-
-    const items = (data || []).map(mi => ({
+    const items = (allRows || []).map((mi) => ({
       id_menu_item:   mi.id_menu_item,
       price:          mi.price,
       created_at:     mi.created_at,
-      item_name:      mi.products?.name  ?? '',
-      producent:      mi.products?.brand ?? '',
-      category:       mi.products?.categories?.category_name ?? '',
-      subcategory:    mi.products?.subcategories?.subcat_name ?? '',
-      subsubcategory: mi.products?.subsubcategories?.subsubcat_name ?? '',
+
+      item_name:      mi.products?.name ?? "",
+      producent:      mi.products?.brand ?? "",
+      category:       mi.products?.categories?.category_name ?? "",
+      subcategory:    mi.products?.subcategories?.subcat_name ?? "",
+      subsubcategory: mi.products?.subsubcategories?.subsubcat_name ?? "",
+
       is_zero:        Number(mi.products?.is_zero ?? 0),
       is_sparkling:   Number(mi.products?.is_sparkling ?? 0),
 
-// NEW functional flags
       is_protein:     Number(mi.products?.is_protein ?? 0),
       is_prebiotic:   Number(mi.products?.is_prebiotic ?? 0),
       is_magnesium:   Number(mi.products?.is_magnesium ?? 0),
       is_vitamin:     Number(mi.products?.is_vitamin ?? 0),
       is_collagen:    Number(mi.products?.is_collagen ?? 0),
 
-// ALSO include these
       is_trending:    Number(mi.products?.is_trending ?? 0),
       is_high_margin: Number(mi.products?.is_high_margin ?? 0),
 
-      abv:           Number(mi.products?.abv ?? 0),
-      ibu:           Number(mi.products?.ibu ?? 0),
-      heritage:      mi.products?.heritage ?? 'NORMAL',
+      abv:            Number(mi.products?.abv ?? 0),
+      ibu:            Number(mi.products?.ibu ?? 0),
+      heritage:       mi.products?.heritage ?? "NORMAL",
+
+      floor_price:    mi.products?.floor_price ?? null,
+      low_price:      mi.products?.low_price ?? null,
+      high_price:     mi.products?.high_price ?? null,
+      ceiling_price:  mi.products?.ceiling_price ?? null,
     }));
 
-    res.json({ items, page, pageSize, appliedFilters: effectiveFilters, appliedPredicates: predicates });
+    res.json({
+      items,
+      page,
+      pageSize,
+      appliedFilters: effectiveFilters,
+      appliedPredicates: predicates,
+    });
   } catch (e) {
-    console.error('[menu-items] CATCH:', e);
-    res.status(500).json({ error: 'Server error', message: e.message });
+    console.error("[menu-items] CATCH:", e);
+    res.status(500).json({ error: "Server error", message: e.message });
   }
 };
 
@@ -422,7 +456,7 @@ async function handleMenuCounts(req, res) {
       allGroups = (data || []).map(r => r.brand).filter(Boolean);
     } else if (groupBy === "heritage") {
       // fixed domain
-      allGroups = ["NORMAL", "ABBEY", "TRAPPIST"];
+      allGroups = ["NORMAL", "ABBEY", "TRAPPIST","MODERN"];
     } else if (groupBy === "abv_band") {
       // fixed ABV band labels (match abvToBand)
       allGroups = [
@@ -455,6 +489,29 @@ router.post("/menu-counts", isAuthenticated, (req, res) => {
 });
 
 //add and remove endpoints
+router.patch('/menu-items/:id/price', isAuthenticated, async (req, res) => {
+  const businessId = req.session.user.id;
+  const id = Number(req.params.id);
+  const price = Number(req.body?.price);
+
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'Valid id_menu_item is required' });
+  }
+  if (!Number.isFinite(price) || price <= 0) {
+    return res.status(400).json({ error: 'Valid price is required' });
+  }
+
+  const { error } = await supabase
+      .from('menu_items')
+      .update({ price })
+      .eq('id_menu_item', id)
+      .eq('business_id', businessId);
+
+  if (error) return res.status(500).json({ error: 'Database error', detail: error.message });
+  res.json({ success: true });
+});
+
+
 router.post('/menu-items/add', isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
   const { product_id, price } = req.body;

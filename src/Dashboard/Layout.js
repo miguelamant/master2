@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopWorstSellers from './TopWorstSellers';
-import ToReprice from "./ToReprice";
+import ToReprice from "./ToReprice/ToReprice";
 import WrappedDashboard from "./WrappedDashboard";
 import Menu from "./Menu";
 import './Layout.css';

@@ -1,39 +1,44 @@
 // src/Dashboard/ToAdd/hooks/useCountsByCategory.js
-import { useEffect, useMemo, useState } from 'react';
-import { menuCounts } from '../../../apiService';
-import { fetchPartitionedMenuCounts } from '../utils/fetchPartitionedMenuCounts';
+import { useEffect, useMemo, useState } from "react";
+import { menuCounts } from "../../../apiService";
+import { fetchPartitionedMenuCounts } from "../utils/fetchPartitionedMenuCounts";
 
-const norm = (s) => String(s || '').trim();
+const norm = (s) => String(s || "").trim();
 
+// ---------- predicate helpers ----------
+const fieldKey = (p) => String(p?.field || "").trim().toLowerCase();
+
+// Override preset predicates on the SAME field(s) with rollup predicates.
+// Example: preset has is_zero=0, rollup has is_zero=1 => rollup wins for is_zero.
+const mergePredicatesOverride = (basePreds = [], overridePreds = []) => {
+    const o = Array.isArray(overridePreds) ? overridePreds.filter(Boolean) : [];
+    const base = Array.isArray(basePreds) ? basePreds.filter(Boolean) : [];
+    const oFields = new Set(o.map(fieldKey).filter(Boolean));
+    const keptBase = base.filter((p) => !oFields.has(fieldKey(p)));
+    return [...keptBase, ...o];
+};
+
+// ---------- rollups (local) ----------
 /**
- * Apply "rollups" to a partitioned counts map.
- * Example rule:
- * {
- *   match: { partitionLabel: "With sugar", basePrefix: "LEMONADES_" },
- *   into: "LEMONADES (With sugar)",
- *   keepZero: true
- * }
- *
- * - partitionLabel matches the suffix part after the last " · "
- * - basePrefix matches the base part before the first " · "
- * - baseIn (optional) matches specific base values
+ * Apply "local rollups" to an already-fetched counts map.
+ * (No extra API calls; only regroup existing keys.)
  */
 const applyRollups = (map, rules) => {
-    if (!map || typeof map !== 'object') return map;
+    if (!map || typeof map !== "object") return map;
     if (!Array.isArray(rules) || !rules.length) return map;
 
     const out = { ...map };
-    const originalKeys = new Set(Object.keys(out)); // 👈 only these may be rolled up
+    const originalKeys = new Set(Object.keys(out)); // only these may be rolled up
 
     const split = (k) => {
-        const parts = String(k).split(' · ').map((s) => s.trim());
+        const parts = String(k).split(" · ").map((s) => s.trim());
         const base = parts[0] || k;
-        const part = parts[parts.length - 1] || '';
+        const part = parts[parts.length - 1] || "";
         return { base, part };
     };
 
     const matches = (rule, key) => {
-        if (!originalKeys.has(key)) return false; // 👈 prevents swallowing rollup outputs
+        if (!originalKeys.has(key)) return false; // prevents swallowing rollup outputs
 
         const { base, part } = split(key);
         const m = rule?.match || {};
@@ -47,7 +52,7 @@ const applyRollups = (map, rules) => {
     };
 
     for (const rule of rules) {
-        const into = String(rule?.into ?? '').trim();
+        const into = String(rule?.into ?? "").trim();
         if (!into) continue;
 
         let sum = 0;
@@ -70,11 +75,65 @@ const applyRollups = (map, rules) => {
     return out;
 };
 
+// ---------- rollups (overlay via API) ----------
 /**
- * Builds a map { "<LABEL>": count }.
- * Handles both simple and partitioned queries, applies rollups ensured keys (forceShow),
- * and includeEmpty padding.
+ * Given a counts-map for a specific predicate-slice, compute rollup sums.
+ * This does NOT delete keys; it only returns { into: sum }.
  */
+const computeOverlayRollupAdds = (countsMap, rules) => {
+    const adds = {};
+    if (!countsMap || typeof countsMap !== "object") return adds;
+    if (!Array.isArray(rules) || !rules.length) return adds;
+
+    const split = (k) => {
+        const parts = String(k).split(" · ").map((s) => s.trim());
+        const base = parts[0] || k;
+        const part = parts[parts.length - 1] || "";
+        return { base, part };
+    };
+
+    const matches = (rule, key) => {
+        const { base, part } = split(key);
+        const m = rule?.match || {};
+
+        if (m.partitionLabel != null && String(part) !== String(m.partitionLabel)) return false;
+        if (m.basePrefix != null && !String(base).startsWith(String(m.basePrefix))) return false;
+        if (Array.isArray(m.baseNotIn) && m.baseNotIn.length && m.baseNotIn.includes(base)) return false;
+        if (Array.isArray(m.baseIn) && m.baseIn.length && !m.baseIn.includes(base)) return false;
+
+        return true;
+    };
+
+    for (const rule of rules) {
+        const into = String(rule?.into ?? "").trim();
+        if (!into) continue;
+
+        let sum = 0;
+        let hit = false;
+
+        for (const key of Object.keys(countsMap)) {
+            if (!matches(rule, key)) continue;
+            hit = true;
+            sum += Number(countsMap[key] ?? 0);
+        }
+
+        if (hit) {
+            adds[into] = Number(adds[into] ?? 0) + sum;
+        } else if (rule?.keepZero === true && !(into in adds)) {
+            adds[into] = 0;
+        }
+    }
+
+    return adds;
+};
+
+const hasOverlayPredicates = (rule) => {
+    const p1 = Array.isArray(rule?.predicates) && rule.predicates.length;
+    const p2 = Array.isArray(rule?.match?.predicates) && rule.match.predicates.length;
+    return !!(p1 || p2);
+};
+
+// ---------- main hook ----------
 export function useCountsByCategory({
                                         groupBy,
                                         effectiveSection,
@@ -84,19 +143,22 @@ export function useCountsByCategory({
                                         presetPredicates = [],
                                         partitionBy = [],
                                         forceShow = [],
-                                        rollups = [], // NEW: optional rollup rules for partitioned counts
-                                        presetId = '',
-                                        filterKey = '',
+                                        rollups = [],
+                                        showOnlyRollups = false,   // ✅ ADD THIS
+                                        presetId = "",
+                                        filterKey = "",
                                     }) {
     const [counts, setCounts] = useState({});
 
-    // stable deps to avoid noisy reruns
+    // stable deps
     const filtersKey = useMemo(() => JSON.stringify(apiFilters), [apiFilters]);
     const predsKey = useMemo(() => JSON.stringify(presetPredicates), [presetPredicates]);
     const partsKey = useMemo(() => JSON.stringify(partitionBy), [partitionBy]);
     const forceKey = useMemo(() => JSON.stringify(forceShow), [forceShow]);
     const withinKey = useMemo(() => JSON.stringify(within), [within]);
     const rollupsKey = useMemo(() => JSON.stringify(rollups), [rollups]);
+    const rollupOnlyKey = useMemo(() => String(!!showOnlyRollups), [showOnlyRollups]);
+
 
     useEffect(() => {
         let alive = true;
@@ -106,22 +168,21 @@ export function useCountsByCategory({
                 const baseArgs = {
                     groupBy,
                     section: effectiveSection,
-                    includeEmpty, // pass through to API (if backend supports it)
+                    includeEmpty,
                     within,
                     filters: apiFilters,
                     predicates: presetPredicates,
                 };
 
+                // 1) fetch base counts (preset predicates)
                 let byGroup = {};
 
                 if (Array.isArray(partitionBy) && partitionBy.length) {
-                    // Partitioned fetch (e.g., Sparkling/Still, Zero/With sugar)
                     byGroup = await fetchPartitionedMenuCounts({
                         baseArgs,
                         partitions: partitionBy,
                     });
                 } else {
-                    // Simple fetch
                     const { results } = await menuCounts(baseArgs);
                     byGroup = (results || []).reduce((acc, row) => {
                         const key = row[groupBy] ?? row.group ?? row.category ?? row.label;
@@ -131,9 +192,79 @@ export function useCountsByCategory({
                     }, {});
                 }
 
-                byGroup = applyRollups(byGroup, rollups);
+                // 2) split rollups:
+                //    - local rollups: regroup the current map
+                //    - overlay rollups: require an extra fetch with rollup predicates
+                const allRollups = Array.isArray(rollups) ? rollups : [];
+                const localRollups = allRollups.filter((r) => !hasOverlayPredicates(r));
+                const overlayRollups = allRollups.filter((r) => hasOverlayPredicates(r));
 
-                // --- forceShow: add zeros for any labels we want visible even if missing ---
+
+                // Apply local regrouping
+                byGroup = applyRollups(byGroup, localRollups);
+
+// ✅ NEW: only keep rollup buckets (the "into" labels)
+                if (showOnlyRollups && Array.isArray(localRollups) && localRollups.length) {
+                    const rollupTargets = new Set(
+                        localRollups.map(r => norm(r?.into)).filter(Boolean)
+                    );
+
+                    byGroup = Object.keys(byGroup).reduce((acc, k) => {
+                        if (rollupTargets.has(norm(k))) acc[k] = byGroup[k];
+                        return acc;
+                    }, {});
+                }
+
+
+                // 3) overlay rollups (extra fetch per rollup *predicate slice*)
+                // We compute each overlay rollup in its own predicate slice, then add into byGroup.
+                // NOTE: we do NOT delete any base keys here (different predicate slice).
+                if (overlayRollups.length) {
+                    for (const r of overlayRollups) {
+                        const into = String(r?.into ?? "").trim();
+                        if (!into) continue;
+
+                        const rollPreds = [
+                            ...(Array.isArray(r.predicates) ? r.predicates : []),
+                            ...(Array.isArray(r?.match?.predicates) ? r.match.predicates : []),
+                        ];
+
+                        const mergedPreds = mergePredicatesOverride(presetPredicates, rollPreds);
+
+                        const sliceArgs = {
+                            ...baseArgs,
+                            includeEmpty: false, // overlay rollups usually should not pad
+                            within: { ...(within || {}), ...(r.within || {}) },
+                            predicates: mergedPreds,
+                        };
+
+                        let sliceMap = {};
+
+                        if (Array.isArray(partitionBy) && partitionBy.length) {
+                            sliceMap = await fetchPartitionedMenuCounts({
+                                baseArgs: sliceArgs,
+                                partitions: partitionBy,
+                            });
+                        } else {
+                            const { results } = await menuCounts(sliceArgs);
+                            sliceMap = (results || []).reduce((acc, row) => {
+                                const key = row[groupBy] ?? row.group ?? row.category ?? row.label;
+                                const count = row.count_on_menu ?? row.count ?? 0;
+                                if (key != null) acc[norm(key)] = count;
+                                return acc;
+                            }, {});
+                        }
+
+                        const adds = computeOverlayRollupAdds(sliceMap, [r]);
+                        if (Object.prototype.hasOwnProperty.call(adds, into)) {
+                            byGroup[into] = Number(byGroup[into] ?? 0) + Number(adds[into] ?? 0);
+                        } else if (r.keepZero === true && !(into in byGroup)) {
+                            byGroup[into] = 0;
+                        }
+                    }
+                }
+
+                // 4) forceShow
                 const out = { ...(byGroup || {}) };
                 if (Array.isArray(forceShow)) {
                     for (const raw of forceShow) {
@@ -142,21 +273,19 @@ export function useCountsByCategory({
                     }
                 }
 
-                // --- includeEmpty padding for partitioned views ---
+                // 5) includeEmpty padding for partitioned views
                 // IMPORTANT: do NOT pad rolled-up labels
                 if (includeEmpty && Array.isArray(partitionBy) && partitionBy.length) {
-                    const rollupTargets = new Set(
-                        (rollups || []).map(r => String(r.into).trim())
-                    );
+                    const rollupTargets = new Set((rollups || []).map((r) => String(r.into).trim()));
 
                     const bases = new Set(
                         Object.keys(out)
-                            .filter(k => !rollupTargets.has(norm(k))) // exclude rolled-up buckets
-                            .map(k => norm(k).split(' · ')[0])
+                            .filter((k) => !rollupTargets.has(norm(k)))
+                            .map((k) => norm(k).split(" · ")[0])
                     );
 
                     for (const raw of forceShow || []) {
-                        const b = norm(raw).split(' · ')[0];
+                        const b = norm(raw).split(" · ")[0];
                         if (!rollupTargets.has(b)) bases.add(b);
                     }
 
@@ -170,11 +299,10 @@ export function useCountsByCategory({
                     }
                 }
 
-
                 if (!alive) return;
                 setCounts(out);
             } catch (e) {
-                console.error('[useCountsByCategory] failed', e);
+                console.error("[useCountsByCategory] failed", e);
                 if (!alive) return;
                 setCounts({});
             }
@@ -193,6 +321,7 @@ export function useCountsByCategory({
         forceKey,
         withinKey,
         rollupsKey,
+        rollupOnlyKey,   // ✅ ADD
         presetId,
         filterKey,
     ]);

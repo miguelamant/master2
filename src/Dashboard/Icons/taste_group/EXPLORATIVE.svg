@@ -1,0 +1,23 @@
+<svg width="82" height="81" viewBox="0 0 82 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_1268_6769" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="82" height="81">
+<path d="M0 0H81.9141V80.8642H0V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_1268_6769)">
+<mask id="mask1_1268_6769" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="-1" width="82" height="83">
+<rect x="0.000976562" y="-0.0966797" width="81.9141" height="81.2682" fill="url(#pattern0_1268_6769)"/>
+</mask>
+<g mask="url(#mask1_1268_6769)">
+<rect x="0.000976562" y="-0.0966797" width="81.9141" height="81.2682" fill="url(#pattern1_1268_6769)"/>
+</g>
+</g>
+<defs>
+<pattern id="pattern0_1268_6769" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use transform="scale(0.00123457 0.00123609)"/>
+</pattern>
+<pattern id="pattern1_1268_6769" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use transform="scale(0.00123457 0.00123609)"/>
+</pattern>
+<image id="image0_1268_6769" width="810" height="809" preserveAspectRatio="none"/>
+<image id="image1_1268_6769" width="810" height="809" preserveAspectRatio="none"/>
+</defs>
+</svg>

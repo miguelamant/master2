@@ -51,13 +51,36 @@ export async function listSubcategories(_req, res) {
 
 /* GET /api/items-not-on-menu */
 export async function itemsNotOnMenu(req, res) {
+  res.set("Cache-Control", "no-store"); // kill any caching
+  res.set("X-LOCAL-BACKEND", "yes");
+
   const businessId = req.session.user.id;
 
-  // ✅ NEW: read section from query
+  // read section + optional search
   const section = String(req.query.section || "beers").toLowerCase();
   const parentName = PARENT_BY_SECTION[section] || "REFRESHMENTS";
 
+  const searchRaw = String(req.query.search || "").trim();
+  const hasSearch = searchRaw.length >= 2;
+  // escape commas because .or() uses commas as separators
+  const escapeForOr = (s) =>
+      String(s)
+          .replace(/,/g, " ")
+          .replace(/%/g, "\\%")
+          .replace(/_/g, "\\_");
+
+  const search = escapeForOr(searchRaw);
+
+  console.log("[items-not-on-menu][HIT]", {
+    ts: new Date().toISOString(),
+    section,
+    limit: req.query.limit,
+    page: req.query.page,
+    search: hasSearch ? searchRaw : null,
+  });
+
   try {
+    // 1) all product_ids already on this business menu
     const { data: menuItems, error: miError } = await supabase
         .from("menu_items")
         .select("product_id")
@@ -72,7 +95,7 @@ export async function itemsNotOnMenu(req, res) {
         .map((mi) => mi.product_id)
         .filter((id) => id != null);
 
-    // ✅ NEW: resolve id_category for BEERS/REFRESHMENTS (robust, no join-filter quirks)
+    // 2) resolve category id for the section
     const { data: catRow, error: catErr } = await supabase
         .from("categories")
         .select("id_category")
@@ -81,41 +104,96 @@ export async function itemsNotOnMenu(req, res) {
 
     if (catErr || !catRow) {
       console.error("[/items-not-on-menu] category lookup error:", catErr);
-      return res.status(500).json({ error: "Database error resolving section category" });
+      return res
+          .status(500)
+          .json({ error: "Database error resolving section category" });
     }
 
+    // 3) paging / limits
+    // - if searching: default to 50 results (fast, accurate over full DB)
+    // - if not searching: default to 300 "suggestions"
+    const requestedLimit = Math.min(
+        Number(req.query.limit || (hasSearch ? 50 : 300)),
+        3000
+    );
 
-    const limit = Math.min(Number(req.query.limit || 1000), 1000);
-    const offset = 0;
+    const page = Math.max(1, Number(req.query.page || 1));
+    const fromWanted = (page - 1) * requestedLimit;
+    const toWanted = fromWanted + requestedLimit - 1;
 
-    let q = supabase
-        .from("products")
-        .select(SELECT_COLS_PRODUCTS_WITH_RELATIONS)
-        .eq("id_category", catRow.id_category)
-        .order("commodity_score", { ascending: false })  // ✅ highest first
-        .order("name", { ascending: true })              // tie-break
-        .range(offset, offset + limit - 1);
+    // keep chunking to avoid large range requests
+    const CHUNK = 1000;
 
+    let all = [];
     const list = notInList(takenIds);
-    if (list) q = q.filter("id_product", "not.in", list);
-    if (section === 'beers') {
-      q = q.or('is_trending.is.null,is_trending.eq.0');
+
+    console.log("[items-not-on-menu][DBG] takenIds:", takenIds.length);
+    console.log(
+        "[items-not-on-menu][DBG] notInList chars:",
+        list ? String(list).length : null
+    );
+
+    for (let from = fromWanted; from <= toWanted; from += CHUNK) {
+      const to = Math.min(from + CHUNK - 1, toWanted);
+
+      const searchRaw = String(req.query.search || "").trim();
+      const hasSearch = searchRaw.length >= 2;
+
+// ...
+      let q = supabase
+          .from("products")
+          .select(SELECT_COLS_PRODUCTS_WITH_RELATIONS)
+          .eq("id_category", catRow.id_category)
+          .order("commodity_score", { ascending: false })
+          .order("name", { ascending: true });
+
+// exclude items already on menu
+      const list = notInList(takenIds);
+      if (list) q = q.filter("id_product", "not.in", list);
+
+      if (section === "beers") {
+        q = q.or("is_trending.is.null,is_trending.eq.0");
+      }
+
+// ✅ server-side search
+      if (hasSearch) {
+        const s = searchRaw.replace(/,/g, " "); // commas break `.or(...)`
+        q = q.or(`name.ilike.%${s}%,brand.ilike.%${s}%`);
+      }
+
+// ✅ limit results when searching
+      const limit = hasSearch ? 100 : requestedLimit;
+      q = q.range(0, limit - 1);
+
+      const { data, error } = await q;
+
+      if (error) {
+        console.error("[/items-not-on-menu] products error:", error);
+        return res.status(500).json({ error: "Database error fetching products" });
+      }
+
+      if (!data?.length) break;
+
+      all.push(...data);
+
+      // reached end early
+      if (data.length < to - from + 1) break;
+
+      // if we're searching, we almost never need chunking; but keep it safe anyway
+      if (all.length >= requestedLimit) break;
     }
 
+    // hard cap to requested limit (because chunking might overshoot)
+    all = all.slice(0, requestedLimit);
 
-    const { data: products, error: pError } = await q;
-    if (pError) {
-      console.error("[/items-not-on-menu] products error:", pError);
-      return res.status(500).json({ error: "Database error fetching products" });
-    }
-
-    const flattened = (products || []).map(flattenProductRow);
+    const flattened = (all || []).map(flattenProductRow);
     return res.json(flattened);
   } catch (err) {
     console.error("[/items-not-on-menu] server error:", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
+
 
 
 /* GET /api/segments */

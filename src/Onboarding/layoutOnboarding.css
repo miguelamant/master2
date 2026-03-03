@@ -4,115 +4,68 @@
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    background-color: var(--oxford-blue); /* Donkerblauwe achtergrond */
+    background-color: var(--oxford-blue);
 }
 
 .layout-header {
-    padding: 2rem;
+    padding: 1.2rem 1rem 1rem 1rem; /* ✅ smaller black zone */
     text-align: center;
-
 }
 
 .layout-header h1{
     color: var(--ivory);
     font-family: 'Quicksand', sans-serif;
-    font-weight: 500; /*Medium bold*/
+    font-weight: 500;
     font-size: 40px;
 }
-.layout-content{
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+
 .layout-content-container {
     display: flex;
     flex-direction: column;
+    align-items: center;            /* ✅ center children horizontally */
     background-color: var(--ivory);
     border-radius: 80px 80px 0 0;
     width: 100%;
     height: 100%;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: auto;                 /* ✅ allow scroll without weird alignment */
 }
 
+.layout-content{
+    width: 100%;                    /* ✅ full width */
+    max-width: 1300px;              /* ✅ centered page canvas */
+    margin: 0 auto;
+    padding: 0 1.5rem 1.5rem 1.5rem;/* ✅ symmetric padding */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Typography inside container */
 .layout-content-container h1 {
     color: var(--oxford-blue);
     font-family: 'Quicksand', sans-serif;
     font-size: 32px;
-    font-weight: 500; /*Medium bold*/
+    font-weight: 500;
 }
-.layout-content-container h2 {
-    color: var(--oxford-blue);
-}
-.layout-content-container p {
-    color: var(--oxford-blue);
-}
+.layout-content-container h2 { color: var(--oxford-blue); }
+.layout-content-container p  { color: var(--oxford-blue); }
 
+/* Footer */
 .layout-footer {
     margin-top: auto;
     width: 100%;
-    padding: 1rem;
+    padding: 1rem 2rem;
     background-color: var(--ivory);
-}
-
-.progress-bar {
-    width: 80%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 0 auto;
-}
-
-.progress {
-    height: 100%;
-    background-color: var(--sandy-brown); /* Gebruikt een oranje tint */
-}
-
-.start-button-container{
-    display: flex;
-    justify-content: center;
-    width: 100%; /* Full width to center button */
-    margin-top: auto; /* Push button to bottom of container */
-}
-
-.start-button {
-    align-self: flex-end;
-    background-color: var(--sandy-brown); /* Use the orange color */
-    color: var(--ivory); /* Text color */
-    font-family: 'Quicksand', sans-serif;
-    font-size: 32px;
-    font-weight: 500;
-    padding: 0.5rem 3rem;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: 1rem;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Optional shadow */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.start-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
-}
-
-.start-button:active {
-    transform: translateY(1px);
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.layout-footer {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1rem 2rem; /* Adjusts padding to give space on sides */
-    width: 100%;
-    background-color: var(--ivory);
 }
 
 .layout-footer-text {
-    color: var(--oxford-blue); /* Dark color for contrast */
+    color: var(--oxford-blue);
     font-family: 'Quicksand', sans-serif;
     font-weight: 500;
     cursor: pointer;
@@ -134,6 +87,6 @@
 
 .progress {
     height: 100%;
-    background-color: #D9D9D9; /* Dark blue for progress color */
+    background-color: #D9D9D9;
     border-radius: 4px;
 }

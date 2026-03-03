@@ -36,7 +36,7 @@ export default function useHoverLists({
                                           apiFilters = {},
                                           predicates = [],
                                           within = {},
-                                          section, // ✅ NEW (pass effectiveSection from index.jsx)
+                                          section, // ✅ NEW (pass effectiveSection from ToReprice.jsx)
                                       }) {
     const [hoverLists, setHoverLists] = useState({});
     const [hoverCat, setHoverCat] = useState(null);

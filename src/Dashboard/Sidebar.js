@@ -63,7 +63,8 @@ const Sidebar = ({ onSelectionChange, selectedOption }) => {
     const handleLogout = () => window.location.assign('/');
 
     // NEW: navigate to onboarding/personas
-    const handleGetStarted = () => window.location.assign('/personas');
+    //const handleGetStarted = () => window.location.assign('/personas');
+    const handleGetStarted = () => window.location.assign('/leeftijdsverdeling');
 
     const CornerBadge = ({ t }) => {
         const icon = badgeForTier(t);
@@ -93,10 +94,24 @@ const Sidebar = ({ onSelectionChange, selectedOption }) => {
                     className={`sidebar-list-item ${selectedOption === 'edit-menu' ? 'active' : ''}`}
                     onClick={(e) => handleClick('edit-menu', false, e)}
                 >
-                    Jouw menu
+                    Jouw assortiment
                 </li>
 
-                {/* Beers */}
+                <li
+                    className={`sidebar-list-item ${selectedOption === 'to-reprice' ? 'active' : ''}`}
+                    onClick={(e) => handleClick('to-reprice', false, e)}
+                >
+                    To reprice
+                </li>
+                {/*
+                <li
+                    className={`sidebar-list-item ${selectedOption === 'wrapped' ? 'active' : ''}`}
+                    onClick={(e) => handleClick('wrapped', false, e)}
+                >
+                    Wrapped
+                </li>
+
+               Beers */}
                 <li
                     className={`sidebar-list-item ${selectedOption === 'beers' ? 'active' : ''}`}
                     onClick={(e) => handleClick('beers', false, e)}

@@ -1,4 +1,4 @@
-﻿// src/Dashboard/ToAdd/index.jsx
+﻿// src/Dashboard/ToAdd/ToReprice.jsx
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 
 import { api } from "apiService";
@@ -152,11 +152,39 @@ const normalizeCategory = (s) => {
 
 
   const [sortOrder] = useState('top');
-  const [items, setItems] = useState([]);
+ // const [setItems] = useState([]);
   const [businessCity, setBusinessCity] = useState('');
   const [businessCountry, setBusinessCountry] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [itemsNotOnMenu, setItemsNotOnMenu] = useState([]);
+  const [loadingItems, setLoadingItems] = useState(false);
+  const [itemsError, setItemsError] = useState(null);
+
+    // modal state
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalPrice, setModalPrice] = useState('');
+
+  const [toAddMode, setToAddMode] = useState(true);     // controls ItemsList switch
+  const [onMenuItems, setOnMenuItems] = useState([]);   // raw items currently on menu
+  const [layersOverride, setLayersOverride] = useState(null);
+
+  // show/hide price bars
+  const [showPriceBars, setShowPriceBars] = useState(false);          // local only
+  const [willyMode, setWillyModeLocal] = useState(getWillyMode());   // mirrors global
+
+  const itemsSectionRef = React.useRef(null);
+
+  const presetInfo = currentPreset?.info ?? {};
+
+
+
+
+
+
+
+
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -170,26 +198,17 @@ const normalizeCategory = (s) => {
     });
 
 
-  // dynamic taste options for the Optionbar (driven by summary)
+
+
+
+    // dynamic taste options for the Optionbar (driven by summary)
   const [mergedLayers, setMergedLayers] = useState(null);
 
 
 
-    // modal state
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [modalPrice, setModalPrice] = useState('');
 
-  const [toAddMode, setToAddMode] = useState(true);     // controls ItemsList switch
-  const [onMenuItems, setOnMenuItems] = useState([]);   // raw items currently on menu
-  const [layersOverride, setLayersOverride] = useState(null);
 
-    // show/hide price bars
-  const [showPriceBars, setShowPriceBars] = useState(false);          // local only
-  const [willyMode, setWillyModeLocal] = useState(getWillyMode());   // mirrors global
 
-  const itemsSectionRef = React.useRef(null);
-
-  const presetInfo = currentPreset?.info ?? {};
 
 
   // —— UI filters (Optionbar) ——
@@ -197,14 +216,11 @@ const normalizeCategory = (s) => {
     tastes: new Set(),
     sugar: { zero_sugar: true, with_sugar: true },
     sparkling: { sparkling: true, not_sparkling: true },
-    heritage: new Set(['abbey', 'trappist', 'normal']),
+    heritage: new Set(['abbey', 'trappist', 'normal','modern']),
   });
 
     const [addItem, setAddItem] = useState(null);
     const [removeItem, setRemoveItem] = useState(null);
-
-
-
 
     const activeLayerIds = React.useMemo(() => {
     const pid = String(getPresetId(currentPreset));
@@ -219,12 +235,28 @@ const normalizeCategory = (s) => {
       const rollups = Array.isArray(preset.rollups) ? preset.rollups : [];
       const partBy = Array.isArray(preset.partitionBy) ? preset.partitionBy : [];
 
-      // map partition label -> predicate (e.g. "With alcohol" -> is_zero eq 0)
+      // map partition label -> predicate (e.g. "Zero" -> is_zero eq 1)
       const partLabelToPred = new Map(
           partBy
-              .filter(p => p && p.field && (p.value === 0 || p.value === 1 || p.value === "0" || p.value === "1"))
-              .map(p => [String(p.label || "").toLowerCase(), { field: p.field, op: "eq", value: Number(p.value) }])
+              .filter(
+                  (p) =>
+                      p &&
+                      p.field &&
+                      (p.value === 0 || p.value === 1 || p.value === "0" || p.value === "1")
+              )
+              .map((p) => [
+                String(p.label || "").toLowerCase(),
+                { field: p.field, op: "eq", value: Number(p.value) },
+              ])
       );
+
+      const normalizePreds = (arr) =>
+          (Array.isArray(arr) ? arr : [])
+              .filter(Boolean)
+              .map((p) => ({
+                ...p,
+                op: p.op ? String(p.op).toLowerCase() : "eq",
+              }));
 
       const out = {};
 
@@ -235,31 +267,158 @@ const normalizeCategory = (s) => {
         const m = r.match || {};
         const preds = [];
 
-        // For this preset groupBy=subsubcategory, baseIn/baseNotIn refers to subsubcategory names
+        // baseIn/baseNotIn apply to the preset groupBy (usually subsubcategory)
         if (Array.isArray(m.baseIn) && m.baseIn.length) {
-          preds.push({ field: preset.groupBy || "subsubcategory", op: "in", value: m.baseIn });
+          preds.push({
+            field: preset.groupBy || "subsubcategory",
+            op: "in",
+            value: m.baseIn,
+          });
         }
         if (Array.isArray(m.baseNotIn) && m.baseNotIn.length) {
-          // ✅ needs backend support for op="nin" (see section 3 below)
-          preds.push({ field: preset.groupBy || "subsubcategory", op: "nin", value: m.baseNotIn });
+          preds.push({
+            field: preset.groupBy || "subsubcategory",
+            op: "nin",
+            value: m.baseNotIn,
+          });
         }
 
+        // partition label -> predicate (optional)
         if (m.partitionLabel) {
           const p = partLabelToPred.get(String(m.partitionLabel).toLowerCase());
           if (p) preds.push(p);
         }
 
+        // ✅ NEW: rollup-level predicates (Option B2)
+        // Supports both `r.predicates` (recommended) and `match.predicates` (back-compat)
+        preds.push(...normalizePreds(r.predicates));
+        preds.push(...normalizePreds(m.predicates));
+
         out[into] = {
-          value: into,                 // cache key seed
+          value: into,
           groupBy: preset.groupBy || "subsubcategory",
-          within: {},                  // base within already comes from hook
+          within: r.within || {},      // allow rollup-specific within if you want
           predicates: preds,
-          noGroupFilter: true,         // ✅ critical for rollups
+          noGroupFilter: true,         // ✅ critical for rollups (virtual labels)
         };
       }
 
       return out;
     }, [currentPreset]);
+
+
+    const inActiveSection = (it) => {
+      const catTok = it._category_token || normToken(it.category_name || it.category);
+      if (activeCategory === 'beers') return catTok === 'BEERS';
+      if (activeCategory === 'refreshments') return catTok === 'REFRESHMENTS';
+      return true;
+    };
+
+    const normalizeForFilters = (it) => ({
+      ...it,
+      heritage: normalizeHeritage(it.heritage),
+    });
+
+    // —— bottom list filtering (client-side) ——
+    const passesFilters = (item) => {
+      // ✅ local search only for 0–1 chars (because backend search only kicks in at >=2)
+      // robust search: matches "tripel" against "WESTMALLE_TRIPEL", etc.
+      const needle = normToken(searchTerm);
+      if (needle) {
+        const hay1 = normToken(item.name);
+        const hay2 = normToken(item.item_name);
+        if (!hay1.includes(needle) && !hay2.includes(needle)) return false;
+      }
+
+
+      // taste (based on current groupBy)
+      let tasteId = null;
+      const catToken  = item._category_token    || normToken(item.category_name || item.category);
+      const subToken  = item._subcat_token      || normToken(item.subcat_name || item.subcategory);
+      const ssubToken = item._subsubcat_token   || normToken(item.subsubcat_name || item.subsubcategory);
+
+      if (groupBy === "category") tasteId = catToken;
+      else if (groupBy === "subcategory") tasteId = subToken;
+      else if (groupBy === "subsubcategory") tasteId = ssubToken;
+
+      if (filters.tastes.size && tasteId && !filters.tastes.has(tasteId)) return false;
+
+      // sugar
+      const sugar = filters.sugar || { zero_sugar: true, with_sugar: true };
+      const sugarNoRestr =
+          (!sugar.zero_sugar && !sugar.with_sugar) ||
+          (sugar.zero_sugar && sugar.with_sugar);
+
+      const isZero = Number(item.is_zero ?? 0) === 1;
+      if (!sugarNoRestr) {
+        if (isZero && !sugar.zero_sugar) return false;
+        if (!isZero && !sugar.with_sugar) return false;
+      }
+
+      // sparkling
+      const sprk = filters.sparkling || { sparkling: true, not_sparkling: true };
+      const sprkNoRestr =
+          (!sprk.sparkling && !sprk.not_sparkling) ||
+          (sprk.sparkling && sprk.not_sparkling);
+
+      const isSpark = Number(item.is_sparkling ?? 0) === 1;
+      if (!sprkNoRestr) {
+        if (isSpark && !sprk.sparkling) return false;
+        if (!isSpark && !sprk.not_sparkling) return false;
+      }
+
+      // functional
+      const functional = filters.functional || {
+        protein: true,
+        prebiotic: true,
+        magnesium: true,
+        vitamin: true,
+        collagen: true,
+      };
+
+      const funcNoRestr =
+          Object.values(functional).every((v) => v === true) ||
+          Object.values(functional).every((v) => v === false);
+
+      if (!funcNoRestr) {
+        const isProtein   = Number(item.is_protein ?? 0) === 1;
+        const isPrebiotic = Number(item.is_prebiotic ?? 0) === 1;
+        const isMagnesium = Number(item.is_magnesium ?? 0) === 1;
+        const isVitamin   = Number(item.is_vitamin ?? 0) === 1;
+        const isCollagen  = Number(item.is_collagen ?? 0) === 1;
+
+        if (isProtein   && !functional.protein) return false;
+        if (isPrebiotic && !functional.prebiotic) return false;
+        if (isMagnesium && !functional.magnesium) return false;
+        if (isVitamin   && !functional.vitamin) return false;
+        if (isCollagen  && !functional.collagen) return false;
+      }
+
+      // business
+      const business = filters.business || { trending: true, high_margin: true };
+      const businessNoRestr =
+          (!business.trending && !business.high_margin) ||
+          (business.trending && business.high_margin);
+
+      if (!businessNoRestr) {
+        const isTrending   = Number(item.is_trending ?? 0) === 1;
+        const isHighMargin = Number(item.is_high_margin ?? 0) === 1;
+
+        if (isTrending && !business.trending) return false;
+        if (isHighMargin && !business.high_margin) return false;
+      }
+
+      // heritage
+      const hset = filters.heritage instanceof Set
+          ? filters.heritage
+          : new Set(["abbey", "trappist", "normal","modern"]);
+
+      const hval = (item.heritage || "normal").toLowerCase();
+      if (!hset.has(hval)) return false;
+
+      return true;
+    };
+
 
     useEffect(() => {
       let alive = true;
@@ -268,6 +427,92 @@ const normalizeCategory = (s) => {
       });
       return () => { alive = false; };
     }, []);
+
+    const items = useMemo(
+        () => (Array.isArray(itemsNotOnMenu) ? itemsNotOnMenu : []),
+        [itemsNotOnMenu]
+    );
+
+    const onMenu = useMemo(
+        () => (Array.isArray(onMenuItems) ? onMenuItems : []),
+        [onMenuItems]
+    );
+
+    const sorted = useMemo(() => {
+      const arr = [...items];
+      arr.sort((a, b) => {
+        const an = String(a.name ?? a.item_name ?? "");
+        const bn = String(b.name ?? b.item_name ?? "");
+        const ac = String(a.category ?? a.category_name ?? "");
+        const bc = String(b.category ?? b.category_name ?? "");
+
+        if (sortOrder === "name") return an.localeCompare(bn);
+        if (sortOrder === "category") return ac.localeCompare(bc);
+        return 0;
+      });
+      return arr;
+    }, [items, sortOrder]);
+
+    const visible = useMemo(() => {
+      return sorted
+          .filter(inActiveSection)
+          .map(normalizeForFilters)
+          .filter(passesFilters);
+    }, [sorted, inActiveSection, normalizeForFilters, passesFilters]);
+
+    const visibleOnMenu = useMemo(() => {
+      return onMenu
+          .filter(inActiveSection)
+          .map(normalizeForFilters)
+          .filter(passesFilters);
+    }, [onMenu, inActiveSection, normalizeForFilters, passesFilters]);
+
+    useEffect(() => {
+      let cancelled = false;
+
+      const t = setTimeout(async () => {
+        try {
+          setLoadingItems(true);
+          setItemsError(null);
+
+          const raw = String(searchTerm || "").trim();
+          const hasSearch = raw.length >= 2;
+
+          const params = {
+            section,
+            limit: hasSearch ? 100 : 1000, // 100 is a nicer UX than 50
+          };
+
+          // ✅ send RAW text to backend
+          if (hasSearch) params.search = raw;
+
+          const res = await api.get("/api/items-not-on-menu", {
+            withCredentials: true,
+            params,
+          });
+
+
+
+          if (!cancelled) setItemsNotOnMenu(Array.isArray(res.data) ? res.data : []);
+        } catch (e) {
+          if (!cancelled) setItemsError("Kon items niet laden");
+          console.error(e);
+        } finally {
+          if (!cancelled) setLoadingItems(false);
+        }
+      }, 250);
+
+
+
+      return () => {
+        cancelled = true;
+        clearTimeout(t);
+      };
+
+
+    }, [section, searchTerm]);
+
+
 
 
     // still in the same file where setLayersOverride is available
@@ -387,46 +632,7 @@ const normalizeCategory = (s) => {
   const forceShowKey   = React.useMemo(() => JSON.stringify(forceShow),   [forceShow]);
 
 
-/*
-    const _loadHoverList = async (groupValue) => {
-      const key = makeHoverKey(groupValue);
-      if (hoverLists[key]) return;
-
-      try {
-        let f = { ...apiFilters };
-        const { base, partition, partitionPredicates } = splitComposite(groupValue);
-
-        // constrain the base group for the API
-        const gv = base;
-        if (groupBy === "category") f.category = gv;
-        else if (groupBy === "subcategory") f.subcategory = gv;
-        else if (groupBy === "subsubcategory") f.subsubcategory = gv;
-
-        // merge: preset-level + partitionBy-level + (optional) single partition rule (sparkling/zero/abv)
-        const mergedPreds = [
-          ...(presetPredicates || []),
-          ...(partitionPredicates || []),
-          ...(partition ? [partition] : []),
-        ];
-
-      const { items } = await menuItems({
-        filters: f,
-        predicates: mergedPreds,   // ← no op-forcing; ABV "between" survives
-        within,
-        page: 1,
-        pageSize: 200,
-        orderBy: "products.name",
-      });
-
-      setHoverLists((prev) => ({ ...prev, [key]: items || [] }));
-    } catch (e) {
-      console.error("hover list fetch failed", e);
-      setHoverLists((prev) => ({ ...prev, [key]: [] }));
-    }
-  };
-
-    //const loadHoverList = React.useMemo(() => debounce(_loadHoverList, 200), [filterKey, groupBy]);
-*/
+/**/
 
   useEffect(() => {
 
@@ -441,7 +647,8 @@ const normalizeCategory = (s) => {
            groupBy, effectiveSection,
            includeEmpty: currentPreset.includeEmpty ?? false,
            within, apiFilters, presetPredicates,
-           partitionBy, forceShow, rollups: currentPreset.rollups || [], presetId, filterKey
+           partitionBy, forceShow, rollups: currentPreset.rollups || [], presetId, filterKey, showOnlyRollups: currentPreset.showOnlyRollups ?? false,
+
      });
 
     useEffect(() => {
@@ -680,7 +887,7 @@ const normalizeCategory = (s) => {
                     ? (Number(i.low_price) + Number(i.high_price)) / 2
                     : null,
           }));
-          setItems(mapped);
+          setItemsNotOnMenu(mapped);
         })
         .catch((err) => {
           console.error(err);
@@ -812,128 +1019,11 @@ const normalizeCategory = (s) => {
   if (loading) return <p>Loading…</p>;
   if (error) return <p className="error">{error}</p>;
 
-  const sorted = [...items].sort((a, b) => {
-    if (sortOrder === 'name') return a.name.localeCompare(b.name);
-    if (sortOrder === 'category') return a.category.localeCompare(b.category);
-    return 0;
-  });
 
-  // —— bottom list filtering (client-side) ——
-  const passesFilters = (item) => {
-    // (this is your existing filter logic, unchanged)
-    if (!item.name?.toLowerCase?.().includes(searchTerm.toLowerCase().replace(/[ &/]/g, '_'))
-        && !item.item_name?.toLowerCase?.().includes(searchTerm.toLowerCase().replace(/[ &/]/g, '_'))
-    ) return false;
 
-    // taste (based on current groupBy)
-    let tasteId = null;
-    const catToken = item._category_token || normToken(item.category_name || item.category);
-    const subToken = item._subcat_token || normToken(item.subcat_name || item.subcategory);
-    const ssubToken= item._subsubcat_token || normToken(item.subsubcat_name || item.subsubcategory);
-    if (groupBy === 'category') tasteId = catToken;
-    else if (groupBy === 'subcategory') tasteId = subToken;
-    else if (groupBy === 'subsubcategory') tasteId = ssubToken;
 
-    if (filters.tastes.size && tasteId && !filters.tastes.has(tasteId)) return false;
 
-    // sugar
-    const sugar = filters.sugar || { zero_sugar: true, with_sugar: true };
-    const sugarNoRestr = (!sugar.zero_sugar && !sugar.with_sugar) || (sugar.zero_sugar && sugar.with_sugar);
-    const isZero = Number(item.is_zero ?? 0) === 1;
-    if (!sugarNoRestr) {
-      if (isZero && !sugar.zero_sugar) return false;
-      if (!isZero && !sugar.with_sugar) return false;
-    }
 
-    // sparkling
-    const sprk = filters.sparkling || { sparkling: true, not_sparkling: true };
-    const sprkNoRestr = (!sprk.sparkling && !sprk.not_sparkling) || (sprk.sparkling && sprk.not_sparkling);
-    const isSpark = Number(item.is_sparkling ?? 0) === 1;
-    if (!sprkNoRestr) {
-      if (isSpark && !sprk.sparkling) return false;
-      if (!isSpark && !sprk.not_sparkling) return false;
-    }
-
-    /* =========================
-   Functional filters
-   ========================= */
-
-    const functional = filters.functional || {
-      protein: true,
-      prebiotic: true,
-      magnesium: true,
-      vitamin: true,
-      collagen: true,
-    };
-
-    const funcNoRestr =
-        Object.values(functional).every(v => v === true) ||
-        Object.values(functional).every(v => v === false);
-
-    if (!funcNoRestr) {
-      const isProtein    = Number(item.is_protein ?? 0) === 1;
-      const isPrebiotic  = Number(item.is_prebiotic ?? 0) === 1;
-      const isMagnesium  = Number(item.is_magnesium ?? 0) === 1;
-      const isVitamin    = Number(item.is_vitamin ?? 0) === 1;
-      const isCollagen   = Number(item.is_collagen ?? 0) === 1;
-
-      if (isProtein   && !functional.protein)   return false;
-      if (isPrebiotic && !functional.prebiotic) return false;
-      if (isMagnesium && !functional.magnesium) return false;
-      if (isVitamin   && !functional.vitamin)   return false;
-      if (isCollagen  && !functional.collagen)  return false;
-    }
-
-    /* =========================
-       Business filters
-       ========================= */
-
-    const business = filters.business || {
-      trending: true,
-      high_margin: true,
-    };
-
-    const businessNoRestr =
-        (!business.trending && !business.high_margin) ||
-        (business.trending && business.high_margin);
-
-    if (!businessNoRestr) {
-      const isTrending   = Number(item.is_trending ?? 0) === 1;
-      const isHighMargin = Number(item.is_high_margin ?? 0) === 1;
-
-      if (isTrending   && !business.trending)   return false;
-      if (isHighMargin && !business.high_margin) return false;
-    }
-
-    // heritage (default 'normal'); onMenu items may not have this — treat as 'normal'
-    const hset = filters.heritage instanceof Set ? filters.heritage : new Set(['abbey', 'trappist', 'normal']);
-    const hval = (item.heritage || 'normal').toLowerCase();
-    if (!hset.has(hval)) return false;
-
-    return true;
-  };
-
-    const inActiveSection = (it) => {
-      const catTok = it._category_token || normToken(it.category_name || it.category);
-      if (activeCategory === 'beers') return catTok === 'BEERS';
-      if (activeCategory === 'refreshments') return catTok === 'REFRESHMENTS';
-      return true;
-    };
-
-    const normalizeForFilters = (it) => ({
-      ...it,
-      heritage: normalizeHeritage(it.heritage),
-    });
-
-    const visible = sorted
-        .filter(inActiveSection)
-        .map(normalizeForFilters)
-        .filter(passesFilters);
-
-    const visibleOnMenu = (Array.isArray(onMenuItems) ? onMenuItems : [])
-        .filter(inActiveSection)
-        .map(normalizeForFilters)
-        .filter(passesFilters);
 
 
 
@@ -1128,6 +1218,11 @@ const normalizeCategory = (s) => {
     };
 
 
+    const viewUI = currentPreset?.ui || {};
+    const gridColumns = viewUI.columns === 3 ? 3 : 2;
+    const showItemsInline = !!viewUI.showItemsInline;
+    const aggregateTop = viewUI.aggregateTop || { enabled: false };
+
 
 
 
@@ -1179,6 +1274,10 @@ const normalizeCategory = (s) => {
                 summaryAdds={aggAdds}
                 summaryRemoves={aggRemoves}
                 sortPriority={currentPreset.sortPriority || []}
+                columns={gridColumns}
+                showItemsInline={showItemsInline}
+                aggregateTop={aggregateTop}
+                ui={currentPreset?.ui}
             />
           </div>
 
@@ -1197,6 +1296,7 @@ const normalizeCategory = (s) => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+
             </div>
 
 

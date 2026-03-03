@@ -41,19 +41,6 @@ export const LABEL_MAP = {
     SPECIALS:"Speciale frisdranken",
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Fruit beers with % labels
     FRUIT_BEERS_ABV_0_TO_0p5:        'Fruit Beers · 0–0.5%',
     FRUIT_BEERS_ABV_0p5_TO_3p5:      'Fruit Beers · 0.5–3.5%',

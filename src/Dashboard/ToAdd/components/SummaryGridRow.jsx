@@ -19,7 +19,7 @@ function parseCompositeMulti(val) {
     let is_sparkling = null;
     let is_zero = null;
     let is_prebiotic = null;
-    let heritage = null; // "NORMAL" | "ABBEY" | "TRAPPIST" | ["NORMAL","ABBEY"]
+    let heritage = null;
 
     if (suffixes.includes("sparkling")) is_sparkling = 1;
     if (suffixes.includes("still") || suffixes.includes("not sparkling")) is_sparkling = 0;
@@ -33,20 +33,17 @@ function parseCompositeMulti(val) {
         is_zero = 0;
     }
 
-    // ✅ heritage partitions
     if (suffixes.includes("trappist")) heritage = "TRAPPIST";
     else if (suffixes.includes("abbey")) heritage = "ABBEY";
     else if (suffixes.includes("normal")) heritage = "NORMAL";
+    else if (suffixes.includes("modern")) heritage = "MODERN";
     else if (suffixes.includes("normal/abbey") || suffixes.includes("abbey/normal")) heritage = ["NORMAL", "ABBEY"];
 
     return { base, is_sparkling, is_zero, is_prebiotic, heritage };
 }
 
-
 /**
  * Build a hover descriptor that useHoverLists understands.
- * - Rollup override wins (hoverOverrides[groupValue])
- * - Otherwise partitioned label -> base value + predicates
  */
 function buildHoverGroupDescriptor({ groupValue, groupBy, hoverOverrides }) {
     const label = String(groupValue || "");
@@ -67,7 +64,6 @@ function buildHoverGroupDescriptor({ groupValue, groupBy, hoverOverrides }) {
             groupBy: ov.groupBy || groupBy,
             within: ov.within || {},
             predicates: normalizePreds(ov.predicates || []),
-            // ✅ critical: rollup labels are virtual, so don't force f.subsubcategory="IPA (all)"
             noGroupFilter: ov.noGroupFilter !== undefined ? !!ov.noGroupFilter : true,
         };
     }
@@ -94,46 +90,41 @@ function buildHoverGroupDescriptor({ groupValue, groupBy, hoverOverrides }) {
     };
 }
 
-
 export default function SummaryGridRow(props) {
     const {
-        // identity
         groupValue,
         groupBy = "subcategory",
         filterKey,
-
-        // data
         countsByCategory = {},
-
-        // recommendations
         chosen = null,
 
-        // hover
         hoverLists = {},
         hoverCat,
         setHoverCat,
         loadHoverList,
         hoverOverrides = {},
-        makeKey, // optional; if you pass hook's makeKey, we can use it, else we use makeHoverKey util
+        makeKey,
 
-        // UX
         onFocusGroup,
         showPriceBars = true,
         activeBadges = [],
+
+        showItemsInline = false,
+        inlineItemsLimit = 6,
+
+        // ✅ NEW: compact mode (used in matrix cells)
+        compact = false,
     } = props;
 
     const actual = countsByCategory[groupValue] ?? 0;
     const displayLabel = convertDisplayLabel(groupValue);
-
     const { base, is_sparkling, is_zero } = parseCompositeMulti(groupValue);
 
-    // row-level badges
     const rowBadges = [...activeBadges];
     if (is_zero === 1) rowBadges.push("zero");
     if (is_sparkling === 1) rowBadges.push("sparkling");
     if (is_sparkling === 0) rowBadges.push("badge_still");
 
-    // icons
     const icons = [];
     for (let i = 0; i < Math.max(0, actual); i++) {
         icons.push(
@@ -143,15 +134,20 @@ export default function SummaryGridRow(props) {
         );
     }
 
-    // hover descriptor + key (MUST match useHoverLists key building)
-    const hoverDesc = buildHoverGroupDescriptor({ groupValue, groupBy, hoverOverrides });
+    const hoverDesc = React.useMemo(
+        () => buildHoverGroupDescriptor({ groupValue, groupBy, hoverOverrides }),
+        [groupValue, groupBy, hoverOverrides]
+    );
 
-    const extra = {
-        effGroupBy: hoverDesc.groupBy || groupBy,
-        extraWithin: hoverDesc.within || {},
-        extraPreds: hoverDesc.predicates || [],
-        noGroupFilter: !!hoverDesc.noGroupFilter,
-    };
+    const extra = React.useMemo(
+        () => ({
+            effGroupBy: hoverDesc.groupBy || groupBy,
+            extraWithin: hoverDesc.within || {},
+            extraPreds: hoverDesc.predicates || [],
+            noGroupFilter: !!hoverDesc.noGroupFilter,
+        }),
+        [hoverDesc, groupBy]
+    );
 
     const hoverKey =
         typeof makeKey === "function"
@@ -161,19 +157,12 @@ export default function SummaryGridRow(props) {
     const itemsForHover = hoverLists[hoverKey] || [];
     const isOpen = hoverCat === hoverKey;
 
-    const dbgRow = (typeof window !== "undefined" && window.__DBG_HOVER_ROW__) || null;
-    if (dbgRow?.enabled) {
-        console.log("[HOVER][ROW]", {
-            groupValue,
-            base,
-            actual,
-            hoverDesc,
-            hoverKey,
-            hoverCat,
-            isOpen,
-            itemsLen: itemsForHover.length,
-        });
-    }
+    React.useEffect(() => {
+        if (!showItemsInline) return;
+        if (!loadHoverList) return;
+        if (!hoverLists[hoverKey]) loadHoverList(hoverDesc);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showItemsInline, hoverKey]);
 
     const CountDeltaChip = ({ chosen }) => {
         const d = chosen ? Number(chosen.delta || 0) : 0;
@@ -210,11 +199,17 @@ export default function SummaryGridRow(props) {
     };
 
     const [hoverBucket, setHoverBucket] = React.useState(null);
+    const [expanded, setExpanded] = React.useState(false);
+
+    const visibleInlineItems = expanded ? itemsForHover : itemsForHover.slice(0, inlineItemsLimit);
+    const canExpand = itemsForHover.length > inlineItemsLimit;
 
     return (
-        <div className="segment-row">
-      <span className="segment-label">
-        <strong className="segment-title-name">{displayLabel}</strong>
+        <div className="segment-row" style={compact ? { padding: 0 } : undefined}>
+      <span className="segment-label" style={compact ? { marginBottom: 4 } : undefined}>
+        <strong className="segment-title-name" style={compact ? { fontSize: 13 } : undefined}>
+          {displayLabel}
+        </strong>
 
         <button
             type="button"
@@ -244,7 +239,7 @@ export default function SummaryGridRow(props) {
               onMouseLeave={() => setHoverBucket(null)}
               style={{ display: "inline-flex" }}
           >
-            <TasteIconWithBadges token={base} badges={rowBadges} size={30} />
+            <TasteIconWithBadges token={base} badges={rowBadges} size={compact ? 24 : 30} />
           </span>
         </button>
       </span>
@@ -253,30 +248,21 @@ export default function SummaryGridRow(props) {
                 <div
                     className={`segment-icons ${icons.length > 15 ? "segment-icons--multiline" : ""}`}
                     onMouseEnter={() => {
-                        console.log("[HOVER][ENTER]", { groupValue, hoverDesc, extra, hoverKey });
-                        const dbg = typeof window !== "undefined" && window.__DBG_HOVER__?.enabled;
-
-
-                        if (dbg) console.log("[HOVER][ENTER]", { groupValue, hoverKey, hoverDesc, extra });
-
-                        // IMPORTANT: store the FULL key (so partitions/rollups don't collide)
                         setHoverCat && setHoverCat(hoverKey);
-
-                        // IMPORTANT: this only works if index.jsx passes the hook's loadHoverList down
                         loadHoverList && loadHoverList(hoverDesc);
                     }}
                     onMouseLeave={() => setHoverCat && setHoverCat(null)}
                 >
                     {icons}
 
-                    {isOpen && (
+                    {isOpen && !showItemsInline && (
                         <div className="hover-list-popover">
                             {itemsForHover.length === 0 ? (
                                 <div className="hover-empty">No items</div>
                             ) : (
                                 <ul className="hover-list">
                                     {itemsForHover.map((p) => (
-                                        <li key={p.id_menu_item}>
+                                        <li key={p.id_menu_item || p.id_product || p.name}>
                                             <span className="hover-name">{convertItemLabel(p.item_name || p.name)}</span>
                                             {p.price != null && <span className="hover-price">€{Number(p.price).toFixed(2)}</span>}
                                         </li>
@@ -301,6 +287,54 @@ export default function SummaryGridRow(props) {
                     <CountDeltaChip chosen={chosen} />
                 </div>
             </div>
+
+            {showItemsInline && (
+                <div
+                    style={{
+                        marginTop: 8,
+                        marginLeft: 6,
+                        padding: "8px 10px",
+                        borderRadius: 10,
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                    }}
+                >
+                    {itemsForHover.length === 0 ? (
+                        <div style={{ opacity: 0.75, fontSize: 13 }}>No items</div>
+                    ) : (
+                        <>
+                            <ul style={{ margin: 0, paddingLeft: 18 }}>
+                                {visibleInlineItems.map((p) => (
+                                    <li key={p.id_menu_item || p.id_product || p.name} style={{ margin: "4px 0" }}>
+                                        <span style={{ opacity: 0.95 }}>{convertItemLabel(p.item_name || p.name)}</span>
+                                        {p.price != null && (
+                                            <span style={{ marginLeft: 8, opacity: 0.85 }}>€{Number(p.price).toFixed(2)}</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            {canExpand && (
+                                <button
+                                    type="button"
+                                    onClick={() => setExpanded((v) => !v)}
+                                    style={{
+                                        marginTop: 6,
+                                        background: "transparent",
+                                        border: "none",
+                                        padding: 0,
+                                        cursor: "pointer",
+                                        fontWeight: 700,
+                                        opacity: 0.85,
+                                    }}
+                                >
+                                    {expanded ? "Show less" : `Show all (${itemsForHover.length})`}
+                                </button>
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
 
             {hoverBucket && (
                 <div

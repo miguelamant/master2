@@ -36,6 +36,17 @@ import LandingPage from "./Landing/LandinginPage";
 
 // Import OnboardingProvider for context
 import { OnboardingProvider } from './Onboarding/OnboardingContext';
+import Regioverdeling from "./Onboarding/Regioverdeling";
+import Innovatieverdeling from "./Onboarding/Innovatieverdeling";
+import Seizoensverdeling from "./Onboarding/Seizoensverdeling";
+import Identiteitsverdeling from "./Onboarding/Identiteitsverdeling";
+import Trendyverdeling from "./Onboarding/Trendyverdeling";
+
+import Localiteitsverdeling from "./Onboarding/Localiteitsverdeling";
+import Oorsprongverdeling from "./Onboarding/Oorsprongverdeling";
+import Budgetverdeling from "./Onboarding/Budgetverdeling";
+import Ecologyverdeling from "./Onboarding/Ecologyverdeling";
+import Healthyverdeling from "./Onboarding/Healthyverdeling";
 
 const wrappedRoutes = [
     "/wrapped1",
@@ -87,6 +98,21 @@ function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/welcomepage" element={<WelcomePage />} />
                     <Route path="/contact" element={<ContactPage />} />
+
+
+                    <Route path="/regioverdeling" element={<Regioverdeling />} />
+                    <Route path="/leeftijdsverdeling" element={<Leeftijdsverdeling />} />
+                    <Route path="/innovatieverdeling" element={<Innovatieverdeling />} />
+                    <Route path="/seizoensverdeling" element={<Seizoensverdeling />} />
+                    <Route path="/identiteitsverdeling" element={<Identiteitsverdeling />} />
+                    <Route path="/trendyverdeling" element={<Trendyverdeling />} />
+
+                    <Route path="/localiteitsverdeling" element={<Localiteitsverdeling />} />
+                    <Route path="/oorsprongverdeling" element={<Oorsprongverdeling />} />
+                    <Route path="/budgetverdeling" element={<Budgetverdeling />} />
+                    <Route path="/ecologyverdeling" element={<Ecologyverdeling />} />
+                    <Route path="/healthyverdeling" element={<Healthyverdeling />} />
+
 
                     <Route path="/personas" element={<Personas />} />
                     <Route path="/clienteleanalysis" element={<ClienteleAnalysis />} />

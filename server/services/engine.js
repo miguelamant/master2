@@ -18,15 +18,15 @@ export const FILTERS = {
   is_vitamin:     { path: 'products.is_vitamin',     op: 'eq', coerce: toInt },
   is_collagen:    { path: 'products.is_collagen',    op: 'eq', coerce: toInt },
 
-  category:          { path: 'products.categories.category_name',          op: 'eq' },
-  category_ilike:    { path: 'products.categories.category_name',          op: 'ilike', coerce: v => `%${v}%` },
-  subcategory:       { path: 'products.subcategories.subcat_name',         op: 'eq' },
-  subcategory_ilike: { path: 'products.subcategories.subcat_name',         op: 'ilike', coerce: v => `%${v}%` },
-  subsubcategory:       { path: 'products.subsubcategories.subsubcat_name',   op: 'eq' },
-  subsubcategory_ilike: { path: 'products.subsubcategories.subsubcat_name',   op: 'ilike', coerce: v => `%${v}%` },
+  category:          { path: 'products.categories.category_name',            op: 'eq' },
+  category_ilike:    { path: 'products.categories.category_name',            op: 'ilike', coerce: v => `%${v}%` },
+  subcategory:       { path: 'products.subcategories.subcat_name',           op: 'eq' },
+  subcategory_ilike: { path: 'products.subcategories.subcat_name',           op: 'ilike', coerce: v => `%${v}%` },
+  subsubcategory:       { path: 'products.subsubcategories.subsubcat_name',  op: 'eq' },
+  subsubcategory_ilike: { path: 'products.subsubcategories.subsubcat_name',  op: 'ilike', coerce: v => `%${v}%` },
 
-  subcategory_in:    { path: 'products.subcategories.subcat_name',       op: 'in',  coerce: toArr },
-  subsubcategory_in: { path: 'products.subsubcategories.subsubcat_name', op: 'in',  coerce: toArr },
+  subcategory_in:    { path: 'products.subcategories.subcat_name',           op: 'in',  coerce: toArr },
+  subsubcategory_in: { path: 'products.subsubcategories.subsubcat_name',     op: 'in',  coerce: toArr },
 
   search: { op: 'search', fields: ['products.name','products.brand'] },
 
@@ -78,9 +78,9 @@ export function applyFilters(baseQuery, rawFilters = {}, options = {}) {
 
     const path = rule.path || '';
     if (path.startsWith('products')) needProducts = true;
-    if (path.includes('categories'))     { needCategories = true;    needProducts = true; catFiltersUsed    = true; }
-    if (path.includes('subcategories'))  { needSubcats    = true;    needProducts = true; subcatFiltersUsed = true; }
-    if (path.includes('subsubcategories')) { needSubsubcats = true;  needProducts = true; subsubFiltersUsed = true; }
+    if (path.includes('categories'))       { needCategories = true;   needProducts = true; catFiltersUsed    = true; }
+    if (path.includes('subcategories'))    { needSubcats    = true;   needProducts = true; subcatFiltersUsed = true; }
+    if (path.includes('subsubcategories')) { needSubsubcats = true;   needProducts = true; subsubFiltersUsed = true; }
 
     if (rule.op === 'search') {
       const q = (val && (val.q ?? val) || '').toString().trim();
@@ -99,12 +99,23 @@ export function applyFilters(baseQuery, rawFilters = {}, options = {}) {
   const subsubJoin     = (subsubFiltersUsed || includeSubsubcategories) ? '!inner' : '';
 
   const baseCols = 'id_menu_item,price,created_at';
+
+  // ✅ FIX: include price band fields so they don't come back null
   const productCols =
-    (needProducts || needCategories || needSubcats || needSubsubcats)
-      ? `,products${productsJoin}(
+      (needProducts || needCategories || needSubcats || needSubsubcats)
+          ? `,products${productsJoin}(
            id_product,
            name,
            brand,
+
+           floor_price,
+           low_price,
+           high_price,
+           ceiling_price,
+
+           price_retail,
+           sugar_content,
+
            is_high_margin,
            is_trending,
            is_zero,
@@ -124,7 +135,7 @@ export function applyFilters(baseQuery, rawFilters = {}, options = {}) {
            ${needSubcats     ? `,subcategories${subcatsJoin}(subcat_name,id_subcat)` : ''}
            ${needSubsubcats  ? `,subsubcategories${subsubJoin}(subsubcat_name,id_subsubcat)` : ''}
          )`
-      : '';
+          : '';
 
   baseQuery = baseQuery.select(`${baseCols}${productCols}`);
 
