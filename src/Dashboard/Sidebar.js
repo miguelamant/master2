@@ -94,16 +94,16 @@ const Sidebar = ({ onSelectionChange, selectedOption }) => {
                     className={`sidebar-list-item ${selectedOption === 'edit-menu' ? 'active' : ''}`}
                     onClick={(e) => handleClick('edit-menu', false, e)}
                 >
-                    Jouw assortiment
+                    Assortiment
                 </li>
-
+                {/*
                 <li
                     className={`sidebar-list-item ${selectedOption === 'to-reprice' ? 'active' : ''}`}
                     onClick={(e) => handleClick('to-reprice', false, e)}
                 >
                     To reprice
                 </li>
-                {/*
+
                 <li
                     className={`sidebar-list-item ${selectedOption === 'wrapped' ? 'active' : ''}`}
                     onClick={(e) => handleClick('wrapped', false, e)}
