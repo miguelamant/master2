@@ -6,8 +6,13 @@ import magnifyIcon from "../../Icons/magnifying_glass.svg";
 import checkIcon from "../../Icons/check.svg";
 import { convertItemLabel } from "../utils/itemLabelMap";
 import { convertDisplayLabel } from "../utils/labelMap";
-import { getGroupExplanation } from "../utils/explanations";
+import { getGroupExplanation, hasHardCodedExplanation } from "../utils/explanations";
 import { makeHoverKey } from "../utils/hoverKey";
+import { convertBaseLabel } from "../utils/labelMap";
+import { normToken } from "../utils/normalize";
+import { api } from "../../../apiService";
+
+const _aiExplCache = new Map(); // key -> { text } | '__loading__'
 
 // Parse composite labels like "COLA · Still", "LEMONADES · Sparkling", etc.
 function parseCompositeMulti(val) {
@@ -125,8 +130,13 @@ export default function SummaryGridRow(props) {
     if (is_sparkling === 1) rowBadges.push("sparkling");
     if (is_sparkling === 0) rowBadges.push("badge_still");
 
+    const iconLimit = compact ? 20 : Infinity;
+    const iconCount = Math.max(0, actual);
+    const visibleIconCount = Math.min(iconCount, iconLimit);
+    const iconOverflow = iconCount - visibleIconCount;
+
     const icons = [];
-    for (let i = 0; i < Math.max(0, actual); i++) {
+    for (let i = 0; i < visibleIconCount; i++) {
         icons.push(
             <span key={`${groupValue}-${i}`} className="segment-icon-wrapper">
         <TasteIconWithBadges token={base} badges={rowBadges} size={20} title={`${displayLabel} (${actual})`} />
@@ -233,8 +243,51 @@ export default function SummaryGridRow(props) {
           <span
               onMouseEnter={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
-                  const info = getGroupExplanation(base);
-                  setHoverBucket({ anchorRect: rect, title: info.title, text: info.text });
+
+                  // 1. Hard-coded entry → use as-is
+                  if (hasHardCodedExplanation(base)) {
+                      const info = getGroupExplanation(base);
+                      setHoverBucket({ anchorRect: rect, title: info.title, text: info.text });
+                      return;
+                  }
+
+                  const cacheKey = String(groupValue);
+                  const cached = _aiExplCache.get(cacheKey);
+
+                  // 2. Already fetched → show immediately
+                  if (cached && cached !== '__loading__') {
+                      setHoverBucket({ anchorRect: rect, title: convertBaseLabel(normToken(base)), text: cached.text });
+                      return;
+                  }
+
+                  // 3. Show loading state
+                  const title = convertBaseLabel(normToken(base));
+                  setHoverBucket({ anchorRect: rect, title, text: 'Loading explanation…' });
+
+                  if (cached === '__loading__') return; // fetch already in flight
+
+                  // 4. Fetch from backend
+                  _aiExplCache.set(cacheKey, '__loading__');
+
+                  const ov = hoverOverrides && hoverOverrides[cacheKey];
+                  const baseInPred = ov?.predicates?.find(p => p.op === 'in');
+                  const subsubcategories = baseInPred?.value ?? [];
+
+                  api.post('/api/explain-bucket', { label: cacheKey, subsubcategories, section: groupBy })
+                      .then(({ data }) => {
+                          const text = data.text || 'No explanation available.';
+                          _aiExplCache.set(cacheKey, { text });
+                          setHoverBucket(prev =>
+                              prev && prev.title === title ? { ...prev, text } : prev
+                          );
+                      })
+                      .catch(() => {
+                          const text = 'Explanation unavailable.';
+                          _aiExplCache.set(cacheKey, { text });
+                          setHoverBucket(prev =>
+                              prev && prev.title === title ? { ...prev, text } : prev
+                          );
+                      });
               }}
               onMouseLeave={() => setHoverBucket(null)}
               style={{ display: "inline-flex" }}
@@ -254,6 +307,19 @@ export default function SummaryGridRow(props) {
                     onMouseLeave={() => setHoverCat && setHoverCat(null)}
                 >
                     {icons}
+
+                    {iconOverflow > 0 && (
+                        <span style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            fontSize: 12,
+                            fontWeight: 700,
+                            opacity: 0.7,
+                            marginLeft: 2,
+                        }}>
+                            +{iconOverflow}
+                        </span>
+                    )}
 
                     {isOpen && !showItemsInline && (
                         <div className="hover-list-popover">

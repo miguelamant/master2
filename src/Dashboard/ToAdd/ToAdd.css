@@ -1,15 +1,17 @@
 .toadd-grid .segment-section,
 .toadd-grid .items-section {
-    background-color: var(--ivory);
-    border-radius: 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: var(--bg-card);
+    border-radius: 1.5rem;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     padding: 1.5rem;
 }
 
 .section-title {
     font-size: 1.5rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
 }
 
 .segment-bars {
@@ -153,24 +155,30 @@
     margin-right: 1.8rem;
     display: flex;
     align-items: center;
-    background-color: #fde3d6; /* Light peach background */
-    border-radius: 1.5rem;
-    padding: 0.5rem 1rem;
-    width: 15rem; /* Adjust width */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 0.4rem 0.9rem;
+    width: 15rem;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.search-bar:focus-within {
+    border-color: var(--border-accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .search-bar input {
     border: none;
     background: transparent;
     outline: none;
-    font-size: 1rem;
-    color: #fa954b;
+    font-size: 0.9rem;
+    color: var(--text-primary);
     width: 100%;
 }
 
 .search-bar input::placeholder {
-    color: #fa954b;
+    color: var(--text-muted);
     opacity: 0.7;
 }
 
@@ -219,7 +227,7 @@
 .stat-card h2 {
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-muted);
 }
 
 .stat-card p {
@@ -334,8 +342,9 @@
     opacity: 0;
     width: max-content;
     max-width: 220px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-medium);
+    color: var(--text-primary);
     text-align: left;
     border-radius: 6px;
     padding: 0.5rem;
@@ -370,19 +379,19 @@
 }
 
 .add-button:hover {
-    background-color: #ff9640; /* iets donkerder tintje van sandy-brown */
+    background-color: #4f46e5;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
 }
 
 .add-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
 .add-button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(250, 149, 75, 0.4); /* highlight ring */
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.35);
 }
 
 
@@ -399,7 +408,7 @@
 
 .recommended-price {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .confirm-add {
@@ -431,7 +440,8 @@
     max-width: 460px;
     z-index: 1000;
     text-align: center;
-    border: 5px solid black;
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-accent);
     pointer-events: all;
     font-family: inherit;
 }
@@ -462,7 +472,9 @@
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    background-color: #eee;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
     transition: all 0.2s ease-in-out;
 }
 
@@ -545,9 +557,9 @@
     position: absolute;
     z-index: 30;
     transform: translateY(8px);
-    background: #fff;
-    border: 1px solid #e6e6e6;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     padding: 0.5rem 0.75rem;
     border-radius: 0.75rem;
     min-width: 350px;
@@ -581,7 +593,7 @@
 .hover-name { font-weight: 600; }
 .hover-price { opacity: 0.8; }
 
-.hover-empty { color: #999; font-style: italic; }
+.hover-empty { color: var(--text-muted); font-style: italic; }
 
 /*REMOVE BELOW FOR OLD CSS */
 
@@ -589,9 +601,9 @@
 
 
 
-/* header spans both columns in row 1 */
+/* header in left column only, row 1 */
 .segment-section {
-    grid-column: 1 / -1;   /* columns 1 through 2 */
+    grid-column: 1;
     grid-row: 1;
 }
 
@@ -614,11 +626,12 @@
 
 /* card: the visual panel */
 .optionbar-container > *:first-child{
-    background: var(--ivory);
-    border-radius: 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,.1);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     padding: 0.5rem;
-    max-height: inherit;            /* keep the scrolling here */
+    max-height: inherit;
     overflow: auto;
 }
 
@@ -632,9 +645,9 @@
 
 
 
-/* Header card spans both columns */
+/* Header card in left column only */
 .segment-section {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 1;
 }
 
@@ -651,15 +664,22 @@
 /* flatten the wrapper so its children become grid items */
 .centre-content { display: contents; }
 
-/* header spans both columns (row 1) */
-.segment-section { grid-column: 1 / -1; grid-row: 1; }
+/* header in left column only (row 1) */
+.segment-section { grid-column: 1; grid-row: 1; }
+
+/* stereotype panel in right column (row 1) */
+.stereotype-panel-container {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+}
 
 /* list area in left column (row 2) */
 .items-section   { grid-column: 1; grid-row: 2; }
 
-/* Make header text black (and readable) */
+/* Header text on dark surface */
 .segment-section .section-header {
-    color: #111;              /* base color for everything inside */
+    color: var(--text-primary);
 }
 
 .segment-section .section-header .section-title,
@@ -667,15 +687,15 @@
 .segment-section .section-header button,
 .segment-section .section-header span,
 .segment-section .section-header input {
-    color: #111;
+    color: var(--text-primary);
 }
 
 /* PresetInfo text specifically */
 .segment-section .section-header .preset-info__line {
-    color: #111;
+    color: var(--text-primary);
 }
 .segment-section .section-header .preset-info__line--muted {
-    color: #444;              /* darker than white, keep muted look */
+    color: var(--text-muted);
     opacity: 1;               /* in case a global opacity is making it too light */
 }
 
@@ -712,9 +732,9 @@
 .willy-image-slot {
     margin-top: 0.5rem;
     height: 90px;            /* reserve plaats voor image */
-    border: 1px dashed #ddd; /* placeholder */
+    border: 1px dashed var(--border-medium);
     border-radius: 0.75rem;
-    background: #fafafa;
+    background: var(--bg-surface);
 }
 
 /* MIDDLE */
@@ -754,7 +774,7 @@
     height: 140px;
     object-fit: contain;
     display: block;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
 }
@@ -762,14 +782,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999;
-    background: #fafafa;
+    color: var(--text-muted);
+    background: var(--bg-surface);
 }
 
 /* make labels black */
 .willy-label,
 .preset-name {
-    color: #000;
+    color: var(--text-primary);
 }
 
 /* smaller total count */
@@ -787,7 +807,7 @@
     height: 140px;
     object-fit: contain;
     display: block;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
     margin-bottom: 0.5rem;
@@ -799,7 +819,7 @@
     height: 140px;
     object-fit: contain;
     display: block;
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
 }
@@ -808,11 +828,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999;
-    background: #fafafa;
+    color: var(--text-muted);
+    background: var(--bg-surface);
 }
 
-/* Force black text inside the To Add view */
+/* Ensure text is legible on dark surfaces inside ToAdd */
 .toadd-grid h1,
 .toadd-grid h2,
 .toadd-grid h3,
@@ -826,10 +846,9 @@
 .toadd-grid .total-count--small,
 .toadd-grid .items-list,
 .toadd-grid .optionbar-container,
-.toadd-grid button,
 .toadd-grid input,
 .toadd-grid .preset-name {
-    color: #000 !important;
+    color: var(--text-primary);
 }
 
 /* Keep icons/images unaffected (no color override) */
@@ -848,9 +867,9 @@
 }
 
 .kpi-badge { font-weight: 800; font-size: 16px; letter-spacing: .2px; }
-.kpi-badge--green  { color: #137333 !important; }
-.kpi-badge--orange { color: #b45309 !important; }
-.kpi-badge--red    { color: #b91c1c !important; }
+.kpi-badge--green  { color: var(--color-success) !important; }
+.kpi-badge--orange { color: var(--color-warning) !important; }
+.kpi-badge--red    { color: var(--color-danger)  !important; }
 
 
 

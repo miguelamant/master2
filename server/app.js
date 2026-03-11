@@ -18,6 +18,7 @@ import miscRoutes from "./routes/misc.routes.js";
 import layersRoutes from "./routes/layers.routes.js";
 import personaRoutes from "./routes/persona.routes.js";
 import businessPersonasRoutes from "./routes/businessPersonas.routes.js";
+import explainRoutes from "./routes/explain.routes.js";
 
 export const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api", miscRoutes);
 app.use("/api", layersRoutes);
 app.use("/api", personaRoutes);
 app.use("/api", businessPersonasRoutes);
+app.use("/api", explainRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {

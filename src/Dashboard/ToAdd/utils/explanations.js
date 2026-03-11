@@ -192,6 +192,13 @@ const EXPLAIN = {
 };
 
 /**
+ * Returns true if a hard-coded explanation exists for this label.
+ */
+export function hasHardCodedExplanation(rawLabel) {
+    return !!EXPLAIN[normToken(rawLabel)];
+}
+
+/**
  * Ophalen van gestructureerde uitleg.
  * Returned shape:
  *  { token, title, text }  // text bevat definitie, “Stijlen:” en “Denk aan:” (met \n\n)

@@ -8,16 +8,19 @@ import Menu from "./Menu";
 import './Layout.css';
 import '../index.css';
 import ToAdd from './ToAdd';
+import CategoryGrid from './CategoryGrid';
 
 const ToRemoveComponent = () => (
     <div><h2>To Remove Component</h2><p>Coming soon...</p></div>
 );
 
 const Layout = ({ children }) => {
-    const [selectedOption, setSelectedOption] = useState('beers');
+    const [selectedOption, setSelectedOption] = useState(null);
 
     let MainContent = null;
-    switch (selectedOption) {
+    if (selectedOption === null) {
+        MainContent = <CategoryGrid onSelect={setSelectedOption} />;
+    } else switch (selectedOption) {
         case 'stats':
             MainContent = <TopWorstSellers />;
             break;
@@ -71,6 +74,7 @@ const Layout = ({ children }) => {
             <Sidebar
                 selectedOption={selectedOption}
                 onSelectionChange={setSelectedOption}
+                onGoBack={() => setSelectedOption(null)}
             />
             <div className="main-content">
                 {MainContent}

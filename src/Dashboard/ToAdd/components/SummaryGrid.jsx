@@ -109,6 +109,7 @@ export default function SummaryGrid(props) {
     const detRows = !!aggregateRows?.enabled && !!aggregateRows?.deterministic;
 
     const matrixMode = detCols && detRows;
+    const rowsOnlyMode = detRows && !matrixMode;
 
     const colDefs = React.useMemo(() => {
         const cols = Array.isArray(aggregateTop?.columns) ? aggregateTop.columns : [];
@@ -140,15 +141,24 @@ export default function SummaryGrid(props) {
 
     const assignedBuckets = React.useMemo(() => {
         const set = new Set();
-        for (const b of allBucketsInCounts) {
-            if (bucketToCol.has(b) && bucketToRow.has(b)) set.add(b);
-        }
-        // also consider buckets that exist in defs even if count is 0 / missing from counts
-        for (const [b] of bucketToCol.entries()) {
-            if (bucketToRow.has(b)) set.add(b);
+        if (rowsOnlyMode) {
+            for (const b of allBucketsInCounts) {
+                if (bucketToRow.has(b)) set.add(b);
+            }
+            for (const [b] of bucketToRow.entries()) {
+                set.add(b);
+            }
+        } else {
+            for (const b of allBucketsInCounts) {
+                if (bucketToCol.has(b) && bucketToRow.has(b)) set.add(b);
+            }
+            // also consider buckets that exist in defs even if count is 0 / missing from counts
+            for (const [b] of bucketToCol.entries()) {
+                if (bucketToRow.has(b)) set.add(b);
+            }
         }
         return set;
-    }, [allBucketsInCounts, bucketToCol, bucketToRow]);
+    }, [allBucketsInCounts, bucketToCol, bucketToRow, rowsOnlyMode]);
 
     const unassignedBuckets = React.useMemo(() => {
         const out = [];
@@ -345,8 +355,96 @@ export default function SummaryGrid(props) {
                 </div>
             )}
 
-            {/* ✅ MATRIX VIEW */}
-            {matrixMode ? (
+            {/* ✅ ROWS-ONLY VIEW */}
+            {rowsOnlyMode ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {rowDefs.map((row, rowIdx) => {
+                        const rTotal = rowTotals[rowIdx] ?? 0;
+                        if (rTotal === 0) return null;
+
+                        // hide zero-count sub-buckets by default, unless row has keepEmpty: true
+                        const rowBuckets = row?.keepEmpty
+                            ? (row?.buckets || [])
+                            : (row?.buckets || []).filter(
+                                (b) => Number(countsByCategory?.[b] ?? 0) > 0
+                              );
+                        const rowIcon = row?.iconToken ? iconFor(row.iconToken) : null;
+
+                        return (
+                            <div key={rowIdx} style={{
+                                background: "rgba(255,255,255,0.03)",
+                                border: "1px solid rgba(0,0,0,0.25)",
+                                borderRadius: 14,
+                                padding: "10px 12px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 14,
+                            }}>
+                                {/* Left: count + icon + title */}
+                                <div style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "flex-start",
+                                    justifyContent: "center",
+                                    minWidth: 90,
+                                    gap: 4,
+                                    flexShrink: 0,
+                                }}>
+                                    {/* count left of icon, on same line */}
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <div style={{ fontWeight: 900, fontSize: 22, lineHeight: 1 }}>{rTotal}</div>
+                                        {rowIcon && <img src={rowIcon} alt="" aria-hidden="true" style={{ width: 24, height: 24 }} />}
+                                    </div>
+                                    <div style={{ fontWeight: 700, fontSize: 11, opacity: 0.75, lineHeight: 1.2 }}>{row.title}</div>
+                                </div>
+
+                                {/* Divider */}
+                                <div style={{ width: 1, alignSelf: "stretch", background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
+
+                                {/* Right: sub-buckets — free-flowing, wraps after ~10 icons wide */}
+                                <div style={{
+                                    flex: 1,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: 14,
+                                    alignItems: "flex-start",
+                                    alignContent: "flex-start",
+                                }}>
+                                    {rowBuckets.map((bucket) => {
+                                        const chosen = findSummaryFor(bucket);
+                                        return (
+                                            <SummaryGridRow
+                                                key={bucket}
+                                                {...props}
+                                                groupValue={bucket}
+                                                chosen={chosen}
+                                                showItemsInline={showItemsInline}
+                                                compact
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    {/* Unassigned buckets fall through to a normal column layout */}
+                    {unassignedBuckets.length > 0 && (
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns: `repeat(${safeCols}, minmax(0, 1fr))`,
+                            gap: 10,
+                        }}>
+                            {unassignedBuckets.map((k) => {
+                                const chosen = findSummaryFor(k);
+                                return (
+                                    <SummaryGridRow key={k} {...props} groupValue={k} chosen={chosen} showItemsInline={showItemsInline} />
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            ) : matrixMode ? (
                 <div
                     style={{
                         display: "grid",

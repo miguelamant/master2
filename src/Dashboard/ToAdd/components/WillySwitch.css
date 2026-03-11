@@ -10,8 +10,8 @@
     width: 36px;
     height: 36px;
     border-radius: 9999px;
-    border: 1px solid rgba(0,0,0,0.15);
-    background: #fff;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-elevated);
     display: inline-grid;
     place-items: center;
     cursor: pointer;
@@ -19,7 +19,8 @@
 }
 
 .willy-round-btn:hover {
-    box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+    border-color: var(--border-accent);
+    box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .willy-round-btn img {

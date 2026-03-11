@@ -1,55 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg-page:     #080d18;
+  --bg-surface:  #f0f4f8;
+  --bg-card:     #ffffff;
+  --bg-elevated: #f8fafc;
 
-/* Globale font family */
+  /* Borders */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.12);
+  --border-accent: rgba(99, 102, 241, 0.45);
+
+  /* Accents */
+  --accent:        #818cf8;
+  --accent-bright: #6366f1;
+  --accent-glow:   rgba(129, 140, 248, 0.18);
+  --accent-cyan:   #67e8f9;
+  --accent-purple: #c084fc;
+
+  /* Text */
+  --text-primary: #1e293b;
+  --text-muted:   #64748b;
+  --text-faint:   #94a3b8;
+
+  /* Semantic */
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger:  #f87171;
+
+  /* Legacy variable remaps (backward-compat with existing classes) */
+  --sandy-brown: #818cf8;
+  --ivory:       #ffffff;
+  --oxford-blue: #1e293b;
+  --light-cyan:  #67e8f9;
+  --jordy-blue:  #1e2d4a;
+  --bice-blue:   #818cf8;
+}
+
+/* ─── Font fallback import ───────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
 * {
-  font-family: 'Quicksand', sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Grote koptekst (Font 1) */
-.heading-large {
-  font-size: 40px;
-  font-weight: 600; /* SemiBold */
-  line-height: 1.2; /* Pas aan voor optimale spacing */
+html, body, #root {
+  height: 100%;
+  background: var(--bg-page);
+  color: var(--text-primary);
 }
 
-/* Middelgrote koptekst (Font 2) */
-.heading-medium {
-  font-size: 32px;
-  font-weight: 500; /* Medium */
-  line-height: 1.3;
+/* ─── Headings ───────────────────────────────────────────────────────────── */
+h1, h2, h3, h4,
+.heading-large, .heading-medium, .heading-small {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Kleine koptekst (Small Text) */
-.heading-small {
-  font-size: 24px;
-  font-weight: 400; /* Standaard gewicht */
-  line-height: 1.4;
-}
+.heading-large  { font-size: 40px; font-weight: 700; line-height: 1.15; letter-spacing: -0.03em; }
+.heading-medium { font-size: 32px; font-weight: 600; line-height: 1.2;  letter-spacing: -0.02em; }
+.heading-small  { font-size: 24px; font-weight: 500; line-height: 1.3;  letter-spacing: -0.01em; }
+.text-very-small  { font-size: 15px; font-weight: 400; line-height: 1.5; }
+.text-extra-small { font-size: 11px; font-weight: 400; line-height: 1.5; }
 
-/* Zeer kleine tekst (Very Small Text) */
-.text-very-small {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.4;
-}
+/* ─── Global Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: rgba(129, 140, 248, 0.22); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(129, 140, 248, 0.46); }
 
-/* Zeer zeer kleine tekst (Very Very Small Text) */
-.text-extra-small {
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-/* Kleurvariabelen */
-:root {
-  --sandy-brown: #D3D3D3; /* Vervang door de juiste hexkleur als nodig FA954B*/
-  --ivory: #F9FBF2;
-  --light-cyan: #D7F9FF;
-  --jordy-blue: #AFCBFF;
-  --oxford-blue:black ; /*#0E1C36*/
-  --bice-blue:black;
-  /*--bice-blue: #3A6EA5;*/
-}
+/* ─── Selection ──────────────────────────────────────────────────────────── */
+::selection { background: rgba(129, 140, 248, 0.3); color: #fff; }

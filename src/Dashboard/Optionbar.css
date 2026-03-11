@@ -1,32 +1,34 @@
 /* Optionbar.css */
 
-/* Container: wider + roomier padding */
 .optionbar-container {
-    background-color: var(--ivory);
-    border-radius: 2rem;
-    padding: 1.5rem 1.75rem;     /* ↑ a bit more padding */
-    width: 24rem;                /* was 15rem → ~33% wider */
-    max-width: 22rem;            /* guardrail */
-    margin: 2rem 2rem 2rem 0;    /* keep space from right edge */
-    box-shadow: none;
-
+    background: var(--bg-card);
+    border-radius: 1.5rem;
+    border: 1px solid var(--border-subtle);
+    padding: 1.1rem 1rem;
+    width: 24rem;
+    max-width: 22rem;
+    margin: 0 1rem 1rem 0;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .optionbar-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--sandy-brown);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
     margin: 0 0 1rem 0;
+    letter-spacing: -0.015em;
 }
 
 /* Scroll region */
 .optionbar-scrollable {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
 }
 
 /* Lists */
@@ -39,90 +41,67 @@
 .option-item {
     display: flex;
     align-items: center;
-    gap: 0.65rem;                 /* a touch more breathing room */
-    color: var(--oxford-blue);
-    margin-bottom: 0.55rem;
-    padding: 0.55rem 0.85rem;     /* larger hit box */
-    border-radius: 0.5rem;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    gap: 0.6rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    transition: all 0.18s ease;
+    cursor: pointer;
 }
 
 .option-item:hover {
-    background-color: var(--sandy-brown);
-    color: var(--ivory);
+    background: rgba(129, 140, 248, 0.1);
+    border-color: rgba(129, 140, 248, 0.2);
+    color: var(--text-primary);
 }
 
-/* ✔ Consistent checkbox sizing across browsers */
 .option-item input[type="checkbox"] {
     -webkit-appearance: auto;
     appearance: auto;
-    width: 1.15rem;               /* fixed size */
-    height: 1.15rem;
-    min-width: 1.15rem;
-    min-height: 1.15rem;
-    accent-color: var(--oxford-blue);
-    flex: 0 0 1.15rem;            /* prevent flex shrink/expand */
+    width: 1rem;
+    height: 1rem;
+    min-width: 1rem;
+    min-height: 1rem;
+    accent-color: var(--accent);
+    flex: 0 0 1rem;
 }
 
-/* ✔ Consistent icon sizing */
 .option-icon {
-    width: 24px;                  /* fixed and equal */
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
-    flex: 0 0 24px;               /* lock size in flex row */
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    flex: 0 0 22px;
+    opacity: 0.7;
 }
 
-/* Label follows hover color */
 .option-label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: bold;
-    font-size: 1.1rem;
+    font-weight: 500;
+    font-size: 0.92rem;
     color: inherit;
     cursor: pointer;
 }
 
 /* Divider */
 .optionbar-divider {
-    margin: 0.9rem 0;
+    margin: 0.65rem 0;
     border: none;
     height: 1px;
-    background-color: var(--sandy-brown);
+    background: var(--border-subtle);
 }
 
 /* Scrollbar */
-.optionbar-scrollable::-webkit-scrollbar { width: 8px; }
-.optionbar-scrollable::-webkit-scrollbar-track {
-    background: var(--ivory);
-    border-radius: 10px;
-}
-.optionbar-scrollable::-webkit-scrollbar-thumb {
-    background: #0E1C3622;
-    border-radius: 10px;
-}
-.optionbar-scrollable::-webkit-scrollbar-thumb:hover {
-    background: #0E1C3655;
-}
-/* spacing tweaks */
-.optionbar-container {
-    /* was: padding: 1.5rem 1.75rem; */
-    padding: 15rem 15rem 15rem 225rem;  /* ← a bit more left padding */
-    /* was: margin: 2rem 2rem 2rem 0; */
-    margin: 0rem 2rem 2rem 0;                /* ← smaller top margin */
-}
-/* place these at the end of Optionbar.css */
-.optionbar-container {
-    margin-top: -0.2rem !important;   /* smaller top margin */
-}
+.optionbar-scrollable::-webkit-scrollbar        { width: 4px; }
+.optionbar-scrollable::-webkit-scrollbar-track  { background: transparent; }
+.optionbar-scrollable::-webkit-scrollbar-thumb  { background: rgba(129,140,248,0.18); border-radius: 4px; }
+.optionbar-scrollable::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.4); }
 
 .optionbar-card {
-    padding-left: 0.5rem !important; /* more left padding you’ll actually see */
-    padding-top: 0.5rem !important;
-}
-
-/* (optional) if the scroll area also needs a nudge */
-.optionbar-scrollable {
-    padding-left: 0.25rem;
+    padding-left: 0.5rem;
+    padding-top: 0.5rem;
 }

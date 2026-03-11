@@ -81,6 +81,7 @@ import PlanSummary from './components/PlanSummary';
 import { normToken } from './utils/normalize';
 import { iconFor } from './utils/iconLoader';
 import RemoveFromMenuModal from "./components/RemoveFromMenuModal"; // still used to build tasteOptions icons
+import StereotypeSatisfactionPanel from './components/StereotypeSatisfactionPanel';
 
 // ---------- helpers ----------
 const DISPLAY_LABELS = {};
@@ -1087,6 +1088,64 @@ const normalizeCategory = (s) => {
   };
 
   const handleFocusGroup = (groupValue) => {
+    // ── Rollup bucket: use hoverOverrides predicates directly ──────────────
+    const rollupOv = hoverOverrides && hoverOverrides[groupValue];
+    if (rollupOv) {
+      const preds = Array.isArray(rollupOv.predicates) ? rollupOv.predicates : [];
+
+      // baseIn predicate → tastes Set (real subsubcategory/subcategory tokens)
+      const baseInPred = preds.find(
+          p => String(p.op || '').toLowerCase() === 'in' && p.field === (rollupOv.groupBy || groupBy)
+      );
+      const tastesSet = baseInPred && Array.isArray(baseInPred.value)
+          ? new Set(baseInPred.value.map(normToken))
+          : new Set();
+
+      // is_zero predicate → sugar state
+      const zeroEq = preds.find(p => p.field === 'is_zero' && String(p.op || '').toLowerCase() === 'eq');
+      const sugarState = zeroEq
+          ? (Number(zeroEq.value) === 1
+              ? { zero_sugar: true,  with_sugar: false }
+              : { zero_sugar: false, with_sugar: true })
+          : { zero_sugar: true, with_sugar: true };
+
+      // is_sparkling predicate → sparkling state
+      const sparkEq = preds.find(p => p.field === 'is_sparkling' && String(p.op || '').toLowerCase() === 'eq');
+      const sparklingState = sparkEq
+          ? (Number(sparkEq.value) === 1
+              ? { sparkling: true,  not_sparkling: false }
+              : { sparkling: false, not_sparkling: true })
+          : { sparkling: true, not_sparkling: true };
+
+      setToAddMode(true);
+      setFilters(prev => ({
+        ...prev,
+        tastes: tastesSet,
+        sugar: sugarState,
+        sparkling: sparklingState,
+      }));
+
+      // scroll to list
+      window.requestAnimationFrame(() => {
+        const targetEl = itemsSectionRef.current;
+        if (!targetEl) return;
+        const scroller = getScrollContainer(targetEl);
+        if (scroller === window) {
+          const rect = targetEl.getBoundingClientRect();
+          const targetY = window.scrollY + rect.top - window.innerHeight * 0.33;
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        } else {
+          const scrollerRect = scroller.getBoundingClientRect();
+          const elRect = targetEl.getBoundingClientRect();
+          const relTop = elRect.top - scrollerRect.top + scroller.scrollTop;
+          const targetY = relTop - scroller.clientHeight * 0.33;
+          scroller.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      });
+      return;
+    }
+
+    // ── Regular (non-rollup) bucket ─────────────────────────────────────────
     // parse suffixes (sparkling/zero/heritage)
     const { base, carb, zero, heritage } = parseCompositeWithHeritage(groupValue);
 
@@ -1324,6 +1383,13 @@ const normalizeCategory = (s) => {
           </div>
         </div>
 
+
+        <div className="stereotype-panel-container">
+          <StereotypeSatisfactionPanel
+            category={activeCategory}
+            filters={filters}
+          />
+        </div>
 
         <nav className="optionbar-container">
           <Optionbar

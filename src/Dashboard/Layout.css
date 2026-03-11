@@ -1,47 +1,47 @@
 .layout-container {
     display: flex;
     height: 100vh;
-    font-family: 'Quicksand', sans-serif;
+    background: var(--bg-page);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
 }
 
-/* Ensure the Sidebar takes up the proper width */
 .sidebar {
     flex-shrink: 0;
 }
 
-/* Main Content Styling */
 .main-content {
     flex: 1;
-    padding: 2rem;
-
+    padding: 1.25rem 1.75rem 1.25rem 1rem;
     overflow-y: auto;
+    background: var(--bg-surface);
+    display: block;
 }
 
-/* Filter Bar Styling */
+.main-content::-webkit-scrollbar       { width: 5px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.2); border-radius: 6px; }
+.main-content::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.42); }
+
+/* Filter Bar (legacy, rarely shown) */
 .filter-bar {
     width: 250px;
-    background-color: var(--jordy-blue);
-    color: var(--ivory);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border-left: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
     padding: 1rem;
 }
 
 .filter-header {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 600;
     margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
 }
 
-.filter-options {
-    list-style: none;
-    padding: 0;
-}
-
-.filter-options li {
-    margin-bottom: 0.5rem;
-}
-
-.filter-options input[type="checkbox"] {
-    margin-right: 0.5rem;
-}
+.filter-options { list-style: none; padding: 0; }
+.filter-options li { margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
+.filter-options input[type="checkbox"] { margin-right: 0.5rem; accent-color: var(--accent); }

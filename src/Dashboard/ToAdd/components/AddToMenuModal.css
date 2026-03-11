@@ -7,16 +7,24 @@
 .mode-toggle .toggle {
     padding: .4rem .8rem;
     border-radius: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
 }
 
 .mode-toggle .toggle.active {
-    background: #ffb680;
-    color: #172033;
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
 }
 
 .mode-toggle .toggle.active.danger {
-    background: #ff8a8a;
-    color: #172033;
+    background: rgba(248, 113, 113, 0.18);
+    border-color: rgba(248, 113, 113, 0.4);
+    color: #f87171;
 }
 
 .remove-confirm {
@@ -29,8 +37,11 @@
 }
 
 .modal-buttons .danger {
-    background: #ff8a8a;
+    background: rgba(248, 113, 113, 0.18) !important;
+    border-color: rgba(248, 113, 113, 0.4) !important;
+    color: #f87171 !important;
 }
-.remove-confirm { margin-top: 0.75rem; }
-.remove-confirm .warning { margin-top: 0.25rem; opacity: 0.8; }
-.modal-buttons .danger { background: #ff8a8a; }
+
+.modal-buttons .danger:hover {
+    background: rgba(248, 113, 113, 0.3) !important;
+}
