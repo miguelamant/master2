@@ -3,6 +3,7 @@ import { getProgress, getFinal, subscribeScoreStore } from '../ui/scoreStore';
 import checkGreen from '../../Icons/check_green.svg';
 import checkOrange from '../../Icons/check_orange.svg';
 import cross from '../../Icons/not_check.svg';
+import AssortmentSwitcher from '../../components/AssortmentSwitcher';
 
 function Mark({ v }) {
     if (v === 1)   return <img src={checkGreen}  alt="" style={{width:14,height:14}}/>;
@@ -19,7 +20,7 @@ export default function KPIHeader({
                                       prevPreset,
                                       nextPreset,
                                       activeCategory,
-                                      currentPreset, // not used, but okay to keep
+                                      currentPreset,
                                   }) {
     const [, force] = React.useState(0);
     React.useEffect(() => subscribeScoreStore(() => force(x => x + 1)), []);
@@ -45,13 +46,16 @@ export default function KPIHeader({
                 borderBottom: '1px solid rgba(0,0,0,0.08)',
             }}
         >
-            {/* LEFT: category cumulative */}
+            {/* LEFT: assortment switcher + category score stacked */}
             <div style={{ color: '#000', fontSize: 14, lineHeight: 1.25 }}>
+                <div style={{ marginBottom: 6 }}>
+                    <AssortmentSwitcher />
+                </div>
                 <div style={{ fontWeight: 700, marginBottom: 6 }}>
                     Category score{' '}
                     <span style={{ fontWeight: 800 }}>
-            {Math.round(earned * 10) / 10}/{denom}
-          </span>
+                        {Math.round(earned * 10) / 10}/{denom}
+                    </span>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     {marks.map((v, i) => <Mark key={`m-${i}`} v={v} />)}
@@ -59,7 +63,7 @@ export default function KPIHeader({
                 </div>
             </div>
 
-            {/* MIDDLE: fixed width column with round arrows */}
+            {/* MIDDLE: preset navigation */}
             <div
                 style={{
                     display: 'grid',
@@ -82,9 +86,9 @@ export default function KPIHeader({
 
                 <div style={{textAlign: 'center'}}>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8}}>
-                          <span style={{whiteSpace: 'nowrap'}}>
+                        <span style={{whiteSpace: 'nowrap'}}>
                             {personaInfo.line1} <strong>{headerKPI.total}</strong> {personaInfo.line2} {statusWord}
-                          </span>
+                        </span>
                         <img
                             src={headerKPI.icon}
                             alt=""
@@ -98,10 +102,7 @@ export default function KPIHeader({
                             }}
                         />
                     </div>
-
-                    <div className="total-count--large" style={{marginTop: 6}}>
-
-                    </div>
+                    <div className="total-count--large" style={{marginTop: 6}} />
                 </div>
 
                 <button
@@ -120,11 +121,8 @@ export default function KPIHeader({
                 </button>
             </div>
 
-            {/* RIGHT: keep info2 */}
-            <div style={{color: '#000', fontSize: 14, lineHeight: 1.25 }}>
-                <div style={{ fontWeight: 700, marginBottom: 6 }}></div>
-                {personaInfo.title}
-            </div>
+            {/* RIGHT: empty column to maintain 3-column grid */}
+            <div />
         </div>
     );
 }

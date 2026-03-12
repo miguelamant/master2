@@ -36,7 +36,9 @@ import LandingPage from "./Landing/LandinginPage";
 
 // Import OnboardingProvider for context
 import { OnboardingProvider } from './Onboarding/OnboardingContext';
+import { AssortmentProvider } from './context/AssortmentContext';
 import Regioverdeling from "./Onboarding/Regioverdeling";
+import Regioverdeling2a from "./Onboarding/Regioverdeling2a";
 import Innovatieverdeling from "./Onboarding/Innovatieverdeling";
 import Seizoensverdeling from "./Onboarding/Seizoensverdeling";
 import Identiteitsverdeling from "./Onboarding/Identiteitsverdeling";
@@ -93,6 +95,7 @@ function WrappedNavigator({ currentPath }) {
 function App() {
     return (
         <OnboardingProvider>
+        <AssortmentProvider>
             <Router>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
@@ -101,6 +104,7 @@ function App() {
 
 
                     <Route path="/regioverdeling" element={<Regioverdeling />} />
+                    <Route path="/regioverdeling2a" element={<Regioverdeling2a />} />
                     <Route path="/leeftijdsverdeling" element={<Leeftijdsverdeling />} />
                     <Route path="/innovatieverdeling" element={<Innovatieverdeling />} />
                     <Route path="/seizoensverdeling" element={<Seizoensverdeling />} />
@@ -145,6 +149,7 @@ function App() {
                     ))}
                 </Routes>
             </Router>
+        </AssortmentProvider>
         </OnboardingProvider>
     );
 }

@@ -1,26 +1,11 @@
 import React from 'react';
 import '../StereotypeSatisfactionPanel.css';
 
-const MOCK_SCORES = {
-  beers: [
-    { country: 'Belgium',     flag: '🇧🇪', score: 87 },
-    { country: 'Germany',     flag: '🇩🇪', score: 79 },
-    { country: 'Netherlands', flag: '🇳🇱', score: 72 },
-    { country: 'France',      flag: '🇫🇷', score: 54 },
-  ],
-  refreshments: [
-    { country: 'Netherlands', flag: '🇳🇱', score: 81 },
-    { country: 'Belgium',     flag: '🇧🇪', score: 68 },
-    { country: 'Germany',     flag: '🇩🇪', score: 63 },
-    { country: 'France',      flag: '🇫🇷', score: 76 },
-  ],
-};
-
-const DEFAULT_SCORES = [
-  { country: 'Belgium',     flag: '🇧🇪', score: 70 },
-  { country: 'Germany',     flag: '🇩🇪', score: 70 },
-  { country: 'Netherlands', flag: '🇳🇱', score: 70 },
-  { country: 'France',      flag: '🇫🇷', score: 70 },
+const PERSONA_MAP = [
+  { key: 'Belgian', country: 'Belgium',     flag: '🇧🇪' },
+  { key: 'French',  country: 'France',      flag: '🇫🇷' },
+  { key: 'German',  country: 'Germany',     flag: '🇩🇪' },
+  { key: 'Dutch',   country: 'Netherlands', flag: '🇳🇱' },
 ];
 
 function barColor(score) {
@@ -29,8 +14,10 @@ function barColor(score) {
   return 'bar-red';
 }
 
-export default function StereotypeSatisfactionPanel({ category }) {
-  const entries = MOCK_SCORES[category] ?? DEFAULT_SCORES;
+export default function StereotypeSatisfactionPanel({ personaFit = {} }) {
+  const entries = PERSONA_MAP
+    .map(({ key, country, flag }) => ({ country, flag, score: personaFit[key] ?? 0 }))
+    .sort((a, b) => b.score - a.score);
 
   return (
     <div className="stereotype-panel">

@@ -27,9 +27,11 @@ export async function menuCounts({
                                      within = {},
                                      filters = {},        // object flags (back-compat)
                                      predicates = [],     // array of { field, op, value }
+                                     assortmentId,
                                  } = {}) {
     const { data } = await api.post('/api/menu-counts', {
-        groupBy, section, includeEmpty, within, filters, predicates
+        groupBy, section, includeEmpty, within, filters, predicates,
+        ...(assortmentId != null && { assortmentId }),
     });
     return data;
 }
@@ -42,9 +44,11 @@ export async function menuItems({
                                     page = 1,
                                     pageSize = 100,
                                     orderBy = 'products.name',
+                                    assortmentId,
                                 } = {}) {
     const { data } = await api.post('/api/menu-items', {
-        filters, within, predicates, page, pageSize, orderBy
+        filters, within, predicates, page, pageSize, orderBy,
+        ...(assortmentId != null && { assortmentId }),
     });
     return data; // { items, page, pageSize, appliedFilters }
 }

@@ -15,6 +15,20 @@ router.post('/business-persona-weights', async (req, res) => {
     const businessId = req?.session?.user?.id;
     if (!businessId) return res.status(401).json({ error: 'Not authenticated' });
 
+    // Resolve assortment ID (from body or default to first assortment)
+    let assortmentId = req.body?.assortmentId ? Number(req.body.assortmentId) : null;
+    if (!assortmentId) {
+        const { data: aRow, error: aErr } = await supabase
+            .from('assortments')
+            .select('id')
+            .eq('business_id', businessId)
+            .order('sort_order', { ascending: true })
+            .limit(1)
+            .single();
+        if (aErr || !aRow) return res.status(400).json({ error: 'No assortment found' });
+        assortmentId = aRow.id;
+    }
+
     const w = req.body?.weights || {};
     const cleaned = {
         eco: Number(w.eco) || 0,
@@ -26,7 +40,7 @@ router.post('/business-persona-weights', async (req, res) => {
         traditional: Number(w.traditional) || 0,
         healthy: Number(w.healthy) || 0,
         average: Number(w.average) || 0,
-        party: Number(w.party) || 0, // renamed from "default" → "party"
+        party: Number(w.party) || 0,
     };
 
     // Clamp 0..100
@@ -34,11 +48,12 @@ router.post('/business-persona-weights', async (req, res) => {
         cleaned[k] = Math.max(0, Math.min(100, cleaned[k]));
     }
 
-    // Update the DB
+    // Update the assortment row
     const { error } = await supabase
-        .from('business_info')
+        .from('assortments')
         .update(cleaned)
-        .eq('id', businessId);
+        .eq('id', assortmentId)
+        .eq('business_id', businessId); // safety: ensure this assortment belongs to the business
 
     if (error) {
         console.error('[persona-weights] update failed:', error);
@@ -50,6 +65,7 @@ router.post('/business-persona-weights', async (req, res) => {
         const PERSONA_DIR = path.resolve('src/Dashboard/ToAdd/engine/context_and_clientele');
         const payload = await rebuildMergedMatrixForBusiness({
             businessId,
+            assortmentId,
             rootDir: PERSONA_DIR,
         });
         return res.json({

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { menuCounts } from '../../../apiService';
 
-export default function useMenuCounts({ groupBy, section, within, apiFilters, predicates }) {
+export default function useMenuCounts({ groupBy, section, within, apiFilters, predicates, assortmentId }) {
     const [countsByCategory, setCountsByCategory] = useState({});
 
     useEffect(() => {
@@ -15,7 +15,8 @@ export default function useMenuCounts({ groupBy, section, within, apiFilters, pr
                     includeEmpty: true,
                     within,
                     filters: apiFilters,
-                    predicates
+                    predicates,
+                    assortmentId,
                 });
 
                 if (!alive) return;
@@ -33,7 +34,7 @@ export default function useMenuCounts({ groupBy, section, within, apiFilters, pr
         return () => {
             alive = false;
         };
-    }, [groupBy, section, within, apiFilters, predicates]);
+    }, [groupBy, section, within, apiFilters, predicates, assortmentId]);
 
     return countsByCategory;
 }

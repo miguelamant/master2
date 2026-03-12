@@ -4,30 +4,47 @@ let store = {};         // { [category]: { visited: { [viewId]: score }, order: 
 let packs = {};         // { [category]: { ids: string[], len: number } }
 let currentPos = {};    // { [category]: number }  // 0-based index of current view within the pack (optional)
 
+// active assortment ID — set at session start, scopes localStorage keys
+let _assortmentId = null;
+
 const listeners = new Set();
-const LS_KEY = 'scoreStore.v2';
-const LS_PACKS = 'scoreStore.packs.v1';
-const LS_POS = 'scoreStore.pos.v1';
+
+function lsKey()    { return _assortmentId ? `scoreStore.v2.${_assortmentId}`       : 'scoreStore.v2'; }
+function lsPacks()  { return _assortmentId ? `scoreStore.packs.v1.${_assortmentId}` : 'scoreStore.packs.v1'; }
+function lsPos()    { return _assortmentId ? `scoreStore.pos.v1.${_assortmentId}`   : 'scoreStore.pos.v1'; }
+
+// ---------- assortment init ----------
+/**
+ * Call once per session (when category is selected and assortmentId is known).
+ * Reloads store data scoped to the given assortment.
+ */
+export function initScoreStore(assortmentId) {
+    if (_assortmentId === assortmentId) return; // no-op if already set
+    _assortmentId = assortmentId;
+    store = {}; packs = {}; currentPos = {};
+    load();
+    emit();
+}
 
 // ---------- persistence ----------
 function load() {
     try {
-        const raw = localStorage.getItem(LS_KEY);
+        const raw = localStorage.getItem(lsKey());
         if (raw) store = JSON.parse(raw);
     } catch {}
     try {
-        const rawP = localStorage.getItem(LS_PACKS);
+        const rawP = localStorage.getItem(lsPacks());
         if (rawP) packs = JSON.parse(rawP);
     } catch {}
     try {
-        const rawPos = localStorage.getItem(LS_POS);
+        const rawPos = localStorage.getItem(lsPos());
         if (rawPos) currentPos = JSON.parse(rawPos);
     } catch {}
 }
 function save() {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(store)); } catch {}
-    try { localStorage.setItem(LS_PACKS, JSON.stringify(packs)); } catch {}
-    try { localStorage.setItem(LS_POS, JSON.stringify(currentPos)); } catch {}
+    try { localStorage.setItem(lsKey(), JSON.stringify(store)); } catch {}
+    try { localStorage.setItem(lsPacks(), JSON.stringify(packs)); } catch {}
+    try { localStorage.setItem(lsPos(), JSON.stringify(currentPos)); } catch {}
 }
 function emit() { listeners.forEach(fn => fn()); save(); }
 
@@ -45,9 +62,9 @@ export function resetAllScores() {
     packs = {};
     currentPos = {};
     try {
-        localStorage.removeItem(LS_KEY);
-        localStorage.removeItem(LS_PACKS);
-        localStorage.removeItem(LS_POS);
+        localStorage.removeItem(lsKey());
+        localStorage.removeItem(lsPacks());
+        localStorage.removeItem(lsPos());
     } catch {}
     emit();
 }

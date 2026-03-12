@@ -1,0 +1,143 @@
+.pw-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: "Quicksand", sans-serif;
+  color: var(--oxford-blue);
+}
+
+.pw-subtitle {
+  text-align: center;
+  opacity: 0.7;
+  font-size: 15px;
+  margin-bottom: 2.5rem;
+  max-width: 520px;
+}
+
+.pw-loading {
+  opacity: 0.5;
+  font-size: 16px;
+  margin: 2rem 0;
+}
+
+.pw-rows {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pw-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.pw-row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 110px;
+}
+
+.pw-flag {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.pw-name {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pw-bar-wrap {
+  flex: 1;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+}
+
+.pw-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.05s;
+  pointer-events: none;
+}
+
+.pw-handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 2;
+  touch-action: none;
+}
+
+.pw-handle:active {
+  cursor: grabbing;
+}
+
+.pw-handle-pct {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--oxford-blue);
+  pointer-events: none;
+}
+
+.pw-actions {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.pw-error {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pw-success {
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pw-back-btn {
+  background: none;
+  border: none;
+  color: var(--oxford-blue);
+  opacity: 0.55;
+  font-size: 14px;
+  font-family: "Quicksand", sans-serif;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.pw-back-btn:hover {
+  opacity: 0.85;
+}

@@ -19,6 +19,9 @@ import layersRoutes from "./routes/layers.routes.js";
 import personaRoutes from "./routes/persona.routes.js";
 import businessPersonasRoutes from "./routes/businessPersonas.routes.js";
 import explainRoutes from "./routes/explain.routes.js";
+import assortmentsRoutes from "./routes/assortments.routes.js";
+import stereotypeBenchmarksRoutes from "./routes/stereotypeBenchmarks.routes.js";
+import engineDistributionsRoutes from "./routes/engineDistributions.routes.js";
 
 export const app = express();
 
@@ -51,6 +54,9 @@ app.use("/api", layersRoutes);
 app.use("/api", personaRoutes);
 app.use("/api", businessPersonasRoutes);
 app.use("/api", explainRoutes);
+app.use("/api", assortmentsRoutes);
+app.use("/api", stereotypeBenchmarksRoutes);
+app.use("/api", engineDistributionsRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {

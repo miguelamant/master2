@@ -36,7 +36,8 @@ export default function useHoverLists({
                                           apiFilters = {},
                                           predicates = [],
                                           within = {},
-                                          section, // ✅ NEW (pass effectiveSection from ToReprice.jsx)
+                                          section,
+                                          assortmentId,
                                       }) {
     const [hoverLists, setHoverLists] = useState({});
     const [hoverCat, setHoverCat] = useState(null);
@@ -121,6 +122,7 @@ export default function useHoverLists({
                     page: 1,
                     pageSize: 200,
                     orderBy: "products.name",
+                    ...(assortmentId != null && { assortmentId }),
                 });
 
                 if (dbg?.enabled) {
@@ -137,7 +139,7 @@ export default function useHoverLists({
                 setHoverLists((prev) => ({ ...prev, [key]: [] }));
             }
         },
-        [apiFilters, groupBy, makeKey, hoverLists, predicates, within, section]
+        [apiFilters, groupBy, makeKey, hoverLists, predicates, within, section, assortmentId]
     );
 
     useEffect(() => {
