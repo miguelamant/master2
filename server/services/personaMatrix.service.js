@@ -81,15 +81,32 @@ function mergeMBArraysWeighted(arrays /* [{w, mb}], w∈[0..1] */) {
 }
 
 // --- main build --------------------------------------------------------------
-export async function getMergedMatrixForBusiness({ businessId, rootDir }) {
-    // 1) fetch persona weights for business
-    const { data: row, error } = await supabase
-        .from('business_info')
-        .select('party,budget,trendy,eco,sport,local,luxury,traditional,healthy,average')
-        .eq('id', businessId)
-        .single();
+export async function getMergedMatrixForBusiness({ businessId, assortmentId, rootDir }) {
+    // 1) resolve assortment row (weights now live in assortments table)
+    let row, fetchError;
+    if (assortmentId) {
+        const { data, error } = await supabase
+            .from('assortments')
+            .select('party,budget,trendy,eco,sport,local,luxury,traditional,healthy,average')
+            .eq('id', assortmentId)
+            .single();
+        row = data; fetchError = error;
+    } else {
+        // fall back: first assortment for this business
+        const { data, error } = await supabase
+            .from('assortments')
+            .select('id,party,budget,trendy,eco,sport,local,luxury,traditional,healthy,average')
+            .eq('business_id', businessId)
+            .order('sort_order', { ascending: true })
+            .limit(1)
+            .single();
+        row = data; fetchError = error;
+        if (data) assortmentId = data.id;
+    }
 
-    if (error) throw new Error(`DB error: ${error.message}`);
+    if (fetchError) throw new Error(`DB error: ${fetchError.message}`);
+
+    const cacheKey = assortmentId ? `a:${assortmentId}` : `b:${businessId}`;
 
     const rawWeights = mapDbRowToPersonaWeights(row);
     const entries = Object.entries(rawWeights).filter(([, v]) => Number(v) > 0);
@@ -103,7 +120,7 @@ export async function getMergedMatrixForBusiness({ businessId, rootDir }) {
     const etag = hashWeights(normWeights);
 
     // cache hit
-    const cached = CACHE.get(businessId);
+    const cached = CACHE.get(cacheKey);
     if (cached && cached.etag === etag) {
         return deepClone({
             version: cached.version,
@@ -191,7 +208,7 @@ export async function getMergedMatrixForBusiness({ businessId, rootDir }) {
         },
     };
 
-    CACHE.set(businessId, {
+    CACHE.set(cacheKey, {
         version: payload.version,
         layers: payload.layers,
         weights: payload.meta.weights,
@@ -202,7 +219,8 @@ export async function getMergedMatrixForBusiness({ businessId, rootDir }) {
     return deepClone(payload);
 }
 
-export async function rebuildMergedMatrixForBusiness({ businessId, rootDir }) {
-    CACHE.delete(businessId);
-    return getMergedMatrixForBusiness({ businessId, rootDir });
+export async function rebuildMergedMatrixForBusiness({ businessId, assortmentId, rootDir }) {
+    const key = assortmentId ? `a:${assortmentId}` : `b:${businessId}`;
+    CACHE.delete(key);
+    return getMergedMatrixForBusiness({ businessId, assortmentId, rootDir });
 }

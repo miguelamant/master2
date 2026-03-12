@@ -4,8 +4,24 @@ import { isAuthenticated } from "../middleware/auth.js";
 
 const router = Router();
 
+async function getDefaultAssortmentId(businessId) {
+  const { data, error } = await supabase
+    .from("assortments")
+    .select("id")
+    .eq("business_id", businessId)
+    .order("sort_order", { ascending: true })
+    .limit(1)
+    .single();
+  if (error || !data) throw new Error("No assortment found for business " + businessId);
+  return data.id;
+}
+
 router.get("/sales", isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   try {
     const { data: mItems, error } = await supabase
       .from("menu_items")
@@ -19,7 +35,7 @@ router.get("/sales", isAuthenticated, async (req, res) => {
         ),
         sales(sold_at)
       `)
-      .eq("business_id", businessId);
+      .eq("assortment_id", assortmentId);
     if (error) return res.status(500).json({ error: "Database error" });
 
     const stats = mItems.map(mi => {
@@ -50,6 +66,10 @@ router.get("/sales", isAuthenticated, async (req, res) => {
 
 router.get("/sales/last-year", isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const lastYear = new Date().getFullYear() - 1;
   const start = `${lastYear}-01-01`, end = `${lastYear}-12-31`;
   try {
@@ -65,7 +85,7 @@ router.get("/sales/last-year", isAuthenticated, async (req, res) => {
         ),
         sales(sold_at)
       `)
-      .eq("business_id", businessId);
+      .eq("assortment_id", assortmentId);
     if (error) return res.status(500).json({ error: "Database error" });
 
     const stats = mItems.map(mi => {
@@ -95,6 +115,10 @@ router.get("/sales/last-year", isAuthenticated, async (req, res) => {
 
 router.get("/sales/last-90-days", isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   try {
     const { data: mItems, error } = await supabase
       .from("menu_items")
@@ -103,7 +127,7 @@ router.get("/sales/last-90-days", isAuthenticated, async (req, res) => {
         products!inner(name, brand, categories!inner(category_name)),
         sales(sold_at)
       `)
-      .eq("business_id", businessId);
+      .eq("assortment_id", assortmentId);
     if (error) return res.status(500).json({ error: "Database error" });
 
     const allDates = mItems.flatMap(mi => mi.sales.map(s => new Date(s.sold_at)));
@@ -124,11 +148,15 @@ router.get("/sales/last-90-days", isAuthenticated, async (req, res) => {
 
 router.get("/sales/growth", isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   try {
     const { data: mItems, error } = await supabase
       .from("menu_items")
       .select(`id_menu_item, price, products!inner(name, brand), sales(sold_at)`)
-      .eq("business_id", businessId);
+      .eq("assortment_id", assortmentId);
     if (error) return res.status(500).json({ error: "Database error" });
 
     const stats = mItems.map(mi => {

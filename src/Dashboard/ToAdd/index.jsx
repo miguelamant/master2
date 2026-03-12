@@ -25,7 +25,8 @@ import AddToMenuModal from './components/AddToMenuModal';
  import { useLayersView } from './hooks/useLayersView';
  import { useRecommendations } from './hooks/useRecommendations';
 
-import { setViewScore } from './ui/scoreStore';
+import { setViewScore, initScoreStore } from './ui/scoreStore';
+import { useAssortment } from '../../context/AssortmentContext';
 
 
 
@@ -41,6 +42,9 @@ import { getWillyMode, setWillyMode, subscribeUIPrefs } from './ui/uiPrefs';
 import { convertBaseLabel } from './utils/labelMap';
 import { fetchMergedLayers } from './engine/mergedLayersClient';
 import useHoverLists from "./hooks/useHoverLists";
+import useStereotypeBenchmarks from "./hooks/useStereotypeBenchmarks";
+import useEngineDistributions from "./hooks/useEngineDistributions";
+import { usePersonaFit } from "./hooks/usePersonaFit";
 
 
 
@@ -116,10 +120,17 @@ const normalizeCategory = (s) => {
 
 
   export default function ToAdd({ section = 'beers' }) {
+      const { activeAssortmentId } = useAssortment() || {};
+
       const {
          activeCategory, currentPreset, presetIndex, setPresetIndex, effectiveSection,
              prevPreset, nextPreset, personaInfo, PACK_LEN
        } = usePresetNavigation(section);
+
+  // Initialize score store scoped to the active assortment
+  React.useEffect(() => {
+    if (activeAssortmentId != null) initScoreStore(activeAssortmentId);
+  }, [activeAssortmentId]);
 
   // 5) Also reset index whenever the *category* flips (Sidebar click)
   React.useEffect(() => {
@@ -151,6 +162,31 @@ const normalizeCategory = (s) => {
   }, [section, activeCategory, PACK_LEN, presetIndex, currentPreset, effectiveSection]);
 
 
+
+  const { benchmarks: stereotypeBenchmarks } = useStereotypeBenchmarks({
+    assortmentId: activeAssortmentId,
+    groupBy,
+    section: effectiveSection,
+    within,
+    filters: apiFilters,
+    predicates: presetPredicates,
+    rollups: currentPreset?.rollups ?? [],
+    enabled: true,
+  });
+
+  const rowDefs = currentPreset?.ui?.aggregateRows?.rows ?? [];
+
+  const dynamicLayers = useEngineDistributions({
+    assortmentId: activeAssortmentId,
+    groupBy,
+    section: effectiveSection,
+    within,
+    filters: apiFilters,
+    predicates: presetPredicates,
+    rollups: currentPreset?.rollups ?? [],
+    rowDefs,
+    enabled: true,
+  });
 
   const [sortOrder] = useState('top');
  // const [setItems] = useState([]);
@@ -193,9 +229,10 @@ const normalizeCategory = (s) => {
       groupBy,
       filterKey,
       apiFilters,
-      predicates: presetPredicates, // ✅ fix
+      predicates: presetPredicates,
       within,
-      section: effectiveSection,    // ✅ new
+      section: effectiveSection,
+      assortmentId: activeAssortmentId,
     });
 
 
@@ -481,10 +518,10 @@ const normalizeCategory = (s) => {
 
           const params = {
             section,
-            limit: hasSearch ? 100 : 1000, // 100 is a nicer UX than 50
+            limit: hasSearch ? 100 : 1000,
+            ...(activeAssortmentId != null && { assortmentId: activeAssortmentId }),
           };
 
-          // ✅ send RAW text to backend
           if (hasSearch) params.search = raw;
 
           const res = await api.get("/api/items-not-on-menu", {
@@ -552,7 +589,10 @@ const normalizeCategory = (s) => {
       try {
         const res = await api.get('/api/menu-items', {
           withCredentials: true,
-          params: { page: 1, pageSize: 500, orderBy: 'products.name' }
+          params: {
+            page: 1, pageSize: 500, orderBy: 'products.name',
+            ...(activeAssortmentId != null && { assortmentId: activeAssortmentId }),
+          }
         });
         if (!alive) return;
         setOnMenuItems(res.data?.items || []);
@@ -561,7 +601,7 @@ const normalizeCategory = (s) => {
       }
     })();
     return () => { alive = false; };
-  }, []);
+  }, [activeAssortmentId]);
 
   // —— Business info (for icons in list) ——
   useEffect(() => {
@@ -649,8 +689,14 @@ const normalizeCategory = (s) => {
            includeEmpty: currentPreset.includeEmpty ?? false,
            within, apiFilters, presetPredicates,
            partitionBy, forceShow, rollups: currentPreset.rollups || [], presetId, filterKey, showOnlyRollups: currentPreset.showOnlyRollups ?? false,
-
+           assortmentId: activeAssortmentId,
      });
+
+  const personaFit = usePersonaFit({
+    dynamicLayers,
+    countsByCategory,
+    rowDefs,
+  });
 
     useEffect(() => {
       if (activeCategory === 'refreshments') {
@@ -752,7 +798,8 @@ const normalizeCategory = (s) => {
       displayedCountsByCategory, viewGroups, layerCounts
     } = useLayersView({
       countsByCategory, groupBy, apiFilters, presetPredicates, within,
-      activeCategory, effectiveSection, currentPreset, layersOverride
+      activeCategory, effectiveSection, currentPreset, layersOverride,
+      dynamicLayers,
     });
 
 
@@ -1254,7 +1301,10 @@ const normalizeCategory = (s) => {
     const refreshOnMenuItems = async () => {
       const res = await api.get('/api/menu-items', {
         withCredentials: true,
-        params: { page: 1, pageSize: 500, orderBy: 'products.name' }
+        params: {
+          page: 1, pageSize: 500, orderBy: 'products.name',
+          ...(activeAssortmentId != null && { assortmentId: activeAssortmentId }),
+        }
       });
       setOnMenuItems(res.data?.items || []);
     };
@@ -1263,7 +1313,10 @@ const normalizeCategory = (s) => {
       const product_id = item?.id_product ?? item?.product_id ?? item?.id;
       await api.post(
           '/api/menu-items/add',
-          { product_id, price: Number(price) },
+          {
+            product_id, price: Number(price),
+            ...(activeAssortmentId != null && { assortmentId: activeAssortmentId }),
+          },
           { withCredentials: true }
       );
       await refreshOnMenuItems();
@@ -1271,7 +1324,8 @@ const normalizeCategory = (s) => {
 
     const removeMenuItem = async (id_menu_item) => {
       await api.delete(`/api/menu-items/${id_menu_item}`, {
-        withCredentials: true
+        withCredentials: true,
+        data: activeAssortmentId != null ? { assortmentId: activeAssortmentId } : undefined,
       });
       await refreshOnMenuItems();
     };
@@ -1337,6 +1391,7 @@ const normalizeCategory = (s) => {
                 showItemsInline={showItemsInline}
                 aggregateTop={aggregateTop}
                 ui={currentPreset?.ui}
+                stereotypeBenchmarks={stereotypeBenchmarks}
             />
           </div>
 
@@ -1386,8 +1441,7 @@ const normalizeCategory = (s) => {
 
         <div className="stereotype-panel-container">
           <StereotypeSatisfactionPanel
-            category={activeCategory}
-            filters={filters}
+            personaFit={personaFit}
           />
         </div>
 

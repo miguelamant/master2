@@ -103,11 +103,31 @@ function toPostgrestInList(v) {
 
 const router = Router();
 
+/** Resolve the assortment ID from request or fall back to the business's first assortment */
+async function resolveAssortmentId(req) {
+  const raw = req.body?.assortmentId ?? req.query?.assortmentId;
+  if (raw != null) return Number(raw);
+  // Fall back: fetch the first assortment for this business
+  const businessId = req.session.user.id;
+  const { data, error } = await supabase
+    .from('assortments')
+    .select('id')
+    .eq('business_id', businessId)
+    .order('sort_order', { ascending: true })
+    .limit(1)
+    .single();
+  if (error || !data) throw new Error('No assortment found for business ' + businessId);
+  return data.id;
+}
+
 /* ===== /api/menu-items (GET & POST) ===== */
 // ===== handler: query menu items with filters, paging, ordering =====
 // ===== handler: query menu items with filters, paging, ordering =====
 const handleMenuItems = async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const isGet = req.method === "GET";
   const body = isGet ? {} : (req.body || {});
 
@@ -153,7 +173,7 @@ const handleMenuItems = async (req, res) => {
         includeSubsubcategories,
       });
 
-      q = q.eq("business_id", businessId);
+      q = q.eq("assortment_id", assortmentId);
 
       // apply explicit predicates
       q = applyPredicates(q, Array.isArray(predicates) ? predicates : []);
@@ -252,7 +272,10 @@ router.post("/menu-items", isAuthenticated, handleMenuItems);
 
 // routes/menu.routes.js
 router.get("/menu-items/by-group", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const groupBy = String(req.query.groupBy || "category");
   const key     = String(req.query.key || "");
   const extra   = req.query; // optional: pass-thru like is_zero, etc.
@@ -279,7 +302,7 @@ router.get("/menu-items/by-group", isAuthenticated, async (req, res) => {
           subsubcategories(subsubcat_name)
         )
       `)
-        .eq('business_id', businessId);
+        .eq('assortment_id', assortmentId);
 
     // constrain by group
     if (groupBy === 'category') {
@@ -336,7 +359,10 @@ router.get("/menu-items/by-group", isAuthenticated, async (req, res) => {
 async function handleMenuCounts(req, res) {
   res.set("X-DBG-menu-counts", "1");
 
-  const businessId   = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const isGet = req.method === "GET";
   const payload = isGet ? req.query : req.body;
   const {
@@ -395,7 +421,7 @@ async function handleMenuCounts(req, res) {
       includeSubcategories,
       includeSubsubcategories,
     });
-    q = q.eq("business_id", businessId);
+    q = q.eq("assortment_id", assortmentId);
     q = applyPredicates(q, Array.isArray(filters) ? filters : predicates);
 
     const {data: rows, error} = await q;
@@ -490,7 +516,10 @@ router.post("/menu-counts", isAuthenticated, (req, res) => {
 
 //add and remove endpoints
 router.patch('/menu-items/:id/price', isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const id = Number(req.params.id);
   const price = Number(req.body?.price);
 
@@ -505,7 +534,7 @@ router.patch('/menu-items/:id/price', isAuthenticated, async (req, res) => {
       .from('menu_items')
       .update({ price })
       .eq('id_menu_item', id)
-      .eq('business_id', businessId);
+      .eq('assortment_id', assortmentId);
 
   if (error) return res.status(500).json({ error: 'Database error', detail: error.message });
   res.json({ success: true });
@@ -513,7 +542,10 @@ router.patch('/menu-items/:id/price', isAuthenticated, async (req, res) => {
 
 
 router.post('/menu-items/add', isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const { product_id, price } = req.body;
 
   if (!product_id || price == null) {
@@ -522,7 +554,7 @@ router.post('/menu-items/add', isAuthenticated, async (req, res) => {
 
   const { data, error } = await supabase
       .from('menu_items')
-      .insert([{ business_id: businessId, product_id, price }])
+      .insert([{ assortment_id: assortmentId, product_id, price }])
       .select('id_menu_item')
       .single();
 
@@ -533,7 +565,10 @@ router.post('/menu-items/add', isAuthenticated, async (req, res) => {
 
 // menu.routes.js
 router.delete('/menu-items/:id', isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const id = Number(req.params.id);
 
   if (!Number.isInteger(id)) {
@@ -544,7 +579,7 @@ router.delete('/menu-items/:id', isAuthenticated, async (req, res) => {
       .from('menu_items')
       .delete()
       .eq('id_menu_item', id)
-      .eq('business_id', businessId);
+      .eq('assortment_id', assortmentId);
 
   if (error) return res.status(500).json({ error: 'Database error', detail: error.message });
   res.json({ success: true });
@@ -555,7 +590,10 @@ router.delete('/menu-items/:id', isAuthenticated, async (req, res) => {
 
 /* ===== NEW: /api/menu-groups (POST) ===== */
 router.post("/menu-groups", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
   const { groupBy = ["category"], filters = {}, minBadgeCoverage = 0.95, sampleLimit = 8 } = req.body || {};
   const gb = Array.isArray(groupBy) ? groupBy : [String(groupBy || "category")];
 
@@ -565,7 +603,7 @@ router.post("/menu-groups", isAuthenticated, async (req, res) => {
   try {
     let q = supabase.from("menu_items");
     q = applyFilters(q, filters, { includeProducts, includeCategories });
-    q = q.eq("business_id", businessId);
+    q = q.eq("assortment_id", assortmentId);
 
     const { data, error } = await q;
     if (error) return res.status(500).json({ error: "Database error", detail: error.message });

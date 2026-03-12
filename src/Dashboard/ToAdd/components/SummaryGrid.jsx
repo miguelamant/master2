@@ -3,6 +3,14 @@ import React from "react";
 import SummaryGridRow from "./SummaryGridRow";
 import { iconFor } from "../utils/iconLoader";
 
+function sumBenchmarks(stereotypeBenchmarks, buckets) {
+    const result = {};
+    for (const [name, byBucket] of Object.entries(stereotypeBenchmarks || {})) {
+        result[name] = (buckets || []).reduce((s, b) => s + Number(byBucket?.[b] ?? 0), 0);
+    }
+    return result;
+}
+
 export default function SummaryGrid(props) {
     const {
         countsByCategory = {},
@@ -12,6 +20,7 @@ export default function SummaryGrid(props) {
         summaryAdds = [],
         summaryRemoves = [],
         groupBy = "subcategory",
+        stereotypeBenchmarks = {},
     } = props;
 
     // ✅ Allow config either via props.ui (preferred) or direct props
@@ -196,6 +205,8 @@ export default function SummaryGrid(props) {
         return grid;
     }, [matrixMode, rowDefs.length, safeCols, allBucketsInCounts, bucketToRow, bucketToCol, shouldShowBucket]);
 
+    const [aggTooltip, setAggTooltip] = React.useState(null);
+
     const colTotals = React.useMemo(() => {
         return colDefs.map((c) =>
             (c?.buckets || []).reduce((sum, b) => sum + Number(countsByCategory?.[b] ?? 0), 0)
@@ -344,7 +355,16 @@ export default function SummaryGrid(props) {
                                 </div>
 
                                 {/* ✅ total: right of the left group, but still "left aligned" */}
-                                <div style={{fontWeight: 900, fontSize: 20, marginLeft: 8}}>
+                                <div
+                                    style={{ fontWeight: 900, fontSize: 20, marginLeft: 8, cursor: 'default' }}
+                                    onMouseEnter={(e) => {
+                                        const colBuckets = colDefs[colIdx]?.buckets || colKeysUsed[colIdx] || [];
+                                        const data = sumBenchmarks(stereotypeBenchmarks, colBuckets);
+                                        if (Object.values(data).some(v => v > 0))
+                                            setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
+                                    }}
+                                    onMouseLeave={() => setAggTooltip(null)}
+                                >
                                     {total}
                                 </div>
                             </div>
@@ -392,7 +412,15 @@ export default function SummaryGrid(props) {
                                 }}>
                                     {/* count left of icon, on same line */}
                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                        <div style={{ fontWeight: 900, fontSize: 22, lineHeight: 1 }}>{rTotal}</div>
+                                        <div
+                                            style={{ fontWeight: 900, fontSize: 22, lineHeight: 1, cursor: 'default' }}
+                                            onMouseEnter={(e) => {
+                                                const data = sumBenchmarks(stereotypeBenchmarks, row?.buckets || []);
+                                                if (Object.values(data).some(v => v > 0))
+                                                    setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
+                                            }}
+                                            onMouseLeave={() => setAggTooltip(null)}
+                                        >{rTotal}</div>
                                         {rowIcon && <img src={rowIcon} alt="" aria-hidden="true" style={{ width: 24, height: 24 }} />}
                                     </div>
                                     <div style={{ fontWeight: 700, fontSize: 11, opacity: 0.75, lineHeight: 1.2 }}>{row.title}</div>
@@ -494,7 +522,15 @@ export default function SummaryGrid(props) {
                                         </div>
                                     </div>
 
-                                    <div style={{ fontWeight: 900, fontSize: 20 }}>{rTotal}</div>
+                                    <div
+                                        style={{ fontWeight: 900, fontSize: 20, cursor: 'default' }}
+                                        onMouseEnter={(e) => {
+                                            const data = sumBenchmarks(stereotypeBenchmarks, row?.buckets || []);
+                                            if (Object.values(data).some(v => v > 0))
+                                                setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
+                                        }}
+                                        onMouseLeave={() => setAggTooltip(null)}
+                                    >{rTotal}</div>
                                 </div>
 
                                 {/* Row cells */}
@@ -595,6 +631,30 @@ export default function SummaryGrid(props) {
                                     />
                                 );
                             })}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {aggTooltip && Object.keys(aggTooltip.data).length > 0 && (
+                <div style={{
+                    position: 'fixed',
+                    top: aggTooltip.rect.bottom + 4,
+                    left: aggTooltip.rect.left,
+                    zIndex: 50,
+                    background: '#fff',
+                    border: '1px solid rgba(0,0,0,0.1)',
+                    borderRadius: 10,
+                    padding: '8px 12px',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                    pointerEvents: 'none',
+                    minWidth: 160,
+                    fontSize: 13,
+                }}>
+                    {Object.entries(aggTooltip.data).map(([name, val]) => (
+                        <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '1px 0' }}>
+                            <span style={{ opacity: 0.75 }}>{name}</span>
+                            <span style={{ fontWeight: 700 }}>{Math.round(val * 10) / 10}</span>
                         </div>
                     ))}
                 </div>

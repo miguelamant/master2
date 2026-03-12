@@ -12,20 +12,41 @@ const COLUMNS = [
     'luxury', 'traditional', 'healthy', 'average'
 ];
 
+async function resolveAssortmentId(req) {
+    const businessId = req.session?.user?.id;
+    const raw = req.body?.assortmentId ?? req.query?.assortmentId;
+    if (raw != null) return Number(raw);
+    const { data, error } = await supabase
+        .from('assortments')
+        .select('id')
+        .eq('business_id', businessId)
+        .order('sort_order', { ascending: true })
+        .limit(1)
+        .single();
+    if (error || !data) throw new Error('No assortment found');
+    return data.id;
+}
+
 // GET current business persona weights
 router.get('/business-personas', async (req, res, next) => {
     try {
         const businessId = req.session?.user?.id;
         if (!businessId) return res.status(401).json({ error: 'Not authenticated' });
 
+        let assortmentId;
+        try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+            return res.status(400).json({ error: e.message });
+        }
+
         const { data, error } = await supabase
-            .from('business_info')
+            .from('assortments')
             .select(COLUMNS.join(','))
-            .eq('id', businessId)
+            .eq('id', assortmentId)
+            .eq('business_id', businessId)
             .maybeSingle();
 
         if (error) return res.status(500).json({ error: error.message });
-        if (!data) return res.status(404).json({ error: 'Business not found' });
+        if (!data) return res.status(404).json({ error: 'Assortment not found' });
 
         res.json({ success: true, personas: data });
     } catch (e) { next(e); }
@@ -36,6 +57,11 @@ router.post('/business-personas', async (req, res, next) => {
     try {
         const businessId = req.session?.user?.id;
         if (!businessId) return res.status(401).json({ error: 'Not authenticated' });
+
+        let assortmentId;
+        try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+            return res.status(400).json({ error: e.message });
+        }
 
         // Accept partial updates, clamp 0..100, coerce to int.
         const payload = {};
@@ -52,9 +78,10 @@ router.post('/business-personas', async (req, res, next) => {
         }
 
         const { error } = await supabase
-            .from('business_info')
+            .from('assortments')
             .update(payload)
-            .eq('id', businessId);
+            .eq('id', assortmentId)
+            .eq('business_id', businessId);
 
         if (error) return res.status(500).json({ error: error.message });
         res.json({ success: true });

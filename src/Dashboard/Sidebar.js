@@ -63,11 +63,11 @@ const Sidebar = ({ selectedOption, onSelectionChange, onGoBack }) => {
             <div className="sidebar-bottom">
                 <button
                     className="sidebar-icon-btn"
-                    onClick={() => window.location.assign('/leeftijdsverdeling')}
-                    title="Instellingen"
-                    aria-label="Instellingen"
+                    onClick={() => window.location.assign('/regioverdeling2a')}
+                    title="Clientele instellingen"
+                    aria-label="Clientele instellingen"
                 >
-                    ⚙
+                    👤
                 </button>
                 <button
                     className="sidebar-icon-btn"

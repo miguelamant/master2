@@ -55,6 +55,18 @@ export async function itemsNotOnMenu(req, res) {
   res.set("X-LOCAL-BACKEND", "yes");
 
   const businessId = req.session.user.id;
+  // resolve assortmentId — from query or default to first assortment
+  let assortmentId = req.query.assortmentId ? Number(req.query.assortmentId) : null;
+  if (!assortmentId) {
+    const { data: aRow } = await supabase
+      .from("assortments")
+      .select("id")
+      .eq("business_id", businessId)
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .single();
+    assortmentId = aRow?.id ?? null;
+  }
 
   // read section + optional search
   const section = String(req.query.section || "beers").toLowerCase();
@@ -80,11 +92,12 @@ export async function itemsNotOnMenu(req, res) {
   });
 
   try {
-    // 1) all product_ids already on this business menu
-    const { data: menuItems, error: miError } = await supabase
-        .from("menu_items")
-        .select("product_id")
-        .eq("business_id", businessId);
+    // 1) all product_ids already on this assortment's menu
+    let miQuery = supabase.from("menu_items").select("product_id");
+    if (assortmentId) {
+      miQuery = miQuery.eq("assortment_id", assortmentId);
+    }
+    const { data: menuItems, error: miError } = await miQuery;
 
     if (miError) {
       console.error("[/items-not-on-menu] menu_items error:", miError);
@@ -263,16 +276,26 @@ export async function priceComparison(req, res) {
   try {
     const userId = req.session.user.id;
 
+    // resolve default assortment for price comparison
+    const { data: aRow } = await supabase
+      .from("assortments")
+      .select("id")
+      .eq("business_id", userId)
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .single();
+    const ownAssortmentId = aRow?.id;
+
     const { data: ownItems, error: ownError } = await supabase
       .from("menu_items")
       .select("product_id, price, products(name)")
-      .eq("business_id", userId);
+      .eq("assortment_id", ownAssortmentId);
     if (ownError) throw ownError;
 
     const { data: others, error: othersError } = await supabase
       .from("menu_items")
       .select("product_id, price")
-      .neq("business_id", userId);
+      .neq("assortment_id", ownAssortmentId);
     if (othersError) throw othersError;
 
     const avgByProduct = {}, countByProduct = {};
@@ -310,13 +333,17 @@ export async function priceComparison(req, res) {
 /* GET /api/business-info */
 export async function businessInfo(req, res) {
   const businessId = req.session.user.id;
+  const assortmentId = req.query.assortmentId ? Number(req.query.assortmentId) : null;
   try {
-    const { data: row, error } = await supabase
-      .from("business_info")
-      .select("address")
-      .eq("id", businessId)
-      .single();
+    let q = supabase.from("assortments").select("address");
+    if (assortmentId) {
+      q = q.eq("id", assortmentId).eq("business_id", businessId);
+    } else {
+      q = q.eq("business_id", businessId).order("sort_order", { ascending: true }).limit(1);
+    }
+    const { data: rows, error } = await q;
     if (error) return res.status(500).json({ error: "Database error" });
+    const row = Array.isArray(rows) ? rows[0] : rows;
     if (!row) return res.status(404).json({ error: "Business not found" });
 
     const parts = (row.address || "").split(",").map(s => s.trim());

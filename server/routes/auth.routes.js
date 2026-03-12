@@ -19,7 +19,7 @@ router.post("/login", async (req, res, next) => {
 
     const { data: user, error } = await supabase
         .from("business_info")
-        .select("id,email,password,horeca_name,manager_first_name,manager_last_name")
+        .select("id,email,password,horeca_name")
         .eq("email", email)
         .maybeSingle();
 
@@ -35,8 +35,6 @@ router.post("/login", async (req, res, next) => {
       id: user.id,
       email: user.email,
       horeca_name: user.horeca_name,
-      manager_first_name: user.manager_first_name,
-      manager_last_name: user.manager_last_name,
     };
 
 // Build per-business matrix ON LOGIN
@@ -83,18 +81,30 @@ router.post("/complete-onboarding", async (req, res, next) => {
       manager_first_name, manager_last_name, horeca_name,
       address, phonenumber, email, password
     } = req.body ?? {};
-    if (!manager_first_name || !manager_last_name || !horeca_name || !address || !phonenumber || !email || !password) {
+    if (!horeca_name || !email || !password) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
     const hashed = bcrypt.hashSync(password, 10);
     const { data, error } = await supabase
       .from("business_info")
-      .insert([{ manager_first_name, manager_last_name, horeca_name, address, phone_number: phonenumber, email, password: hashed }])
+      .insert([{ horeca_name, email, password: hashed }])
       .select("id")
       .single();
 
     if (error) throw new Error(error.message);
+
+    // Create the default assortment for this new business
+    await supabase.from("assortments").insert([{
+      business_id: data.id,
+      name: horeca_name,
+      address: address || null,
+      manager_first_name: manager_first_name || null,
+      manager_last_name: manager_last_name || null,
+      phone_number: phonenumber || null,
+      sort_order: 0,
+    }]);
+
     res.json({ success: true, insertedId: data.id });
   } catch (e) { next(e); }
 });

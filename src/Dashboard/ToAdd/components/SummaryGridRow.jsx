@@ -119,6 +119,8 @@ export default function SummaryGridRow(props) {
 
         // ✅ NEW: compact mode (used in matrix cells)
         compact = false,
+
+        stereotypeBenchmarks = {},
     } = props;
 
     const actual = countsByCategory[groupValue] ?? 0;
@@ -210,6 +212,7 @@ export default function SummaryGridRow(props) {
 
     const [hoverBucket, setHoverBucket] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
+    const [countAnchor, setCountAnchor] = React.useState(null);
 
     const visibleInlineItems = expanded ? itemsForHover : itemsForHover.slice(0, inlineItemsLimit);
     const canExpand = itemsForHover.length > inlineItemsLimit;
@@ -335,12 +338,38 @@ export default function SummaryGridRow(props) {
                                     ))}
                                 </ul>
                             )}
+                            {Object.keys(stereotypeBenchmarks || {}).length > 0 && (
+                                <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid rgba(0,0,0,0.08)" }}>
+                                    {Object.entries(stereotypeBenchmarks).map(([name, buckets]) => {
+                                        const val = buckets[groupValue];
+                                        if (val == null) return null;
+                                        return (
+                                            <div key={name} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 12, opacity: 0.8, padding: "1px 0" }}>
+                                                <span>{name}</span>
+                                                <span style={{ fontWeight: 600 }}>{val}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
 
                 <div className="segment-meta" style={{ display: "inline-flex", alignItems: "center", gap: 6, alignSelf: "center" }}>
-          <span className="segment-count" style={{ fontWeight: 600 }}>
+          <span
+              className="segment-count"
+              style={{ fontWeight: 600, cursor: 'default' }}
+              onMouseEnter={(e) => {
+                  const benchData = Object.fromEntries(
+                      Object.entries(stereotypeBenchmarks || {})
+                          .map(([name, byBucket]) => [name, byBucket?.[groupValue]])
+                          .filter(([, val]) => val != null)
+                  );
+                  setCountAnchor({ rect: e.currentTarget.getBoundingClientRect(), data: benchData });
+              }}
+              onMouseLeave={() => setCountAnchor(null)}
+          >
             {actual}
           </span>
 
@@ -399,6 +428,34 @@ export default function SummaryGridRow(props) {
                             )}
                         </>
                     )}
+                </div>
+            )}
+
+            {countAnchor && (
+                <div style={{
+                    position: 'fixed',
+                    top: countAnchor.rect.bottom + 4,
+                    left: countAnchor.rect.left,
+                    zIndex: 9999,
+                    background: '#fff',
+                    border: '1px solid rgba(0,0,0,0.1)',
+                    borderRadius: 10,
+                    padding: '8px 12px',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                    pointerEvents: 'none',
+                    minWidth: 160,
+                    fontSize: 13,
+                    color: '#000',
+                }}>
+                    {Object.keys(countAnchor.data).length === 0
+                        ? <div style={{ opacity: 0.5 }}>No benchmark data</div>
+                        : Object.entries(countAnchor.data).map(([name, val]) => (
+                            <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '1px 0' }}>
+                                <span style={{ opacity: 0.75 }}>{name}</span>
+                                <span style={{ fontWeight: 700 }}>{Math.round(val * 10) / 10}</span>
+                            </div>
+                        ))
+                    }
                 </div>
             )}
 

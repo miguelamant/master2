@@ -23,7 +23,7 @@ const mergePredicatesOverride = (basePreds = [], overridePreds = []) => {
  * Apply "local rollups" to an already-fetched counts map.
  * (No extra API calls; only regroup existing keys.)
  */
-const applyRollups = (map, rules) => {
+export const applyRollups = (map, rules) => {
     if (!map || typeof map !== "object") return map;
     if (!Array.isArray(rules) || !rules.length) return map;
 
@@ -144,9 +144,10 @@ export function useCountsByCategory({
                                         partitionBy = [],
                                         forceShow = [],
                                         rollups = [],
-                                        showOnlyRollups = false,   // ✅ ADD THIS
+                                        showOnlyRollups = false,
                                         presetId = "",
                                         filterKey = "",
+                                        assortmentId,
                                     }) {
     const [counts, setCounts] = useState({});
 
@@ -172,6 +173,7 @@ export function useCountsByCategory({
                     within,
                     filters: apiFilters,
                     predicates: presetPredicates,
+                    ...(assortmentId != null && { assortmentId }),
                 };
 
                 // 1) fetch base counts (preset predicates)
@@ -321,9 +323,10 @@ export function useCountsByCategory({
         forceKey,
         withinKey,
         rollupsKey,
-        rollupOnlyKey,   // ✅ ADD
+        rollupOnlyKey,
         presetId,
         filterKey,
+        assortmentId,
     ]);
 
     return counts;

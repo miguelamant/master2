@@ -7,6 +7,8 @@ import TasteIconWithBadges from './components/TasteIconWithBadges';
 import { iconFor } from './ToAdd/utils/iconLoader';
 import { convertItemLabel } from './ToAdd/utils/itemLabelMap';
 import { convertDisplayLabel } from './ToAdd/utils/labelMap';
+import AssortmentSwitcher from './components/AssortmentSwitcher';
+import { useAssortment } from '../context/AssortmentContext';
 
 const normToken = (s) =>
     String(s ?? '')
@@ -19,6 +21,8 @@ const BADGES_BY_GROUP = {};
 const SHOW_DIETARY_BADGES = false;
 
 const Menu = () => {
+    const { activeAssortmentId } = useAssortment() || {};
+
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading]     = useState(true);
     const [error, setError]         = useState(null);
@@ -56,21 +60,27 @@ const Menu = () => {
     };
 
 
-    const fetchMenuItems = async () => {
+    const fetchMenuItems = async (assortmentId) => {
         const res = await api.get('/api/menu-items', {
             withCredentials: true,
-            params: { page: 1, pageSize: 500, orderBy: 'products.name' }
+            params: {
+                page: 1, pageSize: 500, orderBy: 'products.name',
+                ...(assortmentId != null && { assortmentId }),
+            }
         });
         return res.data?.items || [];
     };
 
     useEffect(() => {
+        let cancelled = false;
         const fetchAll = async () => {
+            setLoading(true);
             try {
                 const [itemsArr, prodRes] = await Promise.all([
-                    fetchMenuItems(),
+                    fetchMenuItems(activeAssortmentId),
                     api.get('/api/products', { withCredentials: true })
                 ]);
+                if (cancelled) return;
                 setMenuItems(itemsArr);
 
                 const mappedProducts = (prodRes.data || []).map(p => ({
@@ -80,14 +90,16 @@ const Menu = () => {
                 }));
                 setProductsList(mappedProducts);
             } catch (err) {
+                if (cancelled) return;
                 console.error(err);
                 setError('Kon data niet laden');
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
         fetchAll();
-    }, []);
+        return () => { cancelled = true; };
+    }, [activeAssortmentId]);
 
     useEffect(() => {
         if (editMode && Array.isArray(menuItems)) {
@@ -135,7 +147,10 @@ const Menu = () => {
     const handleSave = async () => {
         try {
             for (let id of toDelete) {
-                await api.delete(`/api/menu-items/${id}`, { withCredentials: true });
+                await api.delete(`/api/menu-items/${id}`, {
+                    withCredentials: true,
+                    data: activeAssortmentId != null ? { assortmentId: activeAssortmentId } : undefined,
+                });
             }
             const updates = Object.entries(priceMap)
                 .filter(([id]) => !toDelete.has(Number(id)))
@@ -143,7 +158,7 @@ const Menu = () => {
             if (updates.length) {
                 await api.patch('/api/menu-items', { updates }, { withCredentials: true });
             }
-            const fresh = await fetchMenuItems();
+            const fresh = await fetchMenuItems(activeAssortmentId);
             setMenuItems(fresh);
             setEditMode(false);
             setToDelete(new Set());
@@ -157,12 +172,15 @@ const Menu = () => {
         try {
             await api.post(
                 '/api/menu-items/add',
-                { product_id: newItem.productId, price: Number(newItem.price) },
+                {
+                    product_id: newItem.productId, price: Number(newItem.price),
+                    ...(activeAssortmentId != null && { assortmentId: activeAssortmentId }),
+                },
                 { withCredentials: true }
             );
             localStorage.removeItem('wrapped_hot_items');
             localStorage.removeItem('wrapped_next_season');
-            const fresh = await fetchMenuItems();
+            const fresh = await fetchMenuItems(activeAssortmentId);
             setMenuItems(fresh);
             setNewItem({ productId: '', name: '', brand: '', price: '' });
         } catch (err) {
@@ -303,15 +321,18 @@ const Menu = () => {
 
     return (
         <div className="menu-container">
-            <div className="menu-header">
-                {!editMode ? (
-                    <button className="edit-save-btn" onClick={() => setEditMode(true)}>Edit</button>
-                ) : (
-                    <>
-                        <button className="edit-save-btn" onClick={handleSave}>Confirm</button>
-                        <button className="edit-cancel-btn" onClick={handleCancel}>Cancel</button>
-                    </>
-                )}
+            <div className="menu-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <AssortmentSwitcher />
+                <div style={{ display: 'flex', gap: 8 }}>
+                    {!editMode ? (
+                        <button className="edit-save-btn" onClick={() => setEditMode(true)}>Edit</button>
+                    ) : (
+                        <>
+                            <button className="edit-save-btn" onClick={handleSave}>Confirm</button>
+                            <button className="edit-cancel-btn" onClick={handleCancel}>Cancel</button>
+                        </>
+                    )}
+                </div>
             </div>
 
             <div

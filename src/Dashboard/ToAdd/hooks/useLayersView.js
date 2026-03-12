@@ -118,8 +118,19 @@ const shouldHideZeroForLabel = (label, n, groupBy, groupLookup, layers) => {
 };
 
 export function useLayersView({
-                                  countsByCategory, groupBy, apiFilters, presetPredicates, within, activeCategory, effectiveSection, currentPreset, layersOverride
+                                  countsByCategory, groupBy, apiFilters, presetPredicates, within, activeCategory, effectiveSection, currentPreset, layersOverride, dynamicLayers
                               }) {
+    // 0) bucket → rowLabel map (from preset's aggregateRows.rows)
+    const bucketToRowLabel = React.useMemo(() => {
+        const m = new Map();
+        for (const row of (currentPreset?.ui?.aggregateRows?.rows || [])) {
+            const label = row.title;
+            if (!label) continue;
+            for (const b of (row.buckets || [])) m.set(String(b), label);
+        }
+        return m;
+    }, [currentPreset]);
+
     // 1) BASE groups
     const baseGroups = React.useMemo(() => {
         const entries = Object.entries(countsByCategory || {});
@@ -165,10 +176,13 @@ export function useLayersView({
             if (groupBy === 'subcategory')    g.subcategory    = g.subcategory || baseTok;
             if (groupBy === 'subsubcategory') g.subsubcategory = baseTok;
 
+            // rowLabel: the row-aggregate this bucket belongs to (used by row-level engine layers)
+            g.rowLabel = bucketToRowLabel.get(label) || label;
+
             return g;
         });
         return groups;
-    }, [countsByCategory, groupBy, apiFilters, presetPredicates, within, effectiveSection]);
+    }, [countsByCategory, groupBy, apiFilters, presetPredicates, within, effectiveSection, bucketToRowLabel]);
 
     // 2) Load layers
 // 2) Load layers (supports per-business override via layersOverride)
@@ -208,6 +222,14 @@ export function useLayersView({
             }
             return null;
         };
+
+        // --- dynamic layers path (runtime-computed from persona distributions) ---
+        if (Array.isArray(dynamicLayers) && dynamicLayers.length > 0) {
+            const usable = dynamicLayers
+                .map(L => toUsable(L, baseGroups))
+                .filter(Boolean);
+            return { layers: usable };
+        }
 
         // Prefer per-business merged layers if provided
         // --- override/sessionStorage path ---
@@ -258,7 +280,7 @@ export function useLayersView({
         }
 
         return { layers: arr };
-    }, [allowIds, baseGroups, activeCategory, layersOverride]);
+    }, [allowIds, baseGroups, activeCategory, layersOverride, dynamicLayers]);
 
     React.useEffect(() => {
         console.log("[DBG][layers][usable]", {
@@ -406,9 +428,10 @@ export function useLayersView({
 
             if (groupBy === 'subcategory')    g.subcategory    = g.subcategory || baseTok;
             if (groupBy === 'subsubcategory') g.subsubcategory = baseTok;
+            g.rowLabel = bucketToRowLabel.get(label) || label;
             return g;
         });
-    }, [displayedCountsByCategory, groupBy, activeCategory]);
+    }, [displayedCountsByCategory, groupBy, activeCategory, bucketToRowLabel]);
 
     // Debug: log a sample of viewGroups whenever they change
     React.useEffect(() => {
