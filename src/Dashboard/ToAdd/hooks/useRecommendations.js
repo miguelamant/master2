@@ -54,15 +54,15 @@ export function useRecommendations({
     React.useEffect(() => subscribeUIPrefs((s) => setWillyMode(s.willyMode)), []);
 
     // ---- Map Willy → thresholdAbs
-    // stern  → 0.05
-    // chilly → 0.30
-    // sleepy → 0.99
+    // Thresholds are calibrated against the bucket+row addMB scale (~3×pct/100).
+    // A 2.4% Dutch bucket (e.g. ciders) has addMB≈0.072 at depth=0, so chilly
+    // must be below that to catch it.
     const thresholdAbs = React.useMemo(() => {
         switch (willyMode) {
-            case 1: return 0.10; // stern 0.15
-            case 2: return 0.90; // sleepy 0.99
+            case 1: return 0.03; // stern
+            case 2: return 0.90; // sleepy
             case 0:
-            default: return 0.20; // chilly (default) 0.15
+            default: return 0.06; // chilly
         }
     }, [willyMode]);
 
@@ -70,8 +70,8 @@ export function useRecommendations({
         kMax: 1,
         thresholdAbs,
         topN: 50,
-        requireRemovalDelta: true,
-        minRemoveMag: 1e-6,
+        requireRemovalDelta: false, // over-ideal removals have remMB≈0 by design; isRemovableInAnyLayer already guards
+        minRemoveMag: 0,
         requireAddPositive: true,
     }), [thresholdAbs]);
 
@@ -95,76 +95,104 @@ export function useRecommendations({
         if (!Array.isArray(activeLayers) || !activeLayers.length) return layerCounts || {};
         // Always rebuild from the groups we actually plan on
         const rebuilt = buildPerLayerCounts({ layers: activeLayers, groups: engineGroups || [] });
-        // For visibility while you debug:
         if (typeof window !== 'undefined') {
             window.__COUNTS_FROM_MIRROR__ = rebuilt;
         }
         return rebuilt;
     }, [activeLayers, engineGroups, layerCounts]);
 
+    // Inject zero-count groups for Dutch distribution buckets not present in the
+    // current menu.  The current menu only returns categories with ≥1 item, so
+    // groups like "ciders" with 0 items are invisible to the planner.
+    // These phantom groups have depth=0 in all layers → never removable, but
+    // they do have a positive addMB (series[0]) so the engine can recommend them.
+    const allAddableGroups = React.useMemo(() => {
+        if (!Array.isArray(activeLayers) || !activeLayers.length) return engineGroups || [];
+        const existingKeys = new Set(
+            (engineGroups || []).map(g => String(g.subcategory || g.label || '').toUpperCase())
+        );
+        const category = (engineGroups || [])[0]?.category || '';
+        const extras = [];
+        for (const layer of activeLayers) {
+            if (layer.field === 'rowLabel') continue; // row-aggregate layers, skip
+            for (const bucketKey of Object.keys(layer.buckets || {})) {
+                const norm = String(bucketKey).toUpperCase();
+                if (!existingKeys.has(norm)) {
+                    existingKeys.add(norm);
+                    extras.push({
+                        id: `zero_${bucketKey}`,
+                        label: bucketKey,
+                        count: 0,
+                        subcategory: bucketKey,
+                        subsubcategory: bucketKey,
+                        category,
+                        is_sparkling: null,
+                        is_zero: null,
+                        rowLabel: bucketKey,
+                    });
+                }
+            }
+        }
+        return extras.length > 0 ? [...(engineGroups || []), ...extras] : (engineGroups || []);
+    }, [engineGroups, activeLayers]);
 
+    // Debounce planning inputs: always keep a ref current, fire the planner
+    // at most once per 2 s of inactivity.  Using a ref avoids false restarts
+    // caused by unstable object references from upstream memos.
+    const planSnapshotRef = React.useRef({ groups: allAddableGroups, layers: activeLayers, counts: engineCounts });
+    planSnapshotRef.current = { groups: allAddableGroups, layers: activeLayers, counts: engineCounts };
+
+    // Stable key: only reset the timer when layer IDs or group counts actually change.
+    const planDepsKey = React.useMemo(() => {
+        try {
+            return JSON.stringify({
+                layerIds: (activeLayers || []).map(L => L.layer_id),
+                groupCounts: (engineGroups || []).map(g => `${g.id}:${g.count}`),
+                extraCount: allAddableGroups.length - (engineGroups || []).length,
+            });
+        } catch { return ''; }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeLayers, engineGroups, allAddableGroups]);
+
+    const [planInputs, setPlanInputs] = React.useState(null);
+    React.useEffect(() => {
+        const t = setTimeout(() => {
+            setPlanInputs({ ...planSnapshotRef.current });
+        }, 2000);
+        return () => clearTimeout(t);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [planDepsKey]);
 
     const stepSuggestions = React.useMemo(() => {
-        if (!activeLayers?.length || !viewGroups?.length) return [];
-        console.debug('[DBG L1001 depths]', layerCounts?.L1001);
-
-        // just before buildPlanToThreshold(...)
-        if (typeof window !== 'undefined') {
-            window.__COUNTS_FROM_HOOK__ = JSON.parse(JSON.stringify(layerCounts || {}));
-        }
+        const { groups: dGroups, layers: dLayers, counts: dCounts } = planInputs || {};
+        if (!dLayers?.length || !dGroups?.length) return [];
 
         try {
             if (typeof window !== 'undefined') {
-                window.__PLAN_INPUT_GROUPS__  = JSON.parse(JSON.stringify(viewGroups || []));
-                window.__PLAN_INPUT_LAYERS__  = JSON.parse(JSON.stringify(activeLayers || []));
-                window.__PLAN_INPUT_COUNTS__  = JSON.parse(JSON.stringify(layerCounts || {}));
+                window.__PLAN_INPUT_GROUPS__  = JSON.parse(JSON.stringify(dGroups || []));
+                window.__PLAN_INPUT_LAYERS__  = JSON.parse(JSON.stringify(dLayers || []));
+                window.__PLAN_INPUT_COUNTS__  = JSON.parse(JSON.stringify(dCounts || {}));
                 window.__PLAN_INPUT_OPTIONS__ = JSON.parse(JSON.stringify(recoOptions || {}));
             }
         } catch {}
 
-
         const { plan } = buildPlanToThreshold({
-            groups: engineGroups,       // ← mirrored groups
-            layers: activeLayers,
-            counts: engineCounts,       // ← rebuilt counts from those groups
+            groups: dGroups,
+            layers: dLayers,
+            counts: dCounts,
             options: recoOptions,
             maxSteps: 2000,
         });
-        try {
-            // compact, stable view of what the planner *actually* decided
-            const table = (plan || []).map((s, i) => ({
-                i,
-                k: s?.pair?.k,
-                gain: +(s?.gain ?? 0).toFixed(3),
-                add: s?.pair?.add?.label,
-                remove: s?.pair?.remove?.label,
-            }));
-            console.log('[RECO][PLAN]', table);
-
-            // make it grab-able from the console
-            window.__RECO_PLAN__ = plan;
-        } catch {}
+        try { window.__RECO_PLAN__ = plan; } catch {}
         return plan;
-    }, [viewGroups, activeLayers, layerCounts, recoOptions]);
+    }, [planInputs, recoOptions]);
 
     const alloc = React.useMemo(() => aggregatePlan(stepSuggestions), [stepSuggestions]);
     try { if (typeof window !== 'undefined') window.__PLAN_FINAL_ALLOC__ = alloc; } catch {}
 
 
 
-    try {
-        const rows = Object.values(alloc?.byId || {}).map(r => ({
-            label: r.label,
-            delta: r.delta,
-            add: r.add,
-            remove: r.remove,
-            subcategory: r.subcategory ?? null,
-            is_zero: r.is_zero,
-            is_sparkling: r.is_sparkling,
-        }));
-        console.log('[RECO][ALLOC]', rows);
-        window.__RECO_ALLOC__ = alloc;
-    } catch {}
+    try { window.__RECO_ALLOC__ = alloc; } catch {}
 
     const headerKPI = React.useMemo(() => {
         const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);

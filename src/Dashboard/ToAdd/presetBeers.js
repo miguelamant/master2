@@ -77,6 +77,27 @@ export const PRESET_FILTERS_BEERS = [
             predicates: [{ field: "is_zero", op: "eq", value: 0 }],
             includeEmpty: false,
 
+            forceShow: [
+                // Lagers
+                "HELLES", "DORTMUNDER", "LAGER_MEXICAN", "IPL", "KOLSCH", "LAGER_STRONG", "RAUCHBIER",
+                // Kellerbier (in Special Beers row)
+                "KELLERBIER",
+                // Wheat
+                "WEIZENBOCK",
+                // Normal Blond
+                "BELGIAN_BLONDE", "GOLDEN_ALES",
+                // Pale ales
+                "SESSION_PALE_ALE", "PALE_ALE_BELGIAN_EU", "APA", "PALE_ALE_HAZY_NE", "PALE_ALE_OTHER",
+                // IPAs
+                "SESSION_IPA", "IPA_CLASSIC", "IPA_HAZY_NE", "IPA_STRONG", "IPA_OTHER", "BIPA",
+                // Special beers
+                "SAISON",
+                // Sours — flemish red-brown, lambics, berliner weisse, oude geuze
+                "SOUR_LIGHT", "SOUR_DARK", "SOUR_LAMBIC",
+                // Malt & Sweet
+                "ALTBIER", "BOCKS_ALL", "SPECIALE_BELGE", "BELGE_AMBREE",
+            ],
+
             ui: {
                 columns: 3,
                 showItemsInline: false,
@@ -87,75 +108,80 @@ export const PRESET_FILTERS_BEERS = [
                         {
                             title: "Lagers",
                             iconToken: "LAGERS",
-                            buckets: ["LAGER_PILS", "LAGER_ALE", "LAGER_ROTBIER"],
+                            buckets: ["LAGER_PILS", "HELLES", "DORTMUNDER", "LAGER_MEXICAN", "IPL", "KOLSCH", "LAGER_STRONG", "LAGER_ALE", "RAUCHBIER", "LAGER_PALE"],
                             keepEmpty: true,
                         },
                         {
                             title: "Wheat beers",
                             iconToken: "WHEAT_BEERS",
-                            buckets: ["WHEAT_WIT", "WHEAT_WEIZEN", "WHEAT_DUNKEL"],
+                            buckets: ["WHEAT_WIT", "WHEAT_WEIZEN", "WHEAT_DUNKEL", "WEIZENBOCK"],
                             keepEmpty: true,
                         },
                         {
                             title: "Normal Blond",
                             iconToken: "BLOND",
-                            buckets: ["BLOND_ENKEL", "BLOND", "BLOND_STRONG"],
+                            buckets: ["BLOND_ENKEL", "BELGIAN_BLONDE", "GOLDEN_ALES", "BLOND_STRONG", "BLOND_OTHER"],
                             keepEmpty: true,
                         },
                         {
-                            title: "Pale Ales",
+                            title: "Hoppy Pale Ales",
                             iconToken: "PALE_ALE",
-                            buckets: ["PALE_ALE_BELGIAN_EU", "PALE_ALE_AMERICAN_CLASSIC", "PALE_ALE_HAZY_NE", "PALE_ALE_SPECIALS", "PALE_ALE_OTHER"],
+                            buckets: ["SESSION_PALE_ALE", "PALE_ALE_BELGIAN_EU", "APA", "PALE_ALE_HAZY_NE", "PALE_ALE_OTHER"],
+                            keepEmpty: true,
                         },
                         {
                             title: "IPAs",
                             iconToken: "BLOND_BITTERS",
-                            buckets: ["IPA_CLASSIC", "IPA_HAZY_NE", "IPA_STRONG", "IPA_SPECIALS", "IPA_OTHER"],
+                            buckets: ["SESSION_IPA", "IPA_CLASSIC", "BIPA", "IPA_HAZY_NE", "IPA_STRONG", "IPA_OTHER"],
+                            keepEmpty: true,
                         },
                         {
-                            title: "Dark · Malt & Sweet",
+                            title: "Malt & Sweet",
                             iconToken: "DUBBEL",
-                            buckets: ["DARK_DUBBEL", "DARK_STRONG_QUAD", "DARK_BROWN_ALE", "DARK_BARLEYWINE", "AMBER_ALE", "DARK_OTHER"],
+                            buckets: ["SPECIALE_BELGE", "BELGE_AMBREE", "DARK_DUBBEL", "DARK_STRONG_QUAD", "ALTBIER", "DARK_BROWN_ALE", "DARK_BARLEYWINE", "AMBER_ALE", "DARK_OTHER", "BOCKS_ALL"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Dark · Coffee & Roast",
                             iconToken: "STOUT",
                             buckets: ["ROAST_PORTER", "ROAST_STOUT", "ROAST_IMPERIAL", "ROAST_SPECIALTY"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Sours & Saisons",
                             iconToken: "SOURS_SAISON_LAMBIC_GUEUZE",
                             buckets: ["SOUR_LIGHT", "SOUR_DARK", "SOUR_LAMBIC", "FRUIT_LAMBIC", "SOUR_FARMHOUSE", "SOUR_OTHER"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Fruit beers",
                             iconToken: "FRUIT_BEERS",
                             buckets: ["FRUIT_CLASSIC", "FRUIT_LAMBIC"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Radlers",
                             iconToken: "RADLERS",
                             buckets: ["RADLER_ALL"],
-                        },
-                        {
-                            title: "Ciders & Meads",
-                            iconToken: "CIDERS",
-                            buckets: ["CIDER_CLASSIC", "CIDER_SPECIALTY", "MEAD_ALL"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Flavoured & Hard",
                             iconToken: "SPIRIT_FLAVOURED_BEERS",
                             buckets: ["FLAVOURED_ALL"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Special beers",
                             iconToken: "BEERS_SPECIAL",
-                            buckets: ["SPECIAL_ALL"],
+                            buckets: ["SPECIAL_ALL", "SPECIAL_BEERS_ALL", "MALT_LIQUOR_ALL", "KELLERBIER", "SAISON"],
+                            keepEmpty: true,
                         },
                         {
                             title: "Other / Unclassified",
                             iconToken: "BEERS_OTHER",
                             buckets: ["BEERS_OTHER_ALL"],
+                            keepEmpty: true,
                         },
                     ],
                 },
@@ -165,11 +191,21 @@ export const PRESET_FILTERS_BEERS = [
             rollups: [
                 // ===== LAGERS =====
                 // Pils: clean pale lagers, pilsners
-                { match: { baseIn: ["PILSNER_CZECH_/_BOHEMIAN","PILSNER_GERMAN","PILSNER_OTHER","LAGER_SVETLE_(CZECH_PALE)","LAGER_HELLES","LAGER_DORTMUNDER_/_EXPORT","LAGER_AMERICAN_LIGHT","LAGER_MEXICAN","LAGER_AMERICAN","LAGER_LEICHTBIER","LAGER_CORE"] }, into: "LAGER_PILS", keepZero: true },
-                // Ale-adjacent lagers: kellerbier, kölsch, bocks, märzen, festbier
-                { match: { baseIn: ["KELLERBIER_/_ZWICKELBIER","KOLSCH","BOCK_SINGLE_/_TRADITIONAL","BOCK_HELL_/_MAIBOCK_/_LENTEBOCK","BOCK_DOPPELBOCK","BOCK_EISBOCK","MARZEN","FESTBIER","LAGER_STRONG","LAGER_SPECIALS","LAGER_WINTER","LAGER_OTHER"] }, into: "LAGER_ALE", keepZero: true },
+                { match: { baseIn: ["PILSNER_CZECH_/_BOHEMIAN","PILSNER_GERMAN","PILSNER_OTHER","LAGER_SVETLE_(CZECH_PALE)","LAGER_AMERICAN_LIGHT","LAGER_AMERICAN","LAGER_LEICHTBIER","LAGER_CORE","LAGER_PALE"] }, into: "LAGER_PILS", keepZero: true },
+                // Individual lager sub-types
+                { match: { baseIn: ["LAGER_HELLES"] }, into: "HELLES", keepZero: true },
+                { match: { baseIn: ["LAGER_DORTMUNDER_/_EXPORT"] }, into: "DORTMUNDER", keepZero: true },
+                { match: { baseIn: ["LAGER_MEXICAN"] }, into: "LAGER_MEXICAN", keepZero: true },
+                { match: { baseIn: ["INDIA_PALE_LAGER","IPL"] }, into: "IPL", keepZero: true },
+                { match: { baseIn: ["KOLSCH"] }, into: "KOLSCH", keepZero: true },
+                { match: { baseIn: ["LAGER_STRONG"] }, into: "LAGER_STRONG", keepZero: true },
+                { match: { baseIn: ["KELLERBIER_/_ZWICKELBIER"] }, into: "KELLERBIER", keepZero: true },
+                // Ale-adjacent lagers: märzen, festbier (bocks, kölsch, kellerbier, lager-strong split out)
+                { match: { baseIn: ["MARZEN","FESTBIER","LAGER_SPECIALS","LAGER_WINTER","LAGER_OTHER"] }, into: "LAGER_ALE", keepZero: true },
+                // Bocks — own bucket so they can live in Dark · Malt & Sweet
+                { match: { baseIn: ["BOCK_SINGLE_/_TRADITIONAL","BOCK_HELL_/_MAIBOCK_/_LENTEBOCK","BOCK_DOPPELBOCK","BOCK_EISBOCK"] }, into: "BOCKS_ALL", keepZero: true },
                 // Rotbier: amber, red, vienna, dark, schwarzbier
-                { match: { baseIn: ["LAGER_AMBER_/_RED","LAGER_AMERICAN_AMBER_/_RED","LAGER_VIENNA","LAGER_POLOTMAVE_(CZECH_AMBER)","LAGER_ROTBIER","LAGER_DARK","LAGER_MUNICH_DUNKEL","SCHWARZBIER","LAGER_TMAVE_(CZECH_DARK)"] }, into: "LAGER_ROTBIER", keepZero: true },
+                { match: { baseIn: ["LAGER_AMBER_/_RED","LAGER_AMERICAN_AMBER_/_RED","LAGER_VIENNA","LAGER_POLOTMAVE_(CZECH_AMBER)","LAGER_ROTBIER","RAUCHBIER","LAGER_DARK","LAGER_MUNICH_DUNKEL","SCHWARZBIER","LAGER_TMAVE_(CZECH_DARK)"] }, into: "RAUCHBIER", keepZero: true },
 
                 // ===== WHEAT BEERS =====
                 // Wit: Belgian witbier/blanche
@@ -177,43 +213,50 @@ export const PRESET_FILTERS_BEERS = [
                 // Weizen: German hefeweizen family
                 { match: { baseIn: ["WHEAT_BEER_HEFEWEIZEN","WHEAT_BEER_HEFEWEIZEN_LIGHT_/_LEICHT","WHEAT_BEER_KRISTALLWEIZEN","WHEAT_BEER_AMERICAN_PALE_WHEAT","WHEAT_CLASSIC"] }, into: "WHEAT_WEIZEN", keepZero: true },
                 // Dunkelweizen: dark wheat & specials
-                { match: { baseIn: ["WHEAT_BEER_DUNKELWEIZEN","BOCK_WEIZENBOCK","BOCK_WEIZENDOPPELBOCK","WHEAT_BEER_HOPFENWEISSE","ROGGENBIER","WHEAT_BEER_FRUITED","WHEAT_BEER_WHEAT_WINE","WHEAT_BEER_OTHER","WHEAT_OTHER"] }, into: "WHEAT_DUNKEL", keepZero: true },
+                { match: { baseIn: ["WHEAT_BEER_DUNKELWEIZEN","WHEAT_BEER_HOPFENWEISSE","ROGGENBIER","WHEAT_BEER_FRUITED","WHEAT_BEER_WHEAT_WINE","WHEAT_BEER_OTHER","WHEAT_OTHER"] }, into: "WHEAT_DUNKEL", keepZero: true },
+                // Weizenbock: wheat bocks (split out of dunkelweizen)
+                { match: { baseIn: ["BOCK_WEIZENBOCK","BOCK_WEIZENDOPPELBOCK"] }, into: "WEIZENBOCK", keepZero: true },
 
                 // ===== NORMAL BLOND / AMBER =====
-                // Enkel: patersbier, speciale belge (lightest blonds)
-                { match: { baseIn: ["BELGIAN_ENKEL_/_PATERSBIER","SPECIALE_BELGE"] }, into: "BLOND_ENKEL", keepZero: true },
-                // Blond: Belgian blonde, golden ales
-                { match: { baseIn: ["BELGIAN_BLONDE","BLONDE_/_GOLDEN_ALE_AMERICAN","BLONDE_/_GOLDEN_ALE_ENGLISH","BLONDE_/_GOLDEN_ALE_OTHER","GOLDEN_ALE_UKRAINIAN"] }, into: "BLOND", keepZero: true },
+                // Enkel: patersbier only (speciale belge split out to Malt & Sweet)
+                { match: { baseIn: ["BELGIAN_ENKEL_/_PATERSBIER"] }, into: "BLOND_ENKEL", keepZero: true },
+                { match: { baseIn: ["SPECIALE_BELGE"] }, into: "SPECIALE_BELGE", keepZero: true },
+                // Blond: split into Belgian Blonde vs Golden Ales
+                { match: { baseIn: ["BELGIAN_BLONDE"] }, into: "BELGIAN_BLONDE", keepZero: true },
+                { match: { baseIn: ["BLONDE_/_GOLDEN_ALE_AMERICAN","BLONDE_/_GOLDEN_ALE_ENGLISH","BLONDE_/_GOLDEN_ALE_OTHER","GOLDEN_ALE_UKRAINIAN"] }, into: "GOLDEN_ALES", keepZero: true },
                 { match: { baseIn: ["BELGIAN_STRONG_GOLDEN_ALE","BELGIAN_TRIPEL","BIERE_DE_CHAMPAGNE_/_BIERE_BRUT"] }, into: "BLOND_STRONG", keepZero: true },
-                { match: { baseIn: ["RED_ALE_AMERICAN_AMBER_/_RED","RED_ALE_IRISH","RED_ALE_OTHER","BELGE_AMBREE","TRADITIONAL_ALE","WINTER_ALE","WINTER_WARMER"] }, into: "AMBER_ALE", keepZero: true },
+                { match: { baseIn: ["RED_ALE_AMERICAN_AMBER_/_RED","RED_ALE_IRISH","RED_ALE_OTHER","TRADITIONAL_ALE","WINTER_ALE","WINTER_WARMER"] }, into: "AMBER_ALE", keepZero: true },
+                { match: { baseIn: ["BELGE_AMBREE"] }, into: "BELGE_AMBREE", keepZero: true },
                 { match: { baseIn: ["BITTER_SESSION_/_ORDINARY","BITTER_BEST","BITTER_EXTRA_SPECIAL_/_STRONG_(ESB)","CALIFORNIA_COMMON","AUSTRALIAN_SPARKLING_ALE","CREAM_ALE","CREAM_ALE_IMPERIAL_/_DOUBLE"] }, into: "BLOND_OTHER", keepZero: true },
 
                 // ===== HOPPY & BITTER (Pale Ales) =====
+                { match: { baseIn: ["PALE_ALE_SESSION","SESSION_ALE"] }, into: "SESSION_PALE_ALE", keepZero: true },
                 { match: { baseIn: ["PALE_ALE_BELGIAN","PALE_ALE_ENGLISH"] }, into: "PALE_ALE_BELGIAN_EU", keepZero: true },
-                { match: { baseIn: ["PALE_ALE_AMERICAN"] }, into: "PALE_ALE_AMERICAN_CLASSIC", keepZero: true },
+                { match: { baseIn: ["PALE_ALE_AMERICAN"] }, into: "APA", keepZero: true },
                 { match: { baseIn: ["PALE_ALE_NEW_ENGLAND_/_HAZY"] }, into: "PALE_ALE_HAZY_NE", keepZero: true },
-                { match: { baseIn: ["PALE_ALE_XPA_(EXTRA_PALE)","PALE_ALE_FRUITED","PALE_ALE_MILKSHAKE"] }, into: "PALE_ALE_SPECIALS", keepZero: true },
-                { match: { baseIn: ["PALE_ALE_AUSTRALIAN","PALE_ALE_NEW_ZEALAND","PALE_ALE_OTHER","RYE_BEER","RED_ALE_IMPERIAL_/_DOUBLE"] }, into: "PALE_ALE_OTHER", keepZero: true },
+                { match: { baseIn: ["PALE_ALE_XPA_(EXTRA_PALE)","PALE_ALE_FRUITED","PALE_ALE_MILKSHAKE","PALE_ALE_AUSTRALIAN","PALE_ALE_NEW_ZEALAND","PALE_ALE_OTHER","RYE_BEER","RED_ALE_IMPERIAL_/_DOUBLE"] }, into: "PALE_ALE_OTHER", keepZero: true },
                 { match: { baseIn: ["NON-ALCOHOLIC_BEER_PALE_ALE"] }, into: "PALE_ALE_BELGIAN_EU", keepZero: true },
 
                 // ===== HOPPY & BITTER (IPAs) =====
-                { match: { baseIn: ["IPA_SESSION","IPA_AMERICAN","IPA_ENGLISH","IPA_BELGIAN","IPA_NEW_ZEALAND"] }, into: "IPA_CLASSIC", keepZero: true },
+                { match: { baseIn: ["IPA_SESSION"] }, into: "SESSION_IPA", keepZero: true },
+                { match: { baseIn: ["IPA_AMERICAN","IPA_ENGLISH","IPA_NEW_ZEALAND"] }, into: "IPA_CLASSIC", keepZero: true },
+                { match: { baseIn: ["IPA_BELGIAN"] }, into: "BIPA", keepZero: true },
                 { match: { baseIn: ["IPA_NEW_ENGLAND_/_HAZY","IPA_IMPERIAL_/_DOUBLE_NEW_ENGLAND_/_HAZY","IPA_TRIPLE_NEW_ENGLAND_/_HAZY"] }, into: "IPA_HAZY_NE", keepZero: true },
                 { match: { baseIn: ["IPA_IMPERIAL_/_DOUBLE","IPA_TRIPLE","IPA_QUADRUPLE"] }, into: "IPA_STRONG", keepZero: true },
-                { match: { baseIn: ["IPA_WHITE_/_WHEAT","IPA_COLD","IPA_BRUT","IPA_BLACK_/_CASCADIAN_DARK_ALE","IPA_RED"] }, into: "IPA_SPECIALS", keepZero: true },
-                { match: { baseIn: ["IPA_FRUITED","IPA_RYE","IPA_BRETT","IPA_BROWN","IPA_FARMHOUSE","IPA_OTHER","IPA_IMPERIAL_/_DOUBLE_BLACK","IPA_IMPERIAL_/_DOUBLE_MILKSHAKE"] }, into: "IPA_OTHER", keepZero: true },
+                { match: { baseIn: ["IPA_WHITE_/_WHEAT","IPA_COLD","IPA_BRUT","IPA_BLACK_/_CASCADIAN_DARK_ALE","IPA_RED","IPA_FRUITED","IPA_RYE","IPA_BRETT","IPA_BROWN","IPA_FARMHOUSE","IPA_OTHER","IPA_IMPERIAL_/_DOUBLE_BLACK","IPA_IMPERIAL_/_DOUBLE_MILKSHAKE"] }, into: "IPA_OTHER", keepZero: true },
                 { match: { baseIn: ["NON-ALCOHOLIC_BEER_IPA"] }, into: "IPA_CLASSIC", keepZero: true },
 
                 // ===== DARK · MALT & SWEET =====
                 { match: { baseIn: ["BELGIAN_DUBBEL"] }, into: "DARK_DUBBEL", keepZero: true },
                 { match: { baseIn: ["BELGIAN_STRONG_DARK_ALE","BELGIAN_QUADRUPEL","BARLEYWINE_AMERICAN","BARLEYWINE_ENGLISH","BARLEYWINE_OTHER","SCOTCH_ALE_/_WEE_HEAVY","SCOTTISH_ALE","SCOTTISH_EXPORT_ALE","STRONG_ALE_AMERICAN","STRONG_ALE_ENGLISH","STRONG_ALE_OTHER","OLD_/_STOCK_ALE","RYE_WINE"] }, into: "DARK_STRONG_QUAD", keepZero: true },
-                { match: { baseIn: ["BROWN_ALE_AMERICAN","BROWN_ALE_BELGIAN","BROWN_ALE_ENGLISH","BROWN_ALE_IMPERIAL_/_DOUBLE","BROWN_ALE_OTHER","ALTBIER_TRADITIONAL","ALTBIER_STICKE","MILD_LIGHT","MILD_DARK","MILD_OTHER","DARK_ALE"] }, into: "DARK_BROWN_ALE", keepZero: true },
+                { match: { baseIn: ["ALTBIER_TRADITIONAL","ALTBIER_STICKE"] }, into: "ALTBIER", keepZero: true },
+                { match: { baseIn: ["BROWN_ALE_AMERICAN","BROWN_ALE_BELGIAN","BROWN_ALE_ENGLISH","BROWN_ALE_IMPERIAL_/_DOUBLE","BROWN_ALE_OTHER","MILD_LIGHT","MILD_DARK","MILD_OTHER","DARK_ALE"] }, into: "DARK_BROWN_ALE", keepZero: true },
                 { match: { baseIn: ["BELGIAN_STRONG_DARK_ALE_WINTER","CHRISTMAS_ALE","DARK_STRONG"] }, into: "DARK_BARLEYWINE", keepZero: true },
                 { match: { baseIn: ["DARK_BEER_OTHER"] }, into: "DARK_OTHER", keepZero: true },
 
                 // ===== DARK · COFFEE & ROAST =====
                 { match: { baseIn: ["PORTER_ENGLISH","PORTER_AMERICAN","PORTER_BALTIC","PORTER_COFFEE","PORTER_SMOKED","PORTER_OTHER","PORTER_STOUT_CLASSIC"] }, into: "ROAST_PORTER", keepZero: true },
-                { match: { baseIn: ["STOUT_IRISH_DRY","STOUT_ENGLISH","STOUT_FOREIGN_/_EXPORT","STOUT_OATMEAL","STOUT_MILK_/_SWEET","STOUT_COFFEE","STOUT_PASTRY","STOUT_OYSTER","STOUT_OTHER","RAUCHBIER"] }, into: "ROAST_STOUT", keepZero: true },
+                { match: { baseIn: ["STOUT_IRISH_DRY","STOUT_ENGLISH","STOUT_FOREIGN_/_EXPORT","STOUT_OATMEAL","STOUT_MILK_/_SWEET","STOUT_COFFEE","STOUT_PASTRY","STOUT_OYSTER","STOUT_OTHER"] }, into: "ROAST_STOUT", keepZero: true },
                 { match: { baseIn: ["STOUT_RUSSIAN_IMPERIAL","STOUT_IMPERIAL_/_DOUBLE","STOUT_IMPERIAL_/_DOUBLE_COFFEE","STOUT_IMPERIAL_/_DOUBLE_MILK","STOUT_IMPERIAL_/_DOUBLE_OATMEAL","STOUT_IMPERIAL_/_DOUBLE_PASTRY","STOUT_IMPERIAL_/_DOUBLE_WHITE_/_GOLDEN","IMPERIAL_STOUTS","PASTRY_STOUTS"] }, into: "ROAST_IMPERIAL", keepZero: true },
                 { match: { baseIn: ["SCHWARZBIER"] }, into: "ROAST_SPECIALTY", keepZero: true },
 
@@ -241,6 +284,8 @@ export const PRESET_FILTERS_BEERS = [
 
                 // ===== SPECIAL BEERS =====
                 { match: { baseIn: ["TABLE_BEER","NON_ALC_MAINSTREAM","NON_ALC_NEUTRAL"] }, into: "SPECIAL_ALL", keepZero: true },
+                { match: { baseIn: ["SPECIAL_BEERS"] }, into: "SPECIAL_BEERS_ALL", keepZero: true },
+                { match: { baseIn: ["MALT_LIQUOR","MALT_BEER"] }, into: "MALT_LIQUOR_ALL", keepZero: true },
 
                 // ===== OTHER / CATCH-ALL =====
                 { match: { baseIn: ["KVASS","BEER_SODA_MIX","CORN_BEER_/_CHICHA_DE_JORA","SORGHUM_/_MILLET_BEER","KOJI_/_GINJO_BEER","MAKGEOLLI","SPECIALTY_GRAIN","SPICED_/_HERBED_BEER","PUMPKIN_/_YAM_BEER","CHILLI_/_CHILE_BEER","HONEY_BEER","GRAPE_ALE_ITALIAN","GRAPE_ALE_OTHER","HAPPOSHU","SMOKED_BEER","HISTORICAL_BEER_OTHER","HISTORICAL_ODDITIES"] }, into: "BEERS_OTHER_ALL", keepZero: true },

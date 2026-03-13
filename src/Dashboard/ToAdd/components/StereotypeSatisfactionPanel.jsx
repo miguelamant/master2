@@ -9,8 +9,8 @@ const PERSONA_MAP = [
 ];
 
 function barColor(score) {
-  if (score >= 75) return 'bar-green';
-  if (score >= 50) return 'bar-orange';
+  if (score >= 7.5) return 'bar-green';
+  if (score >= 5.0) return 'bar-orange';
   return 'bar-red';
 }
 
@@ -27,12 +27,12 @@ export default function StereotypeSatisfactionPanel({ personaFit = {} }) {
           <div className="stereotype-entry__header">
             <span className="stereotype-entry__flag">{flag}</span>
             <span>{country}</span>
-            <span className="stereotype-entry__score-label">{score}%</span>
+            <span className="stereotype-entry__score-label">{score.toFixed(1)}/10</span>
           </div>
           <div className="stereotype-entry__bar-track">
             <div
               className={`stereotype-entry__bar-fill ${barColor(score)}`}
-              style={{ width: `${score}%` }}
+              style={{ width: `${score * 10}%` }}
             />
           </div>
         </div>

@@ -44,7 +44,7 @@ import { fetchMergedLayers } from './engine/mergedLayersClient';
 import useHoverLists from "./hooks/useHoverLists";
 import useStereotypeBenchmarks from "./hooks/useStereotypeBenchmarks";
 import useEngineDistributions from "./hooks/useEngineDistributions";
-import { usePersonaFit } from "./hooks/usePersonaFit";
+import { useStereotypeFit } from "./hooks/useStereotypeFit";
 
 
 
@@ -175,18 +175,6 @@ const normalizeCategory = (s) => {
   });
 
   const rowDefs = currentPreset?.ui?.aggregateRows?.rows ?? [];
-
-  const dynamicLayers = useEngineDistributions({
-    assortmentId: activeAssortmentId,
-    groupBy,
-    section: effectiveSection,
-    within,
-    filters: apiFilters,
-    predicates: presetPredicates,
-    rollups: currentPreset?.rollups ?? [],
-    rowDefs,
-    enabled: true,
-  });
 
   const [sortOrder] = useState('top');
  // const [setItems] = useState([]);
@@ -692,10 +680,36 @@ const normalizeCategory = (s) => {
            assortmentId: activeAssortmentId,
      });
 
-  const personaFit = usePersonaFit({
-    dynamicLayers,
-    countsByCategory,
+  const totalMenuCount = useMemo(
+    () => Object.values(countsByCategory || {}).reduce((s, n) => s + (n ?? 0), 0) || 75,
+    [countsByCategory]
+  );
+
+  const dynamicLayers = useEngineDistributions({
+    assortmentId: activeAssortmentId,
+    groupBy,
+    section: effectiveSection,
+    within,
+    filters: apiFilters,
+    predicates: presetPredicates,
+    rollups: currentPreset?.rollups ?? [],
     rowDefs,
+    totalMenuCount,
+    enabled: true,
+  });
+
+  const personaFit = useStereotypeFit({
+    assortmentId: activeAssortmentId,
+    groupBy,
+    section: effectiveSection,
+    within,
+    filters: apiFilters,
+    predicates: presetPredicates,
+    rollups: currentPreset?.rollups ?? [],
+    rowDefs,
+    countsByCategory,
+    totalMenuCount,
+    enabled: true,
   });
 
     useEffect(() => {
@@ -814,15 +828,6 @@ const normalizeCategory = (s) => {
     requireAddPositive: true,
   }), []);
 
-    useEffect(() => {
-      console.log("[DBG][RECO INPUTS]", {
-        viewGroupsLen: Array.isArray(viewGroups) ? viewGroups.length : null,
-        activeLayersLen: Array.isArray(activeLayers) ? activeLayers.length : null,
-        layerCountsKeys: layerCounts ? Object.keys(layerCounts).slice(0, 10) : null,
-        countsKeys: countsByCategory ? Object.keys(countsByCategory).length : null,
-        displayedKeys: displayedCountsByCategory ? Object.keys(displayedCountsByCategory).length : null,
-      });
-    }, [viewGroups, activeLayers, layerCounts, countsByCategory, displayedCountsByCategory]);
 
 
     const { stepSuggestions, alloc, adds: aggAdds, removes: aggRemoves, headerKPI } =
@@ -879,12 +884,19 @@ const normalizeCategory = (s) => {
 
   const K = Object.values(displayedCountsByCategory).reduce((s, n) => s + (n ?? 0), 0);
 
-  // Only (re)select all tastes when the preset actually changes
+  // Only (re)select all tastes when the preset actually changes.
+  // Use an updater that bails out (returns prev) when the set content is unchanged,
+  // preventing an infinite re-render loop when tasteOptions gets a new reference
+  // but contains the same ids.
     useEffect(() => {
-      setFilters((prev) => ({
-        ...prev,
-        tastes: new Set((tasteOptions || []).map((o) => o.id)), // empty Set when no options
-      }));
+      setFilters((prev) => {
+        const newIds = (tasteOptions || []).map((o) => o.id);
+        const old = prev.tastes;
+        if (old instanceof Set && old.size === newIds.length && newIds.every(id => old.has(id))) {
+          return prev; // same content — no state update, no re-render
+        }
+        return { ...prev, tastes: new Set(newIds) };
+      });
     }, [activeCategory, presetIndex, tasteOptions]);
 
 

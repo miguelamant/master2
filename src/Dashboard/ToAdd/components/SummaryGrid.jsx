@@ -380,7 +380,8 @@ export default function SummaryGrid(props) {
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {rowDefs.map((row, rowIdx) => {
                         const rTotal = rowTotals[rowIdx] ?? 0;
-                        if (rTotal === 0) return null;
+                        // TODO: temporary — show all rows even if rTotal === 0
+                        // if (rTotal === 0) return null;
 
                         // hide zero-count sub-buckets by default, unless row has keepEmpty: true
                         const rowBuckets = row?.keepEmpty
@@ -389,6 +390,11 @@ export default function SummaryGrid(props) {
                                 (b) => Number(countsByCategory?.[b] ?? 0) > 0
                               );
                         const rowIcon = row?.iconToken ? iconFor(row.iconToken) : null;
+                        const rowDelta = (row?.buckets || []).reduce((sum, b) => {
+                            const s = findSummaryFor(b);
+                            return sum + (s ? Number(s.delta || 0) : 0);
+                        }, 0);
+                        const rowSuggested = Math.max(0, rTotal + rowDelta);
 
                         return (
                             <div key={rowIdx} style={{
@@ -420,9 +426,19 @@ export default function SummaryGrid(props) {
                                                     setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
                                             }}
                                             onMouseLeave={() => setAggTooltip(null)}
-                                        >{rTotal}</div>
+                                        >
+                                            {rTotal}
+                                            {rowDelta !== 0 && (
+                                                <span style={{ fontSize: 13, fontWeight: 700, marginLeft: 6, color: rowDelta > 0 ? '#16a34a' : '#dc2626' }}>
+                                                    {rowDelta > 0 ? '+' : ''}{rowDelta}
+                                                </span>
+                                            )}
+                                        </div>
                                         {rowIcon && <img src={rowIcon} alt="" aria-hidden="true" style={{ width: 24, height: 24 }} />}
                                     </div>
+                                    {rowDelta !== 0 && (
+                                        <div style={{ fontSize: 11, opacity: 0.7, lineHeight: 1.2 }}>→ {rowSuggested}</div>
+                                    )}
                                     <div style={{ fontWeight: 700, fontSize: 11, opacity: 0.75, lineHeight: 1.2 }}>{row.title}</div>
                                 </div>
 
@@ -485,6 +501,11 @@ export default function SummaryGrid(props) {
                         const rowTitle = row?.title || `Row ${rowIdx + 1}`;
                         const rowIcon = row?.iconToken ? iconFor(row.iconToken) : null;
                         const rTotal = rowTotals[rowIdx] ?? 0;
+                        const rowDelta = (row?.buckets || []).reduce((sum, b) => {
+                            const s = findSummaryFor(b);
+                            return sum + (s ? Number(s.delta || 0) : 0);
+                        }, 0);
+                        const rowSuggested = Math.max(0, rTotal + rowDelta);
 
                         return (
                             <React.Fragment key={rowIdx}>
@@ -522,15 +543,27 @@ export default function SummaryGrid(props) {
                                         </div>
                                     </div>
 
-                                    <div
-                                        style={{ fontWeight: 900, fontSize: 20, cursor: 'default' }}
-                                        onMouseEnter={(e) => {
-                                            const data = sumBenchmarks(stereotypeBenchmarks, row?.buckets || []);
-                                            if (Object.values(data).some(v => v > 0))
-                                                setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
-                                        }}
-                                        onMouseLeave={() => setAggTooltip(null)}
-                                    >{rTotal}</div>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2 }}>
+                                        <div
+                                            style={{ fontWeight: 900, fontSize: 20, cursor: 'default' }}
+                                            onMouseEnter={(e) => {
+                                                const data = sumBenchmarks(stereotypeBenchmarks, row?.buckets || []);
+                                                if (Object.values(data).some(v => v > 0))
+                                                    setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
+                                            }}
+                                            onMouseLeave={() => setAggTooltip(null)}
+                                        >
+                                            {rTotal}
+                                            {rowDelta !== 0 && (
+                                                <span style={{ fontSize: 13, fontWeight: 700, marginLeft: 6, color: rowDelta > 0 ? '#16a34a' : '#dc2626' }}>
+                                                    {rowDelta > 0 ? '+' : ''}{rowDelta}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {rowDelta !== 0 && (
+                                            <div style={{ fontSize: 11, opacity: 0.7 }}>→ {rowSuggested}</div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Row cells */}

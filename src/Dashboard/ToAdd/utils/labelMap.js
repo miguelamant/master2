@@ -73,6 +73,32 @@ export const LABEL_MAP = {
     SPIRIT_FLAVOURED_BEERS: 'Flavoured beers - Despirados etc.',
      */
 
+    // Stijlkaart bucket display names
+    BLOND_ENKEL:    'Patersbier',
+    BLOND_STRONG:   'Belgian Golden & Tripel',
+    IPA_HAZY_NE:    'NEIPA',
+    BIPA:           'BIPA',
+    APA:            'APA',
+    SPECIALE_BELGE: 'Speciale Belge',
+    BELGE_AMBREE:   'Belge Ambrée',
+    BOCKS_ALL:      'Bocks',
+    DARK_DUBBEL:    'Dubbel',
+    ALTBIER:        'Altbier',
+    HELLES:         'Helles',
+    DORTMUNDER:     'Dortmunder Export',
+    KOLSCH:         'Kölsch',
+    KELLERBIER:     'Kellerbier / Zwickelbier',
+    LAGER_STRONG:   'Lager Strong',
+    LAGER_MEXICAN:  'Mexican Lager',
+    IPL:            'IPL',
+    RAUCHBIER:      'Rauchbier',
+    WEIZENBOCK:         'Weizenbock',
+    SESSION_IPA:        'Session IPA',
+    SESSION_PALE_ALE:   'Session Pale Ale',
+    BELGIAN_BLONDE:     'Belgian Blonde',
+    GOLDEN_ALES:        'Golden Ales',
+    SAISON:             'Saison',
+
     // add more as you go...
 };
 

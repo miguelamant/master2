@@ -2,8 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import { api } from "../../../apiService";
 import { applyRollups } from "./useCountsByCategory";
 
-const DECAY = 0.75;
-
 const PERSONA_LAYER_IDS = {
   Belgian: 9001,
   French:  9002,
@@ -19,16 +17,26 @@ const PERSONA_ROW_LAYER_IDS = {
   Dutch:   9014,
 };
 
-// Normalize pct (0–100) to fraction (0–1) so MB values match the static-layer
-// scale (geometric4 curves top out at ~0.45). Weight is also divided by 100
-// so the combined scale keeps gains in the ~0.01–0.50 range that Willy-mode
-// thresholds (0.10 / 0.20 / 0.90) are calibrated for.
-function buildSeries(pct) {
-  const v = pct / 100;            // normalize to 0–1
-  const len = Math.max(10, Math.ceil(v * 300));  // same proportional length
+// Adaptive decay: at `idealCount` items, ~50% of total benefit captured.
+// This ensures meaningful MB values remain at realistic depths and score
+// discrimination between personas holds even for large menus (100–160 items).
+function buildSeries(pct, totalMenuCount = 75) {
+  const v = pct / 100;
+  const idealCount = Math.max(1, Math.round(v * totalMenuCount));
+  const decay = Math.min(0.97, Math.max(0.50, Math.pow(0.5, 1 / idealCount)));
+  const len = Math.max(10, Math.ceil(idealCount * 4));
   const out = [];
   for (let i = 0; i < len; i++) {
-    out.push(Math.round(v * Math.pow(DECAY, i) * 1000) / 1000);
+    if (i < idealCount) {
+      // Original geometric decay within the ideal range
+      out.push(Math.round(v * Math.pow(decay, i) * 1000) / 1000);
+    } else {
+      // Rapid 10× collapse past idealCount: over-represented buckets become
+      // near-free to remove, preventing them from "protecting" their excess items.
+      const lastInIdeal = v * Math.pow(decay, idealCount - 1);
+      const overshoot = i - idealCount + 1;
+      out.push(Math.round(lastInIdeal * Math.pow(0.1, overshoot) * 1000) / 1000);
+    }
   }
   return out;
 }
@@ -55,11 +63,12 @@ function buildRowDist(dist, rowDefs) {
   return rowDist;
 }
 
-function buildLayer({ personaName, layerId, field, weight, distribution }) {
+function buildLayer({ personaName, layerId, field, weight, distribution, totalMenuCount = 75 }) {
   const buckets = {};
   for (const [bucketKey, pct] of Object.entries(distribution)) {
     if (pct <= 0) continue;
-    buckets[bucketKey] = { bucket: buildSeries(pct) };
+    const idealCount = Math.round((pct / 100) * totalMenuCount);
+    buckets[bucketKey] = { bucket: buildSeries(pct, totalMenuCount), idealCount };
   }
   return {
     layer_id: layerId,
@@ -74,7 +83,7 @@ function buildLayer({ personaName, layerId, field, weight, distribution }) {
 /**
  * Fetches stereotype distribution percentages and builds dynamic engine layers.
  * One layer per persona (Belgian/French/German/Dutch), weighted by the bar's persona weights.
- * Each bucket's MB series uses exponential decay: v[i] = pct * 0.75^i
+ * Each bucket's MB series uses adaptive exponential decay calibrated to totalMenuCount.
  */
 export default function useEngineDistributions({
   assortmentId,
@@ -85,15 +94,17 @@ export default function useEngineDistributions({
   predicates = [],
   rollups = [],
   rowDefs = [],
+  totalMenuCount = 75,
   enabled = true,
 }) {
-  const [dynamicLayers, setDynamicLayers] = useState([]);
+  const [rawData, setRawData] = useState(null);
 
   const depsKey = useMemo(
     () => JSON.stringify({ assortmentId, groupBy, section, within, filters, predicates }),
     [assortmentId, groupBy, section, within, filters, predicates]
   );
 
+  // Stage 1: fetch raw weights + distributions only when filters/section change
   useEffect(() => {
     if (!enabled) return;
     let alive = true;
@@ -107,29 +118,7 @@ export default function useEngineDistributions({
       predicates,
     }).then(({ data }) => {
       if (!alive) return;
-      const { weights = {}, distributions = {} } = data;
-
-      const layers = [];
-      for (const [persona, layerId] of Object.entries(PERSONA_LAYER_IDS)) {
-        const weight = Number(weights[persona] ?? 0);
-        if (!weight) continue;
-
-        const rawDist = distributions[persona] || {};
-        // Apply same rollup logic as countsByCategory so bucket names match
-        const dist = applyRollups(rawDist, rollups);
-
-        // Bucket-level layer (weight 1×)
-        const bucketLayer = buildLayer({ personaName: persona, layerId, field: groupBy, weight: weight / 100, distribution: dist });
-        if (Object.keys(bucketLayer.buckets).length > 0) layers.push(bucketLayer);
-
-        // Row-level layer (weight 2×): aggregates buckets belonging to same row
-        const rowLayerId = PERSONA_ROW_LAYER_IDS[persona];
-        const rowDist = buildRowDist(dist, rowDefs);
-        const rowLayer = buildLayer({ personaName: `${persona} (rows)`, layerId: rowLayerId, field: "rowLabel", weight: (weight / 100) * 2, distribution: rowDist });
-        if (Object.keys(rowLayer.buckets).length > 0) layers.push(rowLayer);
-      }
-
-      setDynamicLayers(layers);
+      setRawData(data);
     }).catch(err => {
       console.error("[useEngineDistributions]", err?.response?.data || err);
     });
@@ -138,5 +127,31 @@ export default function useEngineDistributions({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [depsKey, enabled]);
 
-  return dynamicLayers;
+  // Stage 2: rebuild layer objects when rawData or totalMenuCount changes
+  return useMemo(() => {
+    if (!rawData) return [];
+    const { weights = {}, distributions = {} } = rawData;
+
+    const layers = [];
+    for (const [persona, layerId] of Object.entries(PERSONA_LAYER_IDS)) {
+      const weight = Number(weights[persona] ?? 0);
+      if (!weight) continue;
+
+      const rawDist = distributions[persona] || {};
+      // Apply same rollup logic as countsByCategory so bucket names match
+      const dist = applyRollups(rawDist, rollups);
+
+      // Bucket-level layer (weight 1×)
+      const bucketLayer = buildLayer({ personaName: persona, layerId, field: groupBy, weight: weight / 100, distribution: dist, totalMenuCount });
+      if (Object.keys(bucketLayer.buckets).length > 0) layers.push(bucketLayer);
+
+      // Row-level layer (weight 2×): aggregates buckets belonging to same row
+      const rowLayerId = PERSONA_ROW_LAYER_IDS[persona];
+      const rowDist = buildRowDist(dist, rowDefs);
+      const rowLayer = buildLayer({ personaName: `${persona} (rows)`, layerId: rowLayerId, field: "rowLabel", weight: (weight / 100) * 2, distribution: rowDist, totalMenuCount });
+      if (Object.keys(rowLayer.buckets).length > 0) layers.push(rowLayer);
+    }
+
+    return layers;
+  }, [rawData, totalMenuCount, rollups, rowDefs, groupBy]);
 }

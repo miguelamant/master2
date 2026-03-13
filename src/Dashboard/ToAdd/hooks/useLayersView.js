@@ -282,15 +282,6 @@ export function useLayersView({
         return { layers: arr };
     }, [allowIds, baseGroups, activeCategory, layersOverride, dynamicLayers]);
 
-    React.useEffect(() => {
-        console.log("[DBG][layers][usable]", {
-            presetId: String(getPresetId?.(currentPreset) ?? currentPreset?.id ?? ""),
-            allowIds,
-            usableLayersLen: Array.isArray(usableLayers) ? usableLayers.length : null,
-            usableLayerIds: (usableLayers || []).map(L => L.layer_id),
-            baseGroupsFields: baseGroups?.length ? Object.keys(baseGroups[0] || {}) : [],
-        });
-    }, [usableLayers, allowIds, baseGroups, currentPreset]);
 
 
     const activeLayers = React.useMemo(() => {
@@ -300,74 +291,9 @@ export function useLayersView({
         return arr;
     }, [usableLayers, allowIds]);
 
-    // === BEGIN one-time integrity dump for layer 1001 ===
-    try {
-        if (typeof window !== 'undefined') {
-            window.__RAW_LAYER_BUCKETS__ = window.__RAW_LAYER_BUCKETS__ || {};
-            const lid = 'L1001';
-            const L1001 = (activeLayers || []).find(L => String(L.layer_id) === '1001');
-            if (L1001) {
-                const out = {};
-                for (const [k, rec] of Object.entries(L1001.buckets || {})) {
-                    const arr = Array.isArray(rec?.bucket) ? rec.bucket.slice() : null;
-                    out[k] = arr;
-                }
-                window.__RAW_LAYER_BUCKETS__[lid] = out;
-                console.log('[INTEGRITY] L1001 raw buckets loaded by UI:', out);
-            } else {
-                //console.warn('[INTEGRITY] Layer 1001 not in activeLayers');
-            }
-        }
-    } catch (e) {
-        console.warn('[INTEGRITY] dump failed:', e);
-    }
-// === END one-time integrity dump ===
 
 
 
-    // ⬇️ DEBUG: what layers are active, and where did they come from?
-    React.useEffect(() => {
-        try {
-            const src = (layersOverride && Array.isArray(layersOverride.layers)) ? 'override/sessionStorage' : 'files';
-            const sample = (activeLayers || []).map(L => ({
-                id: L.layer_id,
-                name: L.name,
-                type: L.type,
-                field: L.field,
-                rows_field: L.rows_field,
-                cols_field: L.cols_field,
-                weight: L.weight,
-                bucketKeys: L.type === '1D'
-                    ? Object.keys(L.buckets || {}).slice(0, 8)
-                    : Object.keys((L.buckets || L.cells || {})).slice(0, 8),
-            }));
-            console.groupCollapsed(`[DBG] activeLayers (${src}) → ${sample.length}`);
-            console.debug('[ACTIVE LAYERS]', activeLayers.map(L => L.layer_id));
-            console.table(sample);
-            console.groupEnd();
-
-            // Focus a specific layer e.g. 7201
-            const focusId = 7201; // change if needed
-            const L = (activeLayers || []).find(x => Number(x.layer_id) === Number(focusId));
-            if (!L) {
-                console.warn(`[DBG] layer ${focusId} not in activeLayers`);
-            } else {
-                console.log(`[DBG] L${focusId} detail`, {
-                    layer_id: L.layer_id,
-                    name: L.name,
-                    type: L.type,
-                    field: L.field,
-                    rows_field: L.rows_field,
-                    cols_field: L.cols_field,
-                    bucketsPreview: L.type === '1D'
-                        ? Object.keys(L.buckets || {})
-                        : Object.keys((L.buckets || L.cells || {})),
-                });
-            }
-        } catch (e) {
-            console.warn('[DBG] activeLayers log failed:', e);
-        }
-    }, [activeLayers, layersOverride]);
 
 
     // 3) hide_if_zero → displayedCountsByCategory
@@ -379,8 +305,14 @@ export function useLayersView({
     );
 
 // ---------- 3) Apply hide_if_zero to produce displayedCountsByCategory ----------
+    // TODO: temporary — show all buckets regardless of zero. Remove this flag once
+    // the user has identified which zero buckets to keep via forceShow.
+    const SHOW_ALL_ZEROS = true;
+
     const displayedCountsByCategory = React.useMemo(() => {
         if (!baseGroups.length) return countsByCategory || {};
+
+        if (SHOW_ALL_ZEROS) return { ...(countsByCategory || {}) };
 
         // for shouldHideZeroForLabel → we need a label→group lookup
         const groupMap = new Map(baseGroups.map(g => [g.label, g]));
@@ -396,6 +328,11 @@ export function useLayersView({
 
             const hide = shouldHideZeroForLabel(label, n, groupBy, lookup, activeLayers);
             if (!hide) out[label] = n;
+        }
+        // Inject forceShow items that are missing entirely (e.g. rolled-up or never
+        // returned by the API when count = 0). This ensures they always appear.
+        for (const label of forceSet) {
+            if (!(label in out)) out[label] = 0;
         }
         return out;
     }, [

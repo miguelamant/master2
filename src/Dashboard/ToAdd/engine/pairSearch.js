@@ -60,13 +60,14 @@ function depthFor(counts, layer, addr) {
     return Number(counts?.[lid]?.[key] ?? 0);
 }
 
-// group is removable if it has >0 depth in ANY scoring layer
-function isRemovableInAnyLayer(counts, layers, group) {
+// An item is a removal candidate if it is actually present (depth > 0 in any layer).
+// Whether removing it is beneficial is decided entirely by the MB series in findBestPairs.
+function isRemovable(counts, layers, group) {
+    if (Number(group?.count || 0) <= 0) return false;
     for (const layer of layers || []) {
         const addr = addressFor(layer, group);
         if (!addr) continue;
-        const d = depthFor(counts, layer, addr);
-        if (d > 0) return true;
+        if (depthFor(counts, layer, addr) > 0) return true;
     }
     return false;
 }
@@ -92,7 +93,7 @@ export function findBestPairs({ layers, groups, counts, options = {} }) {
     const addables = Array.isArray(groups) ? groups : [];
     // ✅ crucial change: compute removables from counts, not from g.count
     const removables = (Array.isArray(groups) ? groups : []).filter(g =>
-        isRemovableInAnyLayer(counts, scoringLayers, g)
+        isRemovable(counts, scoringLayers, g)
     );
 
     const candidates = [];
