@@ -16,7 +16,7 @@ export function AssortmentProvider({ children }) {
     let alive = true;
     api.get('/api/assortments')
       .then(({ data }) => {
-        if (!alive || !data?.length) return;
+        if (!alive || !Array.isArray(data) || !data.length) return;
         setAssortments(data);
         setActiveAssortmentIdRaw(prev => {
           // keep stored value if it's still valid
