@@ -21,14 +21,23 @@ const PERSONA_ROW_LAYER_IDS = {
 // This ensures meaningful MB values remain at realistic depths and score
 // discrimination between personas holds even for large menus (100–160 items).
 function buildSeries(pct, totalMenuCount = 75) {
-  const v = pct / 100;
-  const idealCount = Math.max(1, Math.round(v * totalMenuCount));
-  const decay = Math.min(0.97, Math.max(0.50, Math.pow(0.5, 1 / idealCount)));
+  const vLinear = pct / 100;
+  // Log-compressed scale so small buckets (3%) stay competitive with large ones (30%).
+  // Linear pct/100 gives 0.03 vs 0.30 (10× ratio); log(1 + pct/10) gives 0.26 vs 1.39 (~5× ratio).
+  // idealCount still uses the true linear percentage so the ideal item count is correct.
+  const v = Math.log(1 + pct / 10);
+  const idealCount = Math.max(1, Math.round(vLinear * totalMenuCount));
+  // idealCount-normalised decay: series[idealCount-1] = v/idealCount exactly.
+  // Per-step removal cost at the ideal boundary scales with 1/idealCount (relative impact),
+  // so removing from a 2-item-ideal row costs more than from a 10-item-ideal row.
+  const decay = idealCount > 1
+    ? Math.pow(idealCount, -1 / (idealCount - 1))
+    : 0.5; // idealCount=1: single-step series, decay unused
   const len = Math.max(10, Math.ceil(idealCount * 4));
   const out = [];
   for (let i = 0; i < len; i++) {
     if (i < idealCount) {
-      // Original geometric decay within the ideal range
+      // Geometric decay within the ideal range
       out.push(Math.round(v * Math.pow(decay, i) * 1000) / 1000);
     } else {
       // Rapid 10× collapse past idealCount: over-represented buckets become

@@ -1,10 +1,10 @@
-/* Optionbar.css */
+/* Optionbar.css — modern pill/chip filter design */
 
 .optionbar-container {
     background: var(--bg-card);
-    border-radius: 1.5rem;
+    border-radius: 1.25rem;
     border: 1px solid var(--border-subtle);
-    padding: 1.1rem 1rem;
+    padding: 1rem;
     width: 24rem;
     max-width: 22rem;
     margin: 0 1rem 1rem 0;
@@ -14,94 +14,134 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* ── Title ─────────────────────────────────────── */
 .optionbar-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.3rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    color: var(--accent);
-    margin: 0 0 1rem 0;
-    letter-spacing: -0.015em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.75rem 0.15rem;
 }
 
-/* Scroll region */
+/* ── Scroll region ─────────────────────────────── */
 .optionbar-scrollable {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
+    padding-right: 0.15rem;
+    padding-left: 0.15rem;
 }
 
-/* Lists */
-.optionbar-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+/* ── Section groups ────────────────────────────── */
+.optionbar-group {}
 
-.option-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+.optionbar-group-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
     color: var(--text-muted);
-    margin-bottom: 0.35rem;
-    padding: 0.5rem 0.7rem;
-    border-radius: 9px;
-    border: 1px solid transparent;
-    transition: all 0.18s ease;
-    cursor: pointer;
-}
-
-.option-item:hover {
-    background: rgba(129, 140, 248, 0.1);
-    border-color: rgba(129, 140, 248, 0.2);
-    color: var(--text-primary);
-}
-
-.option-item input[type="checkbox"] {
-    -webkit-appearance: auto;
-    appearance: auto;
-    width: 1rem;
-    height: 1rem;
-    min-width: 1rem;
-    min-height: 1rem;
-    accent-color: var(--accent);
-    flex: 0 0 1rem;
-}
-
-.option-icon {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    min-height: 22px;
-    flex: 0 0 22px;
+    margin: 0 0 0.45rem 0.2rem;
     opacity: 0.7;
 }
 
-.option-label {
+/* ── Chip list (wrapping flex) ─────────────────── */
+.optionbar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.15rem 0;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    font-size: 0.92rem;
-    color: inherit;
-    cursor: pointer;
+    flex-wrap: wrap;
+    gap: 0.35rem;
 }
 
-/* Divider */
+/* ── Individual pill chip ──────────────────────── */
+.option-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 100px;
+    border: 1.5px solid var(--border-subtle);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1.35;
+}
+
+.option-chip:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.04);
+    color: var(--text-primary);
+}
+
+.option-chip.active {
+    background: rgba(99, 102, 241, 0.10);
+    border-color: rgba(99, 102, 241, 0.45);
+    color: var(--accent-blue-bright, #6366f1);
+    font-weight: 600;
+}
+
+.option-chip.active:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.55);
+}
+
+/* ── Chip icon ─────────────────────────────────── */
+.option-chip-icon {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    flex: 0 0 16px;
+    opacity: 0.55;
+    transition: opacity 0.18s ease;
+}
+
+.option-chip.active .option-chip-icon {
+    opacity: 0.85;
+}
+
+/* ── Chip count badge ──────────────────────────── */
+.option-chip-count {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0.5;
+    margin-left: 0.1rem;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.option-chip.active .option-chip-count {
+    opacity: 0.7;
+    color: var(--accent-blue-bright, #6366f1);
+}
+
+/* ── Divider ───────────────────────────────────── */
 .optionbar-divider {
-    margin: 0.65rem 0;
+    margin: 0.6rem 0;
     border: none;
     height: 1px;
     background: var(--border-subtle);
+    opacity: 0.6;
 }
 
-/* Scrollbar */
-.optionbar-scrollable::-webkit-scrollbar        { width: 4px; }
+/* ── Scrollbar ─────────────────────────────────── */
+.optionbar-scrollable::-webkit-scrollbar        { width: 3px; }
 .optionbar-scrollable::-webkit-scrollbar-track  { background: transparent; }
-.optionbar-scrollable::-webkit-scrollbar-thumb  { background: rgba(129,140,248,0.18); border-radius: 4px; }
-.optionbar-scrollable::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.4); }
+.optionbar-scrollable::-webkit-scrollbar-thumb  { background: rgba(0,0,0,0.10); border-radius: 4px; }
+.optionbar-scrollable::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.22); }
 
+/* ── Legacy compat: card wrapper override ──────── */
 .optionbar-card {
-    padding-left: 0.5rem;
-    padding-top: 0.5rem;
+    padding-left: 0.35rem;
+    padding-top: 0.35rem;
 }

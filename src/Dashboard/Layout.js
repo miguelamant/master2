@@ -24,6 +24,8 @@ const Layout = ({ children }) => {
     const [selectedStoreId, setSelectedStoreId] = useState(null);
     // 'analysis' | 'menu' — what action was chosen from the overview
     const [overviewAction, setOverviewAction]   = useState('analysis');
+    // persisted scores across overview ↔ analysis navigation
+    const [assortmentScores, setAssortmentScores] = useState({});
 
     function handleCategorySelect(option) {
         setSelectedOption(option);
@@ -62,12 +64,19 @@ const Layout = ({ children }) => {
             <AssortmentOverview
                 category={selectedOption}
                 onSelectStore={handleSelectStoreForAnalysis}
-                onViewMenu={handleSelectStoreForMenu}
+                scores={assortmentScores}
+                onScoreUpdate={(id, s) => setAssortmentScores(prev => ({ ...prev, [id]: s }))}
             />
         );
 
     } else {
         // ── post-overview: analysis or menu ──
+        const toAddProps = {
+            onGoBack:        handleGoBack,
+            onViewMenu:      () => setOverviewAction('menu'),
+            assortmentScores,
+            onScoreUpdate:   (id, s) => setAssortmentScores(prev => ({ ...prev, [id]: s })),
+        };
         switch (selectedOption) {
             case 'stats':
                 MainContent = <TopWorstSellers />;
@@ -78,30 +87,30 @@ const Layout = ({ children }) => {
             case 'beers':
                 MainContent = overviewAction === 'menu'
                     ? <Menu />
-                    : <ToAdd section="beers" />;
+                    : <ToAdd section="beers" {...toAddProps} />;
                 break;
             case 'refreshments':
                 MainContent = overviewAction === 'menu'
                     ? <Menu />
-                    : <ToAdd section="refreshments" />;
+                    : <ToAdd section="refreshments" {...toAddProps} />;
                 break;
             case 'liquors':
-                MainContent = <ToAdd section="liquors" />;
+                MainContent = <ToAdd section="liquors" {...toAddProps} />;
                 break;
             case 'wines':
-                MainContent = <ToAdd section="wines" />;
+                MainContent = <ToAdd section="wines" {...toAddProps} />;
                 break;
             case 'hotdrinks':
-                MainContent = <ToAdd section="hotdrinks" />;
+                MainContent = <ToAdd section="hotdrinks" {...toAddProps} />;
                 break;
             case 'meals':
-                MainContent = <ToAdd section="meals" />;
+                MainContent = <ToAdd section="meals" {...toAddProps} />;
                 break;
             case 'snacks':
-                MainContent = <ToAdd section="snacks" />;
+                MainContent = <ToAdd section="snacks" {...toAddProps} />;
                 break;
             case 'cocktails':
-                MainContent = <ToAdd section="cocktails" />;
+                MainContent = <ToAdd section="cocktails" {...toAddProps} />;
                 break;
             case 'to-remove':
                 MainContent = <ToRemoveComponent />;
@@ -113,18 +122,23 @@ const Layout = ({ children }) => {
                 MainContent = <Menu />;
                 break;
             default:
-                MainContent = <ToAdd section="beers" />;
+                MainContent = <ToAdd section="beers" {...toAddProps} />;
         }
     }
 
+    const isMapView = ANALYSABLE.has(selectedOption) && selectedStoreId === null;
+    const showSidebar = selectedOption === null || isMapView;
+
     return (
         <div className="layout-container">
-            <Sidebar
-                selectedOption={selectedOption}
-                onSelectionChange={handleCategorySelect}
-                onGoBack={handleGoBack}
-            />
-            <div className="main-content">
+            {showSidebar && (
+                <Sidebar
+                    selectedOption={selectedOption}
+                    onSelectionChange={handleCategorySelect}
+                    onGoBack={handleGoBack}
+                />
+            )}
+            <div className={`main-content${isMapView ? ' main-content--map' : ''}`}>
                 {MainContent}
                 {children}
             </div>

@@ -1,33 +1,26 @@
 import React, { useState } from 'react';
-import "./LandingPage.css";
-import BillyLogo from "../Images/BillyLogo.svg";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-import { api } from "apiService";
+import './LandingPage.css';
+import { useNavigate } from 'react-router-dom';
+import { api } from 'apiService';
+import octopusIcon from '../Dashboard/Icons/octopus.svg';
 
 const LandingPage = () => {
     const navigate = useNavigate();
 
-    const [loginData, setLoginData] = useState({
-        email: "",
-        password: ""
-    });
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        setLoginData((prev) => ({
-            ...prev,
-            [id]: value
-        }));
+        setLoginData((prev) => ({ ...prev, [id]: value }));
     };
 
     const handleLogin = async () => {
+        setError(null);
+        setLoading(true);
         try {
-            const res = await api.post(
-                '/api/login',
-                loginData,
-                { withCredentials: true }
-            );
+            const res = await api.post('/api/login', loginData, { withCredentials: true });
 
             if (res.data?.success) {
                 if (res.data?.layers_matrix?.layers && Array.isArray(res.data.layers_matrix.layers)) {
@@ -35,99 +28,79 @@ const LandingPage = () => {
                 } else {
                     sessionStorage.removeItem('layersMatrix');
                 }
-
-                if (res.data.token) {
-                    localStorage.setItem('token', res.data.token);
-                }
-                if (res.data.business_id) {
-                    localStorage.setItem('business_id', res.data.business_id);
-                }
+                if (res.data.token) localStorage.setItem('token', res.data.token);
+                if (res.data.business_id) localStorage.setItem('business_id', res.data.business_id);
 
                 navigate('/dashboard');
             } else {
-                alert('Invalid credentials');
+                setError('Invalid credentials');
             }
-        } catch (err) {
-            console.error(err);
-            alert('Server error');
+        } catch {
+            setError('Unable to connect — try again');
         }
+        setLoading(false);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') handleLogin();
     };
 
     return (
-        <div className="container">
-            <div className="content">
-                <div className="logo">
-                    <span className="logo-text">Willy's Assortment Check</span>
-
-
-                </div>
-                <div className="main-text">
-
-                    <div className="text-bottom">
-
-
-                        <ul className="features">
-                            <li>
-                                <span style={{color: 'black', fontWeight: '700'}}>Zekerheid </span> dat je de lokale klanten houdt.
-                            </li>
-                            <br/>
-                            <li>
-                                <span style={{color: 'black', fontWeight: '700'}}>Geen hoofdpijn </span>  of discussie, alles helder voor het hele team.
-                            </li>
-
-                        </ul>
-                    </div>
-                </div>
-
-
+        <div className="landing">
+            {/* decorative grid lines */}
+            <div className="landing-lines">
+                <span /><span /><span /><span />
             </div>
 
-            {/* Right Section: Login */}
-            <div className="login-container">
-                <p className="login-title">Willy</p>
+            <div className="landing-card">
+                <div className="landing-pulse-ring" />
 
-                <div className="login-section">
-                    <h3>Login <span>your account</span></h3>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
+                <img src={octopusIcon} alt="" className="landing-octopus" />
+                <div className="landing-brand">Willy</div>
+                <div className="landing-tagline">Serve your local demand</div>
+
+                <div className="landing-form" onKeyDown={handleKeyDown}>
+                    <div className="landing-field">
+                        <label className="landing-label" htmlFor="email">Email</label>
                         <input
+                            className="landing-input"
                             type="email"
                             id="email"
-                            placeholder="email"
+                            placeholder="you@company.com"
                             value={loginData.email}
                             onChange={handleInputChange}
+                            autoComplete="email"
                         />
                     </div>
 
-                    <div className="input-group">
-                        <label htmlFor="password">Password</label>
+                    <div className="landing-field">
+                        <label className="landing-label" htmlFor="password">Password</label>
                         <input
+                            className="landing-input"
                             type="password"
                             id="password"
-                            placeholder="password"
+                            placeholder="••••••••"
                             value={loginData.password}
                             onChange={handleInputChange}
+                            autoComplete="current-password"
                         />
                     </div>
 
-                    <button className="login-btn" onClick={handleLogin}>Login</button>
+                    <button
+                        className="landing-submit"
+                        onClick={handleLogin}
+                        disabled={loading}
+                    >
+                        {loading ? 'Signing in…' : 'Sign in'}
+                    </button>
+
+                    {error && <div className="landing-error">{error}</div>}
                 </div>
+
+                <div className="landing-footer">Assortment intelligence</div>
             </div>
         </div>
     );
 };
 
 export default LandingPage;
-
-
-/*
-<div className="text-bottom">
-                        <h2 className="why-billy">Why choose Willy?</h2>
-                        <br/>
-                        <ul className="features">
-                            <li>✔ Certainty about satisfied customers</li>
-                            <li>✔ Discover trendy menu items before your competitors</li>
-                            <li>✔ Have the right seasonal products</li>
-                        </ul>
-                    </div>
- */

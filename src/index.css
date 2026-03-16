@@ -1,40 +1,47 @@
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ─── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
   /* Surfaces */
-  --bg-page:     #080d18;
-  --bg-surface:  #f0f4f8;
+  --bg-page:     #f3f4f6;
+  --bg-surface:  #f3f4f6;
   --bg-card:     #ffffff;
-  --bg-elevated: #f8fafc;
+  --bg-elevated: #f9fafb;
 
   /* Borders */
   --border-subtle: rgba(0, 0, 0, 0.08);
-  --border-medium: rgba(0, 0, 0, 0.12);
-  --border-accent: rgba(99, 102, 241, 0.45);
+  --border-medium: rgba(0, 0, 0, 0.15);
+  --border-accent: rgba(0, 0, 0, 0.22);
 
-  /* Accents */
-  --accent:        #818cf8;
-  --accent-bright: #6366f1;
-  --accent-glow:   rgba(129, 140, 248, 0.18);
-  --accent-cyan:   #67e8f9;
-  --accent-purple: #c084fc;
+  /* Accents — neutral */
+  --accent:        #374151;
+  --accent-bright: #1f2937;
+  --accent-glow:   rgba(0, 0, 0, 0.07);
+  --accent-cyan:   #9ca3af;
+  --accent-purple: #6b7280;
+
+  /* Accents — blue/purple (buttons, interactive, +1 badges) */
+  --accent-blue:       #818cf8;
+  --accent-blue-bright: #6366f1;
+  --accent-blue-glow:  rgba(129, 140, 248, 0.18);
 
   /* Text */
-  --text-primary: #1e293b;
-  --text-muted:   #64748b;
-  --text-faint:   #94a3b8;
+  --text-primary: #111827;
+  --text-muted:   #6b7280;
+  --text-faint:   #9ca3af;
 
   /* Semantic */
   --color-success: #34d399;
   --color-warning: #fbbf24;
   --color-danger:  #f87171;
 
-  /* Legacy variable remaps (backward-compat with existing classes) */
-  --sandy-brown: #818cf8;
+  /* Legacy variable remaps */
+  --sandy-brown: #374151;
   --ivory:       #ffffff;
-  --oxford-blue: #1e293b;
-  --light-cyan:  #67e8f9;
-  --jordy-blue:  #1e2d4a;
-  --bice-blue:   #818cf8;
+  --oxford-blue: #111827;
+  --light-cyan:  #9ca3af;
+  --jordy-blue:  #1f2937;
+  --bice-blue:   #374151;
 }
 
 /* ─── Font fallback import ───────────────────────────────────────────────── */
@@ -69,8 +76,8 @@ h1, h2, h3, h4,
 /* ─── Global Scrollbar ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: rgba(129, 140, 248, 0.22); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(129, 140, 248, 0.46); }
+::-webkit-scrollbar-thumb  { background: rgba(0, 0, 0, 0.18); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.35); }
 
 /* ─── Selection ──────────────────────────────────────────────────────────── */
-::selection { background: rgba(129, 140, 248, 0.3); color: #fff; }
+::selection { background: rgba(0, 0, 0, 0.15); color: #111827; }

@@ -167,15 +167,27 @@ export function findBestPairs({ layers, groups, counts, options = {} }) {
                 let remMB = 0;
 
                 for (const layer of scoringLayers) {
-                    // ADD
                     const addAddr = addressFor(layer, addG);
+                    const remAddr = addressFor(layer, remG);
+
+                    // If add and remove land on the same bucket/cell in this layer,
+                    // the pair is a within-bucket swap: row depth is unchanged, so
+                    // this layer contributes zero net gain. Skip it to avoid the
+                    // large spurious penalty that would otherwise block within-row
+                    // quality swaps (e.g. DARK_STRONG_QUAD → BOCKS in "Malt & Sweet").
+                    if (addAddr && remAddr) {
+                        const addKey = layer.type === '1D' ? addAddr.bucketKey : addAddr.cellKey;
+                        const remKey = layer.type === '1D' ? remAddr.bucketKey : remAddr.cellKey;
+                        if (addKey === remKey) continue;
+                    }
+
+                    // ADD
                     if (addAddr) {
                         const d = depthFor(counts, layer, addAddr);
                         const series = seriesForGroupAndLayer(layer, addG, addAddr);
                         addMB += mbAddAtDepth(series, d) * (Number(layer.weight) || 1);
                     }
                     // REMOVE
-                    const remAddr = addressFor(layer, remG);
                     if (remAddr) {
                         const d = depthFor(counts, layer, remAddr);
                         const series = seriesForGroupAndLayer(layer, remG, remAddr);

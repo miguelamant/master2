@@ -11,6 +11,11 @@ import { makeHoverKey } from "../utils/hoverKey";
 import { convertBaseLabel } from "../utils/labelMap";
 import { normToken } from "../utils/normalize";
 import { api } from "../../../apiService";
+import { iconFor } from "../utils/iconLoader";
+
+const PERSONA_FLAG_TOKEN = {
+    Belgian: 'BELGIUM', French: 'FRANCE', German: 'GERMANY', Dutch: 'NETHERLANDS',
+};
 
 const _aiExplCache = new Map(); // key -> { text } | '__loading__'
 
@@ -120,7 +125,12 @@ export default function SummaryGridRow(props) {
         // ✅ NEW: compact mode (used in matrix cells)
         compact = false,
 
+        // card grid mode
+        cardItem = false,
+
         stereotypeBenchmarks = {},
+        onRecommendationClick = null,
+        totalMenuCount = 0,
     } = props;
 
     const actual = countsByCategory[groupValue] ?? 0;
@@ -189,7 +199,7 @@ export default function SummaryGridRow(props) {
             );
         }
         const sign = d > 0 ? "+" : "";
-        const color = "#dc2626";
+        const color = "#3b82f6";
         return (
             <span
                 style={{
@@ -213,9 +223,211 @@ export default function SummaryGridRow(props) {
     const [hoverBucket, setHoverBucket] = React.useState(null);
     const [expanded, setExpanded] = React.useState(false);
     const [countAnchor, setCountAnchor] = React.useState(null);
+    const hideTimerRef = React.useRef(null);
+
+    const startHideTimer = React.useCallback(() => {
+        hideTimerRef.current = setTimeout(() => {
+            setCountAnchor(null);
+            setHoverCat && setHoverCat(null);
+        }, 150);
+    }, [setHoverCat]);
+    const cancelHideTimer = React.useCallback(() => clearTimeout(hideTimerRef.current), []);
 
     const visibleInlineItems = expanded ? itemsForHover : itemsForHover.slice(0, inlineItemsLimit);
     const canExpand = itemsForHover.length > inlineItemsLimit;
+
+    // ✅ Card item early return (for cardsMode in SummaryGrid)
+    if (cardItem) {
+        const delta = chosen ? Number(chosen.delta || 0) : 0;
+
+        const handleIconMouseEnter = (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            if (hasHardCodedExplanation(base)) {
+                const info = getGroupExplanation(base);
+                setHoverBucket({ anchorRect: rect, title: info.title, text: info.text });
+                return;
+            }
+            const cacheKey = String(groupValue);
+            const cached = _aiExplCache.get(cacheKey);
+            if (cached && cached !== '__loading__') {
+                setHoverBucket({ anchorRect: rect, title: convertBaseLabel(normToken(base)), text: cached.text });
+                return;
+            }
+            const title = convertBaseLabel(normToken(base));
+            setHoverBucket({ anchorRect: rect, title, text: 'Loading explanation…' });
+            if (cached === '__loading__') return;
+            _aiExplCache.set(cacheKey, '__loading__');
+            const ov = hoverOverrides && hoverOverrides[cacheKey];
+            const baseInPred = ov?.predicates?.find(p => p.op === 'in');
+            const subsubcategories = baseInPred?.value ?? [];
+            api.post('/api/explain-bucket', { label: cacheKey, subsubcategories, section: groupBy })
+                .then(({ data }) => {
+                    const text = data.text || 'No explanation available.';
+                    _aiExplCache.set(cacheKey, { text });
+                    setHoverBucket(prev => prev && prev.title === title ? { ...prev, text } : prev);
+                })
+                .catch(() => {
+                    const text = 'Explanation unavailable.';
+                    _aiExplCache.set(cacheKey, { text });
+                    setHoverBucket(prev => prev && prev.title === title ? { ...prev, text } : prev);
+                });
+        };
+
+        return (
+            <div style={{ display: 'flex', alignItems: 'center',
+                          minHeight: 24, padding: '2px 4px',
+                          borderRadius: 5,
+                          background: actual === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+
+                {/* Content — opacity only here, so tooltips (position:fixed siblings) are unaffected */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1,
+                              opacity: actual === 0 ? 0.3 : 1 }}>
+
+                    {/* Count with inline delta + benchmark hover */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, flexShrink: 0, minWidth: 22 }}>
+                        <span
+                            style={{ fontWeight: 800, fontSize: 14,
+                                     fontFamily: "'Space Grotesk', sans-serif", cursor: 'default' }}
+                            onMouseEnter={(e) => {
+                                cancelHideTimer();
+                                const benchData = Object.fromEntries(
+                                    Object.entries(stereotypeBenchmarks || {})
+                                        .map(([name, byBucket]) => [name, byBucket?.[groupValue] ?? 0])
+                                );
+                                if (Object.keys(benchData).length > 0)
+                                    setCountAnchor({ rect: e.currentTarget.getBoundingClientRect(), data: benchData });
+                                setHoverCat && setHoverCat(hoverKey);
+                                loadHoverList && loadHoverList(hoverDesc);
+                            }}
+                            onMouseLeave={startHideTimer}
+                        >{actual}</span>
+                        {delta !== 0 && (
+                            <span style={{ fontSize: 10, fontWeight: 700, lineHeight: 1, color: '#3b82f6' }}>
+                                {delta > 0 ? '+' : ''}{delta}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Icon with hover for AI explanation */}
+                    <span
+                        onMouseEnter={handleIconMouseEnter}
+                        onMouseLeave={() => setHoverBucket(null)}
+                        style={{ flexShrink: 0, display: 'inline-flex' }}
+                    >
+                        <TasteIconWithBadges token={base} badges={rowBadges} size={20} />
+                    </span>
+
+                    {/* Label */}
+                    <span style={{ flex: 1, fontSize: 11.5, overflow: 'hidden',
+                                   textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                   letterSpacing: '0.05em', textTransform: 'uppercase',
+                                   opacity: 0.8 }}>
+                        {displayLabel}
+                    </span>
+
+                    {/* Magnify */}
+                    <button
+                        type="button"
+                        className="segment-focus-btn"
+                        onClick={() => onFocusGroup && onFocusGroup(groupValue)}
+                        style={{ padding: 2, border: 'none', background: 'transparent',
+                                 cursor: 'pointer', flexShrink: 0, display: 'inline-flex' }}
+                    >
+                        <img src={magnifyIcon} alt="" aria-hidden="true"
+                             style={{ width: 14, height: 14, opacity: 0.45 }} />
+                    </button>
+                </div>
+
+                {/* Explanation popover */}
+                {hoverBucket && (
+                    <div
+                        className="hover-popover"
+                        style={{
+                            position: 'fixed',
+                            top: hoverBucket.anchorRect.bottom + 8,
+                            left: hoverBucket.anchorRect.left,
+                            zIndex: 30,
+                            background: '#fff',
+                            border: '1px solid rgba(0,0,0,0.1)',
+                            borderRadius: 10,
+                            padding: '10px 12px',
+                            boxShadow: '0 12px 28px rgba(0,0,0,0.15)',
+                            maxWidth: 520,
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        <div style={{ fontWeight: 700, marginBottom: 4 }}>{hoverBucket.title}</div>
+                        <div style={{ color: '#334155', lineHeight: 1.25, whiteSpace: 'pre-line' }}>{hoverBucket.text}</div>
+                    </div>
+                )}
+
+                {/* Benchmark / persona tooltip */}
+                {countAnchor && (
+                    <div
+                        onMouseEnter={cancelHideTimer}
+                        onMouseLeave={startHideTimer}
+                        style={{
+                            position: 'fixed',
+                            top: countAnchor.rect.bottom + 6,
+                            left: countAnchor.rect.left,
+                            zIndex: 9999,
+                            background: '#fff',
+                            border: '1px solid rgba(0,0,0,0.1)',
+                            borderRadius: 12,
+                            padding: '10px 14px',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                            pointerEvents: 'auto',
+                            minWidth: 180,
+                            fontSize: 12,
+                            color: '#000',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8,
+                                      fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+                                      textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)' }}>
+                            <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2"/>
+                                <circle cx="5" cy="5" r="1.5" fill="currentColor"/>
+                            </svg>
+                            Benchmarks
+                        </div>
+                        {Object.keys(countAnchor.data).length === 0
+                            ? <div style={{ opacity: 0.4 }}>No benchmark data</div>
+                            : Object.entries(countAnchor.data).map(([name, val]) => {
+                                const flagUrl = iconFor(PERSONA_FLAG_TOKEN[name]);
+                                return (
+                                    <div key={name} style={{ display: 'flex', alignItems: 'center',
+                                                             justifyContent: 'space-between', gap: 12, padding: '3px 0' }}>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            {flagUrl && <img src={flagUrl} alt={name} style={{ width: 18, height: 12, objectFit: 'cover', borderRadius: 2 }} />}
+                                            <span style={{ color: 'rgba(0,0,0,0.65)', fontSize: 12 }}>{name}</span>
+                                        </span>
+                                        <span style={{ fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: '#000' }}>
+                                            {(Math.round((val ?? 0) * 10) / 10).toFixed(1)}
+                                            {totalMenuCount > 0 && <span style={{ fontWeight: 400, color: 'rgba(0,0,0,0.4)', fontSize: 11 }}>/{totalMenuCount}</span>}
+                                        </span>
+                                    </div>
+                                );
+                            })
+                        }
+                        {itemsForHover.length > 0 && (
+                            <>
+                                <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', margin: '8px 0' }} />
+                                <ul style={{ margin: 0, padding: '0 0 0 16px', maxHeight: 180, overflowY: 'auto' }}>
+                                    {itemsForHover.map((p) => (
+                                        <li key={p.id_menu_item || p.id_product || p.name} style={{ fontSize: 12, margin: '2px 0', color: '#000' }}>
+                                            {convertItemLabel(p.item_name || p.name)}
+                                            {p.price != null && <span style={{ marginLeft: 6, color: 'rgba(0,0,0,0.5)' }}>€{Number(p.price).toFixed(2)}</span>}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="segment-row" style={compact ? { padding: 0 } : undefined}>
@@ -363,12 +575,12 @@ export default function SummaryGridRow(props) {
               onMouseEnter={(e) => {
                   const benchData = Object.fromEntries(
                       Object.entries(stereotypeBenchmarks || {})
-                          .map(([name, byBucket]) => [name, byBucket?.[groupValue]])
-                          .filter(([, val]) => val != null)
+                          .map(([name, byBucket]) => [name, byBucket?.[groupValue] ?? 0])
                   );
-                  setCountAnchor({ rect: e.currentTarget.getBoundingClientRect(), data: benchData });
+                  if (Object.keys(benchData).length > 0)
+                      setCountAnchor({ rect: e.currentTarget.getBoundingClientRect(), data: benchData });
               }}
-              onMouseLeave={() => setCountAnchor(null)}
+              onMouseLeave={startHideTimer}
           >
             {actual}
           </span>
@@ -376,7 +588,26 @@ export default function SummaryGridRow(props) {
                     {(() => {
                         const delta = chosen ? Number(chosen.delta || 0) : 0;
                         const recommended = Math.max(0, Number(actual || 0) + delta);
-                        return delta !== 0 ? <span style={{ opacity: 0.85 }}>→ {recommended}</span> : null;
+                        return delta !== 0 ? (
+                            <span
+                                style={{
+                                    opacity: 0.85,
+                                    cursor: onRecommendationClick ? 'pointer' : 'default',
+                                    textDecoration: onRecommendationClick ? 'underline dotted' : 'none',
+                                }}
+                                onClick={onRecommendationClick ? (e) => {
+                                    e.stopPropagation();
+                                    const bucketBenchmarks = Object.fromEntries(
+                                        Object.entries(stereotypeBenchmarks || {}).map(([persona, byBucket]) => [
+                                            persona, byBucket[groupValue] ?? 0
+                                        ])
+                                    );
+                                    onRecommendationClick({ groupValue, displayLabel, delta, actual, recommended, bucketBenchmarks });
+                                } : undefined}
+                            >
+                                → {recommended}
+                            </span>
+                        ) : null;
                     })()}
 
                     <CountDeltaChip chosen={chosen} />
@@ -432,29 +663,51 @@ export default function SummaryGridRow(props) {
             )}
 
             {countAnchor && (
-                <div style={{
-                    position: 'fixed',
-                    top: countAnchor.rect.bottom + 4,
-                    left: countAnchor.rect.left,
-                    zIndex: 9999,
-                    background: '#fff',
-                    border: '1px solid rgba(0,0,0,0.1)',
-                    borderRadius: 10,
-                    padding: '8px 12px',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                    pointerEvents: 'none',
-                    minWidth: 160,
-                    fontSize: 13,
-                    color: '#000',
-                }}>
+                <div
+                    onMouseEnter={cancelHideTimer}
+                    onMouseLeave={startHideTimer}
+                    style={{
+                        position: 'fixed',
+                        top: countAnchor.rect.bottom + 6,
+                        left: countAnchor.rect.left,
+                        zIndex: 9999,
+                        background: '#fff',
+                        border: '1px solid rgba(0,0,0,0.1)',
+                        borderRadius: 12,
+                        padding: '10px 14px',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                        pointerEvents: 'auto',
+                        minWidth: 180,
+                        fontSize: 12,
+                        color: '#000',
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8,
+                                  fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+                                  textTransform: 'uppercase', color: 'rgba(0,0,0,0.4)' }}>
+                        <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                            <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2"/>
+                            <circle cx="5" cy="5" r="1.5" fill="currentColor"/>
+                        </svg>
+                        Benchmarks
+                    </div>
                     {Object.keys(countAnchor.data).length === 0
-                        ? <div style={{ opacity: 0.5 }}>No benchmark data</div>
-                        : Object.entries(countAnchor.data).map(([name, val]) => (
-                            <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '1px 0' }}>
-                                <span style={{ opacity: 0.75 }}>{name}</span>
-                                <span style={{ fontWeight: 700 }}>{Math.round(val * 10) / 10}</span>
-                            </div>
-                        ))
+                        ? <div style={{ opacity: 0.4 }}>No benchmark data</div>
+                        : Object.entries(countAnchor.data).map(([name, val]) => {
+                            const flagUrl = iconFor(PERSONA_FLAG_TOKEN[name]);
+                            return (
+                                <div key={name} style={{ display: 'flex', alignItems: 'center',
+                                                         justifyContent: 'space-between', gap: 12, padding: '3px 0' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        {flagUrl && <img src={flagUrl} alt={name} style={{ width: 18, height: 12, objectFit: 'cover', borderRadius: 2 }} />}
+                                    </span>
+                                    <span style={{ fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: '#000' }}>
+                                        {(Math.round((val ?? 0) * 10) / 10).toFixed(1)}
+                                        {totalMenuCount > 0 && <span style={{ fontWeight: 400, color: 'rgba(0,0,0,0.4)', fontSize: 11 }}>/{totalMenuCount}</span>}
+                                    </span>
+                                </div>
+                            );
+                        })
                     }
                 </div>
             )}

@@ -11,26 +11,40 @@ import badgeAbbey      from './Icons/badges/badge_abbey.svg';
 import badgeTrappist   from './Icons/badges/badge_trappist.svg';
 import badgeNormal     from './Icons/badges/badge_factory.svg';
 
+function Chip({ icon, label, active, onClick }) {
+    return (
+        <li
+            className={`option-chip${active ? ' active' : ''}`}
+            onClick={onClick}
+            role="checkbox"
+            aria-checked={active}
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+        >
+            {icon && (
+                <img src={icon} alt="" aria-hidden="true" className="option-chip-icon" />
+            )}
+            <span>{label}</span>
+        </li>
+    );
+}
+
 export default function Optionbar({
                                       groupBy,
                                       tasteOptions = [],
                                       filters,
                                       onChange,
-                                      /** optional: "beers" | "refreshments" | "sodas" */
                                       category = null,
                                   }) {
-    // current filter state
     const tastesSet   = filters?.tastes    instanceof Set ? filters.tastes : new Set();
     const sugar       = filters?.sugar     || { zero_sugar: true, with_sugar: true };
     const sparkling   = filters?.sparkling || { sparkling: true, not_sparkling: true };
     const heritageSet = filters?.heritage  instanceof Set ? filters.heritage : new Set(['abbey','trappist','normal']);
 
-    // category gates
     const cat = String(category || '').toLowerCase();
-    const showCarbonation = (cat === 'refreshments' || cat === 'sodas'); // soft drinks only
-    const showHeritage    = (cat === 'beers');                            // beers only
+    const showCarbonation = (cat === 'refreshments' || cat === 'sodas');
+    const showHeritage    = (cat === 'beers');
 
-    // handlers (unchanged data shape so focusGroup keeps working)
     const toggleTaste = (id) => {
         const next = new Set(tastesSet);
         next.has(id) ? next.delete(id) : next.add(id);
@@ -69,94 +83,58 @@ export default function Optionbar({
                             </h4>
                             <ul className="optionbar-list">
                                 {tasteOptions.map(opt => (
-                                    <li key={opt.id} className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id={`taste-${opt.id}`}
-                                            checked={tastesSet.has(opt.id)}
-                                            onChange={() => toggleTaste(opt.id)}
-                                        />
-                                        <label htmlFor={`taste-${opt.id}`} className="option-label">
-                                            {opt.icon && (
-                                                <img
-                                                    src={opt.icon}
-                                                    alt=""
-                                                    aria-hidden="true"
-                                                    className="option-icon"
-                                                />
-                                            )}
-                                            {opt.label}
-                                        </label>
-                                    </li>
+                                    <Chip
+                                        key={opt.id}
+                                        icon={opt.icon}
+                                        label={opt.label}
+                                        active={tastesSet.has(opt.id)}
+                                        onClick={() => toggleTaste(opt.id)}
+                                    />
                                 ))}
                             </ul>
                         </section>
 
                         <hr className="optionbar-divider" />
 
-                        {/* ZERO (renamed from "Sugar"; same data shape for compatibility) */}
+                        {/* ZERO */}
                         <section className="optionbar-group">
                             <h4 className="optionbar-group-title">Zero</h4>
                             <ul className="optionbar-list">
-                                <li className="option-item">
-                                    <input
-                                        type="checkbox"
-                                        id="zero-yes"
-                                        checked={!!sugar.zero_sugar}
-                                        onChange={() => toggleSugar('zero_sugar')}
-                                    />
-                                    <label htmlFor="zero-yes" className="option-label">
-                                        <img src={badgeZero} alt="" aria-hidden="true" className="option-icon" />
-                                        Zero
-                                    </label>
-                                </li>
-                                <li className="option-item">
-                                    <input
-                                        type="checkbox"
-                                        id="zero-no"
-                                        checked={!!sugar.with_sugar}
-                                        onChange={() => toggleSugar('with_sugar')}
-                                    />
-                                    <label htmlFor="zero-no" className="option-label">
-                                        <img src={badgeNotZero} alt="" aria-hidden="true" className="option-icon" />
-                                        Not zero
-                                    </label>
-                                </li>
+                                <Chip
+                                    icon={badgeZero}
+                                    label="Zero"
+                                    active={!!sugar.zero_sugar}
+                                    onClick={() => toggleSugar('zero_sugar')}
+                                />
+                                <Chip
+                                    icon={badgeNotZero}
+                                    label="Not zero"
+                                    active={!!sugar.with_sugar}
+                                    onClick={() => toggleSugar('with_sugar')}
+                                />
                             </ul>
                         </section>
 
                         <hr className="optionbar-divider" />
 
-                        {/* CARBONATION (only for refreshments/soft drinks) */}
+                        {/* CARBONATION */}
                         {showCarbonation && (
                             <>
                                 <section className="optionbar-group">
                                     <h4 className="optionbar-group-title">Carbonation</h4>
                                     <ul className="optionbar-list">
-                                        <li className="option-item">
-                                            <input
-                                                type="checkbox"
-                                                id="sparkling-yes"
-                                                checked={!!sparkling.sparkling}
-                                                onChange={() => toggleSparkling('sparkling')}
-                                            />
-                                            <label htmlFor="sparkling-yes" className="option-label">
-                                                <img src={badgeSparkling} alt="" aria-hidden="true" className="option-icon" />
-                                                Sparkling
-                                            </label>
-                                        </li>
-                                        <li className="option-item">
-                                            <input
-                                                type="checkbox"
-                                                id="sparkling-no"
-                                                checked={!!sparkling.not_sparkling}
-                                                onChange={() => toggleSparkling('not_sparkling')}
-                                            />
-                                            <label htmlFor="sparkling-no" className="option-label">
-                                                <img src={badgeStill} alt="" aria-hidden="true" className="option-icon" />
-                                                Not sparkling
-                                            </label>
-                                        </li>
+                                        <Chip
+                                            icon={badgeSparkling}
+                                            label="Sparkling"
+                                            active={!!sparkling.sparkling}
+                                            onClick={() => toggleSparkling('sparkling')}
+                                        />
+                                        <Chip
+                                            icon={badgeStill}
+                                            label="Not sparkling"
+                                            active={!!sparkling.not_sparkling}
+                                            onClick={() => toggleSparkling('not_sparkling')}
+                                        />
                                     </ul>
                                 </section>
 
@@ -164,47 +142,29 @@ export default function Optionbar({
                             </>
                         )}
 
-                        {/* HERITAGE (beers only) */}
+                        {/* HERITAGE */}
                         {showHeritage && (
                             <section className="optionbar-group">
                                 <h4 className="optionbar-group-title">Heritage</h4>
                                 <ul className="optionbar-list">
-                                    <li className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="heritage-normal"
-                                            checked={heritageSet.has('normal')}
-                                            onChange={() => toggleHeritage('normal')}
-                                        />
-                                        <label htmlFor="heritage-normal" className="option-label">
-                                            <img src={badgeNormal} alt="" aria-hidden="true" className="option-icon" />
-                                            Normal
-                                        </label>
-                                    </li>
-                                    <li className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="heritage-abbey"
-                                            checked={heritageSet.has('abbey')}
-                                            onChange={() => toggleHeritage('abbey')}
-                                        />
-                                        <label htmlFor="heritage-abbey" className="option-label">
-                                            <img src={badgeAbbey} alt="" aria-hidden="true" className="option-icon" />
-                                            Abbey
-                                        </label>
-                                    </li>
-                                    <li className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="heritage-trappist"
-                                            checked={heritageSet.has('trappist')}
-                                            onChange={() => toggleHeritage('trappist')}
-                                        />
-                                        <label htmlFor="heritage-trappist" className="option-label">
-                                            <img src={badgeTrappist} alt="" aria-hidden="true" className="option-icon" />
-                                            Trappist
-                                        </label>
-                                    </li>
+                                    <Chip
+                                        icon={badgeNormal}
+                                        label="Normal"
+                                        active={heritageSet.has('normal')}
+                                        onClick={() => toggleHeritage('normal')}
+                                    />
+                                    <Chip
+                                        icon={badgeAbbey}
+                                        label="Abbey"
+                                        active={heritageSet.has('abbey')}
+                                        onClick={() => toggleHeritage('abbey')}
+                                    />
+                                    <Chip
+                                        icon={badgeTrappist}
+                                        label="Trappist"
+                                        active={heritageSet.has('trappist')}
+                                        onClick={() => toggleHeritage('trappist')}
+                                    />
                                 </ul>
                             </section>
                         )}

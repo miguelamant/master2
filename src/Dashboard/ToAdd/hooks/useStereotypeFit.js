@@ -41,10 +41,50 @@ function accumulatedBenefit(series, depth) {
 }
 
 /**
+ * Pure scoring function — usable without the hook (e.g. for delta computation).
+ * rawDist: { [persona]: { [bucketKey]: pct } }  (un-rolled)
+ */
+export function computePersonaScores({ rawDist, rollups = [], rowDefs = [], countsByCategory = {}, totalMenuCount = 75 }) {
+  if (!rawDist) return {};
+  const rowDepths = {};
+  for (const row of (rowDefs || [])) {
+    const label = row.title;
+    if (!label) continue;
+    rowDepths[label] = (row.buckets || []).reduce(
+      (s, b) => s + Number(countsByCategory?.[b] || 0), 0
+    );
+  }
+  const scores = {};
+  for (const persona of PERSONAS) {
+    const dist = applyRollups(rawDist[persona] || {}, rollups);
+    const rowDist = buildRowDist(dist, rowDefs);
+    let actual = 0, max = 0;
+    for (const [bucketKey, pct] of Object.entries(dist)) {
+      if (pct <= 0) continue;
+      const series = buildSeries(pct, totalMenuCount);
+      const idealCount = Math.max(1, Math.round((pct / 100) * totalMenuCount));
+      const depth = Number(countsByCategory?.[bucketKey] || 0);
+      actual += accumulatedBenefit(series, Math.min(depth, idealCount));
+      max    += accumulatedBenefit(series, idealCount);
+    }
+    for (const [rowLabel, pct] of Object.entries(rowDist)) {
+      if (pct <= 0) continue;
+      const series = buildSeries(pct, totalMenuCount);
+      const idealCount = Math.max(1, Math.round((pct / 100) * totalMenuCount));
+      const depth = rowDepths[rowLabel] ?? Number(countsByCategory?.[rowLabel] || 0);
+      actual += 2 * accumulatedBenefit(series, Math.min(depth, idealCount));
+      max    += 2 * accumulatedBenefit(series, idealCount);
+    }
+    scores[persona] = max > 0 ? Math.round((actual / max) * 100) / 10 : 0.0;
+  }
+  return scores;
+}
+
+/**
  * Self-contained stereotype fit hook.
  * Fetches distributions independently (no onboarding weights bleed-in).
  * Always computes scores for all 4 personas regardless of bar configuration.
- * Returns { Belgian, French, German, Dutch } scores in 0.0–10.0 range.
+ * Returns { scores: { Belgian, French, German, Dutch }, rawDist }.
  */
 export function useStereotypeFit({
   assortmentId,
@@ -88,54 +128,10 @@ export function useStereotypeFit({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [depsKey, enabled]);
 
-  return useMemo(() => {
-    if (!rawDist) return {};
+  const scores = useMemo(
+    () => computePersonaScores({ rawDist, rollups, rowDefs, countsByCategory, totalMenuCount }),
+    [rawDist, rollups, rowDefs, countsByCategory, totalMenuCount]
+  );
 
-    // Pre-compute row depths: rowLabel → total count across all buckets in that row
-    const rowDepths = {};
-    for (const row of (rowDefs || [])) {
-      const label = row.title;
-      if (!label) continue;
-      rowDepths[label] = (row.buckets || []).reduce(
-        (s, b) => s + Number(countsByCategory?.[b] || 0), 0
-      );
-    }
-
-    const scores = {};
-
-    for (const persona of PERSONAS) {
-      const personaRawDist = rawDist[persona] || {};
-      const dist = applyRollups(personaRawDist, rollups);
-      const rowDist = buildRowDist(dist, rowDefs);
-
-      let actual = 0;
-      let max = 0;
-
-      // Bucket-level contribution (weight 1×)
-      for (const [bucketKey, pct] of Object.entries(dist)) {
-        if (pct <= 0) continue;
-        const series = buildSeries(pct, totalMenuCount);
-        const idealCount = Math.max(1, Math.round((pct / 100) * totalMenuCount));
-        const depth = Number(countsByCategory?.[bucketKey] || 0);
-        actual += accumulatedBenefit(series, Math.min(depth, idealCount));
-        max    += accumulatedBenefit(series, idealCount);
-      }
-
-      // Row-level contribution (weight 2×)
-      for (const [rowLabel, pct] of Object.entries(rowDist)) {
-        if (pct <= 0) continue;
-        const series = buildSeries(pct, totalMenuCount);
-        const idealCount = Math.max(1, Math.round((pct / 100) * totalMenuCount));
-        const depth = rowDepths[rowLabel] ?? Number(countsByCategory?.[rowLabel] || 0);
-        actual += 2 * accumulatedBenefit(series, Math.min(depth, idealCount));
-        max    += 2 * accumulatedBenefit(series, idealCount);
-      }
-
-      scores[persona] = max > 0
-        ? Math.round((actual / max) * 100) / 10
-        : 0.0;
-    }
-
-    return scores;
-  }, [rawDist, rollups, rowDefs, countsByCategory, totalMenuCount]);
+  return { scores, rawDist };
 }

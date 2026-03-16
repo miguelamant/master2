@@ -3,6 +3,10 @@ import React from "react";
 import SummaryGridRow from "./SummaryGridRow";
 import { iconFor } from "../utils/iconLoader";
 
+const PERSONA_FLAG_TOKEN = {
+    Belgian: 'BELGIUM', French: 'FRANCE', German: 'GERMANY', Dutch: 'NETHERLANDS',
+};
+
 function sumBenchmarks(stereotypeBenchmarks, buckets) {
     const result = {};
     for (const [name, byBucket] of Object.entries(stereotypeBenchmarks || {})) {
@@ -21,6 +25,8 @@ export default function SummaryGrid(props) {
         summaryRemoves = [],
         groupBy = "subcategory",
         stereotypeBenchmarks = {},
+        onRecommendationClick = null,
+        willyDisabled = false,
     } = props;
 
     // ✅ Allow config either via props.ui (preferred) or direct props
@@ -118,7 +124,8 @@ export default function SummaryGrid(props) {
     const detRows = !!aggregateRows?.enabled && !!aggregateRows?.deterministic;
 
     const matrixMode = detCols && detRows;
-    const rowsOnlyMode = detRows && !matrixMode;
+    const cardsMode = detRows && !matrixMode && aggregateRows?.layout === 'cards';
+    const rowsOnlyMode = detRows && !matrixMode && !cardsMode;
 
     const colDefs = React.useMemo(() => {
         const cols = Array.isArray(aggregateTop?.columns) ? aggregateTop.columns : [];
@@ -150,7 +157,7 @@ export default function SummaryGrid(props) {
 
     const assignedBuckets = React.useMemo(() => {
         const set = new Set();
-        if (rowsOnlyMode) {
+        if (rowsOnlyMode || cardsMode) {
             for (const b of allBucketsInCounts) {
                 if (bucketToRow.has(b)) set.add(b);
             }
@@ -286,6 +293,11 @@ export default function SummaryGrid(props) {
     // -------------------------
     // RENDER
     // -------------------------
+    const forceShowSet = React.useMemo(
+        () => new Set(Array.isArray(props.forceShow) ? props.forceShow : []),
+        [props.forceShow]
+    );
+
     return (
         <div style={{ minHeight: 300, alignContent: "start" }}>
             {/* ✅ Column aggregate headers */}
@@ -375,8 +387,122 @@ export default function SummaryGrid(props) {
                 </div>
             )}
 
-            {/* ✅ ROWS-ONLY VIEW */}
-            {rowsOnlyMode ? (
+            {/* ✅ CARDS VIEW */}
+            {cardsMode ? (
+                <>
+                    <div style={rowDefs.length <= safeCols
+                        ? { display: 'grid', gridTemplateColumns: `repeat(${rowDefs.length}, 1fr)`, gap: 14, alignItems: 'start' }
+                        : { columns: safeCols, columnGap: 14 }
+                    }>
+                        {rowDefs.map((row, rowIdx) => {
+                            const isCatchAll = !!row?.catchAll;
+
+                            const rowBucketsAll = isCatchAll
+                                ? unassignedBuckets
+                                : (row?.buckets || []).filter(
+                                    b => row?.keepEmpty || Number(countsByCategory?.[b] ?? 0) > 0 || forceShowSet.has(b)
+                                  );
+
+                            const bucketsForTotal = isCatchAll ? unassignedBuckets : (row?.buckets || []);
+                            const rTotal = bucketsForTotal.reduce((sum, b) => sum + Number(countsByCategory?.[b] ?? 0), 0);
+                            const rowIcon = row?.iconToken ? iconFor(row.iconToken) : null;
+                            const rowDelta = bucketsForTotal.reduce((sum, b) => {
+                                const s = findSummaryFor(b);
+                                return sum + (s ? Number(s.delta || 0) : 0);
+                            }, 0);
+                            const numRecs = bucketsForTotal.filter(b => {
+                                const s = findSummaryFor(b);
+                                return s && Number(s.delta || 0) !== 0;
+                            }).length;
+                            const cardBorderColor = willyDisabled ? '#d1d5db' : (numRecs === 0 ? '#34d399' : numRecs <= 2 ? '#fb923c' : '#f87171');
+
+                            if (!isCatchAll && rTotal === 0 && rowBucketsAll.length === 0) return null;
+                            if (isCatchAll && rowBucketsAll.length === 0) return null;
+
+                            return (
+                                <div key={rowIdx} style={{
+                                    ...(rowDefs.length > safeCols ? { breakInside: 'avoid', display: 'inline-block', width: '100%', marginBottom: 14 } : {}),
+                                    background: 'linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
+                                    border: '1px solid rgba(255,255,255,0.10)',
+                                    borderLeft: `3px solid ${cardBorderColor}`,
+                                    borderRadius: 14,
+                                    overflow: 'hidden',
+                                    boxShadow: '0 2px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)',
+                                }}>
+                                    {/* Card header */}
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                        padding: '8px 12px',
+                                        borderBottom: '1px solid rgba(255,255,255,0.08)',
+                                        background: 'rgba(255,255,255,0.05)',
+                                    }}>
+                                        <div
+                                            style={{ fontWeight: 900, fontSize: 18, lineHeight: 1,
+                                                     minWidth: 28, textAlign: 'left', flexShrink: 0,
+                                                     fontFamily: "'Space Grotesk', sans-serif", cursor: 'default' }}
+                                            onMouseEnter={(e) => {
+                                                const data = sumBenchmarks(stereotypeBenchmarks, bucketsForTotal);
+                                                if (Object.keys(data).length > 0)
+                                                    setAggTooltip({ rect: e.currentTarget.getBoundingClientRect(), data });
+                                            }}
+                                            onMouseLeave={() => setAggTooltip(null)}
+                                        >
+                                            {rTotal}
+                                            {!willyDisabled && rowDelta !== 0 && (
+                                                <span style={{ fontSize: 10, fontWeight: 700, marginLeft: 4,
+                                                               color: '#3b82f6' }}>
+                                                    {rowDelta > 0 ? '+' : ''}{rowDelta}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {rowIcon && <img src={rowIcon} alt="" aria-hidden="true"
+                                            style={{ width: 20, height: 20, flexShrink: 0, opacity: 0.85 }} />}
+                                        <div style={{ flex: 1, fontWeight: 700, fontSize: 11.5,
+                                                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                                                      opacity: 0.75 }}>{row.title}</div>
+                                    </div>
+
+                                    {/* Sub-bucket list */}
+                                    <div style={{ padding: '6px 10px', display: 'flex',
+                                                  flexDirection: 'column', gap: 1,
+                                                  borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                                        {rowBucketsAll.map(bucket => {
+                                            const chosen = findSummaryFor(bucket);
+                                            return (
+                                                <SummaryGridRow
+                                                    key={bucket}
+                                                    {...props}
+                                                    groupValue={bucket}
+                                                    chosen={chosen}
+                                                    showItemsInline={false}
+                                                    cardItem
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Unassigned fall-through — suppressed when a catchAll row handles them or suppressUnassigned is set */}
+                    {!rowDefs.some(r => r?.catchAll) && !aggregateRows?.suppressUnassigned && unassignedBuckets.length > 0 && (
+                        <div style={{ columns: 3, columnGap: 14, marginTop: 14 }}>
+                            {unassignedBuckets.map(k => {
+                                const chosen = findSummaryFor(k);
+                                return (
+                                    <div key={k} style={{ breakInside: 'avoid', display: 'inline-block',
+                                                          width: '100%', marginBottom: 14 }}>
+                                        <SummaryGridRow {...props} groupValue={k} chosen={chosen} cardItem />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </>
+            ) : rowsOnlyMode ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {rowDefs.map((row, rowIdx) => {
                         const rTotal = rowTotals[rowIdx] ?? 0;
@@ -428,7 +554,7 @@ export default function SummaryGrid(props) {
                                             onMouseLeave={() => setAggTooltip(null)}
                                         >
                                             {rTotal}
-                                            {rowDelta !== 0 && (
+                                            {!willyDisabled && rowDelta !== 0 && (
                                                 <span style={{ fontSize: 13, fontWeight: 700, marginLeft: 6, color: rowDelta > 0 ? '#16a34a' : '#dc2626' }}>
                                                     {rowDelta > 0 ? '+' : ''}{rowDelta}
                                                 </span>
@@ -436,10 +562,24 @@ export default function SummaryGrid(props) {
                                         </div>
                                         {rowIcon && <img src={rowIcon} alt="" aria-hidden="true" style={{ width: 24, height: 24 }} />}
                                     </div>
-                                    {rowDelta !== 0 && (
-                                        <div style={{ fontSize: 11, opacity: 0.7, lineHeight: 1.2 }}>→ {rowSuggested}</div>
+                                    {!willyDisabled && rowDelta !== 0 && (
+                                        <div
+                                            style={{ fontSize: 11, opacity: 0.7, lineHeight: 1.2,
+                                                     cursor: onRecommendationClick ? 'pointer' : 'default' }}
+                                            onClick={onRecommendationClick ? () => {
+                                                const bucketBenchmarks = Object.fromEntries(
+                                                    Object.entries(stereotypeBenchmarks || {}).map(([persona, byBucket]) => [
+                                                        persona, (row?.buckets || []).reduce((s, b) => s + (byBucket[b] ?? 0), 0)
+                                                    ])
+                                                );
+                                                onRecommendationClick({
+                                                    groupValue: row.key, displayLabel: row.title,
+                                                    delta: rowDelta, actual: rTotal, recommended: rowSuggested, bucketBenchmarks
+                                                });
+                                            } : undefined}
+                                        >→ {rowSuggested}</div>
                                     )}
-                                    <div style={{ fontWeight: 700, fontSize: 11, opacity: 0.75, lineHeight: 1.2 }}>{row.title}</div>
+                                    <div style={{ fontWeight: 700, fontSize: 12.5, opacity: 0.75, lineHeight: 1.2 }}>{row.title}</div>
                                 </div>
 
                                 {/* Divider */}
@@ -554,14 +694,28 @@ export default function SummaryGrid(props) {
                                             onMouseLeave={() => setAggTooltip(null)}
                                         >
                                             {rTotal}
-                                            {rowDelta !== 0 && (
+                                            {!willyDisabled && rowDelta !== 0 && (
                                                 <span style={{ fontSize: 13, fontWeight: 700, marginLeft: 6, color: rowDelta > 0 ? '#16a34a' : '#dc2626' }}>
                                                     {rowDelta > 0 ? '+' : ''}{rowDelta}
                                                 </span>
                                             )}
                                         </div>
-                                        {rowDelta !== 0 && (
-                                            <div style={{ fontSize: 11, opacity: 0.7 }}>→ {rowSuggested}</div>
+                                        {!willyDisabled && rowDelta !== 0 && (
+                                            <div
+                                                style={{ fontSize: 11, opacity: 0.7,
+                                                         cursor: onRecommendationClick ? 'pointer' : 'default' }}
+                                                onClick={onRecommendationClick ? () => {
+                                                    const bucketBenchmarks = Object.fromEntries(
+                                                        Object.entries(stereotypeBenchmarks || {}).map(([persona, byBucket]) => [
+                                                            persona, (row?.buckets || []).reduce((s, b) => s + (byBucket[b] ?? 0), 0)
+                                                        ])
+                                                    );
+                                                    onRecommendationClick({
+                                                        groupValue: row.key, displayLabel: row.title,
+                                                        delta: rowDelta, actual: rTotal, recommended: rowSuggested, bucketBenchmarks
+                                                    });
+                                                } : undefined}
+                                            >→ {rowSuggested}</div>
                                         )}
                                     </div>
                                 </div>
@@ -684,12 +838,18 @@ export default function SummaryGrid(props) {
                     minWidth: 160,
                     fontSize: 13,
                 }}>
-                    {Object.entries(aggTooltip.data).map(([name, val]) => (
-                        <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '1px 0' }}>
-                            <span style={{ opacity: 0.75 }}>{name}</span>
-                            <span style={{ fontWeight: 700 }}>{Math.round(val * 10) / 10}</span>
-                        </div>
-                    ))}
+                    {Object.entries(aggTooltip.data).map(([name, val]) => {
+                        const flagUrl = iconFor(PERSONA_FLAG_TOKEN[name]);
+                        return (
+                            <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '2px 0' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: 0.75 }}>
+                                    {flagUrl && <img src={flagUrl} alt="" style={{ width: 18, height: 12, objectFit: 'cover', borderRadius: 2 }} />}
+                                    {name}
+                                </span>
+                                <span style={{ fontWeight: 700 }}>{Math.round(val * 10) / 10}</span>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

@@ -24,7 +24,7 @@ export default function useStereotypeBenchmarks({
   rollups = [],
   enabled = true,
 }) {
-  const [result, setResult] = useState({ benchmarks: {}, currentTotal: 0 });
+  const [result, setResult] = useState({ benchmarks: {}, currentTotal: 0, personaWeights: {} });
 
   const depsKey = useMemo(
     () => JSON.stringify({ assortmentId, groupBy, section, within, filters, predicates, stereotypes, rollups }),
@@ -53,7 +53,7 @@ export default function useStereotypeBenchmarks({
           applyRollups(byBucket, rollups),
         ])
       );
-      setResult({ benchmarks: rolledBenchmarks, currentTotal: data.currentTotal || 0 });
+      setResult({ benchmarks: rolledBenchmarks, currentTotal: data.currentTotal || 0, personaWeights: data.personaWeights || {} });
     }).catch(err => {
       console.error("[useStereotypeBenchmarks]", err?.response?.data || err);
     });

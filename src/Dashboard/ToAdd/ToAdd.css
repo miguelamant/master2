@@ -45,24 +45,26 @@
 }
 
 /* Custom Scrollbar Styling */
-.items-list::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
+.items-list::-webkit-scrollbar,
+.items-grid::-webkit-scrollbar {
+    width: 5px;
 }
 
-.items-list::-webkit-scrollbar-track {
-    background: var(--ivory); /* Track color */
-    border-radius: 10px; /* Rounded corners */
+.items-list::-webkit-scrollbar-track,
+.items-grid::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
 }
 
-.items-list::-webkit-scrollbar-thumb {
-    background: #0E1C3622; /* Gradient color */
-
-    border-radius: 10px; /* Rounded corners */
-
+.items-list::-webkit-scrollbar-thumb,
+.items-grid::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.10);
+    border-radius: 10px;
 }
 
-.items-list::-webkit-scrollbar-thumb:hover {
-    background: #0E1C3655; /* Darker gradient on hover */
+.items-list::-webkit-scrollbar-thumb:hover,
+.items-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.22);
 }
 
 
@@ -112,6 +114,7 @@
 }
 
 
+/* ── Legacy list (kept for back-compat) ── */
 .items-list {
     list-style: none;
     padding: 0;
@@ -148,6 +151,237 @@
     font-size: x-large;
     font-weight: normal;
     margin-right: 1rem;
+}
+
+/* ═══════════════════════════════════════════════
+   Card Grid — 3-column product card layout
+   ═══════════════════════════════════════════════ */
+
+/* ── Mode switch ─────────────────────────────── */
+.items-mode-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px 0;
+}
+
+.mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-card);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mode-btn:hover {
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+}
+
+.mode-btn--active-add {
+    background: rgba(52, 211, 153, 0.10);
+    border-color: rgba(52, 211, 153, 0.45);
+    color: #059669;
+}
+
+.mode-btn--active-add:hover {
+    background: rgba(52, 211, 153, 0.16);
+}
+
+.mode-btn--active-remove {
+    background: rgba(248, 113, 113, 0.10);
+    border-color: rgba(248, 113, 113, 0.40);
+    color: #dc2626;
+}
+
+.mode-btn--active-remove:hover {
+    background: rgba(248, 113, 113, 0.16);
+}
+
+/* ── Grid container ──────────────────────────── */
+.items-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 4px;
+}
+
+/* ── Individual card ─────────────────────────── */
+.item-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px;
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+    cursor: default;
+    min-height: 0;
+}
+
+.item-card:hover {
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+/* ── Card header: taste icon + badges ────────── */
+.item-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.item-card__taste {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.item-card__taste-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+}
+
+.item-card__micro-badge {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+}
+
+.item-card__micro-badge--br {
+    right: -4px;
+    bottom: -4px;
+}
+
+.item-card__micro-badge--tl {
+    left: -4px;
+    top: -4px;
+}
+
+/* ── Attribute badges row ────────────────────── */
+.item-card__badges {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.item-card__badge--abv {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 100px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-blue-bright, #6366f1);
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.item-card__badge-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.item-card:hover .item-card__badge-icon {
+    opacity: 0.9;
+}
+
+/* ── Card name ───────────────────────────────── */
+.item-card__name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 650;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 3px;
+    /* clamp to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Category subtitle ───────────────────────── */
+.item-card__category {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+/* ── Action button ───────────────────────────── */
+.item-card__action {
+    width: 100%;
+    padding: 7px 0;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.02em;
+    margin-top: auto;
+}
+
+.item-card__action--add {
+    background: rgba(52, 211, 153, 0.12);
+    color: #059669;
+}
+
+.item-card__action--add:hover {
+    background: rgba(52, 211, 153, 0.22);
+}
+
+.item-card__action--add:active {
+    background: rgba(52, 211, 153, 0.32);
+}
+
+.item-card__action--remove {
+    background: rgba(248, 113, 113, 0.12);
+    color: #dc2626;
+}
+
+.item-card__action--remove:hover {
+    background: rgba(248, 113, 113, 0.22);
+}
+
+.item-card__action--remove:active {
+    background: rgba(248, 113, 113, 0.32);
+}
+
+.item-card__action:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.30);
 }
 
 .search-bar {
@@ -327,7 +561,7 @@
 }
 
 .segment-title-name{
-    font-size: small;
+    font-size: 0.9rem;
     font-weight: bolder;
 }
 
@@ -379,7 +613,7 @@
 }
 
 .add-button:hover {
-    background-color: #4f46e5;
+    background-color: var(--accent-blue-bright);
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
 }
@@ -653,10 +887,54 @@
     grid-row: 1;
 }
 
+/* Page wrapper: header on top, grid body below */
+.toadd-page {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;         /* allow shrinking inside flex/grid parents */
+}
+
+/* Full-width page header — glassmorphism toolbar */
+.toadd-page-header {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    padding: 14px 24px;
+    margin-bottom: 14px;
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+}
+/* subtle top accent line */
+.toadd-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.12) 30%,
+        rgba(255, 255, 255, 0.12) 70%,
+        transparent
+    );
+}
+.toadd-page-header .section-header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
+}
+
 /* ToAdd layout grid */
 .top-worst-container {
     display: grid;                          /* <- must be grid, not flex */
-    grid-template-columns: minmax(0, 1fr) 340px; /* left grows, right fixed */
+    grid-template-columns: 13fr 7fr; /* left ~65%, right ~35% */
     grid-template-rows: auto 1fr;           /* header row, then body */
     column-gap: 16px;
     row-gap: 16px;
@@ -666,7 +944,7 @@
 /* flatten the wrapper so its children become grid items */
 .centre-content { display: contents; }
 
-/* header in left column only (row 1) */
+/* summary grid in left column (row 1) */
 .segment-section { grid-column: 1; grid-row: 1; }
 
 /* stereotype panel in right column (row 1) */
@@ -674,16 +952,25 @@
     grid-column: 2;
     grid-row: 1;
     align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 /* list area in left column (row 2) */
 .items-section   { grid-column: 1; grid-row: 2; }
 
 /* Header text on dark surface */
+.toadd-page-header .section-header,
 .segment-section .section-header {
     color: var(--text-primary);
 }
 
+.toadd-page-header .section-header .section-title,
+.toadd-page-header .section-header label,
+.toadd-page-header .section-header button,
+.toadd-page-header .section-header span,
+.toadd-page-header .section-header input,
 .segment-section .section-header .section-title,
 .segment-section .section-header label,
 .segment-section .section-header button,
@@ -693,9 +980,11 @@
 }
 
 /* PresetInfo text specifically */
+.toadd-page-header .section-header .preset-info__line,
 .segment-section .section-header .preset-info__line {
     color: var(--text-primary);
 }
+.toadd-page-header .section-header .preset-info__line--muted,
 .segment-section .section-header .preset-info__line--muted {
     color: var(--text-muted);
     opacity: 1;               /* in case a global opacity is making it too light */
@@ -835,28 +1124,28 @@
 }
 
 /* Ensure text is legible on dark surfaces inside ToAdd */
-.toadd-grid h1,
-.toadd-grid h2,
-.toadd-grid h3,
-.toadd-grid h4,
-.toadd-grid p,
-.toadd-grid span,
-.toadd-grid label,
-.toadd-grid li,
-.toadd-grid div,
-.toadd-grid .section-title,
-.toadd-grid .total-count--small,
-.toadd-grid .items-list,
-.toadd-grid .optionbar-container,
-.toadd-grid input,
-.toadd-grid .preset-name {
+.toadd-page h1, .toadd-grid h1,
+.toadd-page h2, .toadd-grid h2,
+.toadd-page h3, .toadd-grid h3,
+.toadd-page h4, .toadd-grid h4,
+.toadd-page p, .toadd-grid p,
+.toadd-page span, .toadd-grid span,
+.toadd-page label, .toadd-grid label,
+.toadd-page li, .toadd-grid li,
+.toadd-page div, .toadd-grid div,
+.toadd-page .section-title, .toadd-grid .section-title,
+.toadd-page .total-count--small, .toadd-grid .total-count--small,
+.toadd-page .items-list, .toadd-grid .items-list,
+.toadd-page .optionbar-container, .toadd-grid .optionbar-container,
+.toadd-page input, .toadd-grid input,
+.toadd-page .preset-name, .toadd-grid .preset-name {
     color: var(--text-primary);
 }
 
 /* Keep icons/images unaffected (no color override) */
-.toadd-grid img,
-.toadd-grid svg,
-.toadd-grid path {
+.toadd-page img, .toadd-grid img,
+.toadd-page svg, .toadd-grid svg,
+.toadd-page path, .toadd-grid path {
     color: inherit !important; /* don’t force black onto icons */
 }
 

@@ -123,6 +123,7 @@ export default function useHoverLists({
                     pageSize: 200,
                     orderBy: "products.name",
                     ...(assortmentId != null && { assortmentId }),
+                    groupBy: effGroupBy,
                 });
 
                 if (dbg?.enabled) {

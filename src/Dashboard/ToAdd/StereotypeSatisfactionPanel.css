@@ -48,7 +48,7 @@
 .stereotype-entry__bar-track {
     height: 6px;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.04);
     overflow: hidden;
 }
 

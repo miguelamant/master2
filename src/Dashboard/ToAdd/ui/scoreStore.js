@@ -146,6 +146,16 @@ export function getCategoryAggregate(category, viewIds) {
 }
 
 /**
+ * Returns pack ids in registration order + visited scores map.
+ * Used by KPIHeader to render marks in pack order.
+ */
+export function getPackOrder(category) {
+    const ids  = packs[category]?.ids || [];
+    const vis  = store[category]?.visited || {};
+    return { ids, visited: vis };
+}
+
+/**
  * Finalization helper used by Sidebar:
  * Returns { finished, sum, total } where:
  *  - finished = true when ALL pack views have been visited at least once

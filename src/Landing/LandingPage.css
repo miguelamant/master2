@@ -1,169 +1,237 @@
-/* General styles */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: var(--oxford-blue);
-}
+/* ─── Landing / Login ─────────────────────────────────────────────────────── */
 
-/* Main container */
-.container {
+.landing {
+    position: relative;
     display: flex;
-    height: 100vh;
-}
-
-/* Left Section */
-.content {
-    flex: 2;
-    padding: 3rem;
-    background-color: #F8F8F5;
-    border-radius: 0 3rem 3rem 0;
-    display: flex;
-    flex-direction: column;
-    max-width: 60%;
-}
-
-.logo {
-    display: flex;
-    font-size: 3rem;
-    font-weight: bold;
-    color: #FF7F32;
-}
-
-.logo img {
-    width: 18rem;
-    margin-right: 0px;
-    margin-left: 10rem;
-}
-
-.main-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    color: var(--oxford-blue);
-    height: 100%;
-    margin-top:-10rem;
-}
-h1 {
-    font-size: 1.75rem;
-    font-weight: bold;
-    margin-top: 1rem;
-    color: var(--oxford-blue);
-}
-
-p {
-    font-size: 1.25rem;
-    color: #333;
-}
-
-.why-billy {
-    font-size: 1.75rem;
-    margin-top: 0rem;
-}
-
-.logo-text {
-    font-size: 3rem;
-    margin-top: 5rem;
-}
-
-.features {
-    list-style: none;
-    padding: 0;
-}
-
-.features li {
-    font-size: 1.25rem;
-    margin: 0.5rem 0;
-}
-
-/* Right Section */
-.login-container {
-    flex: 1;
-    background-color: black ;/*#0C1C3D*/
-    color: white;
-    padding: 1rem 3rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.login-title {
-    font-size: 3rem;
-    color: #FF7F32;
-    text-align: center;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: bolder;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-}
-
-.login-section, .register-section {
-    display: flex;
-    flex-direction: column;
-    margin-top: 2rem;
     align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #fafafa;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
 }
 
-h3 {
-    font-size: 1.5rem;
-    color: var(--sandy-brown);
+/* ── subtle dot grid background ── */
+.landing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
 }
 
-h3 span {
-    font-weight: normal;
-    color: #D3D3D3;
+/* subtle top-left gradient orb */
+.landing::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(129,140,248,0.06) 0%, transparent 70%);
+    pointer-events: none;
 }
 
-/* Input fields styling */
-.input-group {
+/* ── card ── */
+.landing-card {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    width: 90%; /* Ensure inputs and labels align properly */
-    margin-bottom: 1.5rem; /* Adds spacing between each input group */
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    padding: 3.5rem 3rem 3rem;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 40px 80px rgba(0,0,0,0.06),
+        0 1px 3px rgba(0,0,0,0.04);
 }
 
-input {
-    width: 100%; /* Make inputs fill container */
-    padding: 0.8rem;
-    border: none;
-    border-radius: 2rem;
-    background: #F8D1AD;
+/* ── octopus icon ── */
+.landing-octopus {
+    width: 48px;
+    height: 48px;
+    opacity: 0.55;
+    margin-bottom: 0.75rem;
 }
 
-.login-btn, .register-btn {
-    width: 70%;
-    padding: 0.8rem;
-    border: none;
-    cursor: pointer;
-    font-size: xx-large;
-    background-color: #FF7F32;
-    color: white;
-    border-radius: 2rem;
-    margin-top: 2rem;
+/* ── brand ── */
+.landing-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+    background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.login-btn {
-margin-bottom: 5rem;
-}
-
-.register-btn {
-    background-color: #FF7F32;
-    color: white;
-    border-radius: 2rem;
-}
-
-.login-btn:hover, .register-btn:hover {
-    opacity: 0.9;
-}
-
-label {
-    display: block; /* Zorgt ervoor dat het label boven het inputveld blijft */
-    text-align: left; /* Links uitlijnen */
-    width: 90%; /* Zorgt ervoor dat het label even breed is als de inputvelden */
+.landing-tagline {
     font-size: 1rem;
-    font-weight: lighter;
+    font-weight: 400;
+    color: rgba(0,0,0,0.3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+}
+
+/* ── form ── */
+.landing-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.landing-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.landing-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.35);
+    padding-left: 2px;
+}
+
+.landing-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: #f9fafb;
+    color: #111827;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.landing-input::placeholder {
+    color: rgba(0,0,0,0.2);
+}
+
+.landing-input:focus {
+    border-color: rgba(129,140,248,0.5);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(129,140,248,0.1);
+}
+
+/* ── submit button ── */
+.landing-submit {
+    margin-top: 0.75rem;
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    background: #111827;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.landing-submit:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.landing-submit:active {
+    transform: translateY(0);
+}
+
+/* ── error ── */
+.landing-error {
     margin-top: 0.5rem;
-    margin-bottom: 0.2rem;
-    margin-left: 0.7rem;
-    color: var(--ivory); /* Pas aan naar wens */
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.15);
+    color: #dc2626;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* ── footer line ── */
+.landing-footer {
+    margin-top: 2.5rem;
+    font-size: 0.72rem;
+    color: rgba(0,0,0,0.2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ── decorative lines ── */
+.landing-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.landing-lines span {
+    position: absolute;
+    background: rgba(0,0,0,0.025);
+}
+
+.landing-lines span:nth-child(1) {
+    width: 1px;
+    height: 100%;
+    left: 20%;
+}
+
+.landing-lines span:nth-child(2) {
+    width: 1px;
+    height: 100%;
+    left: 80%;
+}
+
+.landing-lines span:nth-child(3) {
+    width: 100%;
+    height: 1px;
+    top: 30%;
+}
+
+.landing-lines span:nth-child(4) {
+    width: 100%;
+    height: 1px;
+    top: 70%;
+}
+
+/* ── pulse ring on brand (subtle) ── */
+@keyframes landing-pulse {
+    0%   { transform: scale(1);   opacity: 0.12; }
+    50%  { transform: scale(1.6); opacity: 0; }
+    100% { transform: scale(1);   opacity: 0; }
+}
+
+.landing-pulse-ring {
+    position: absolute;
+    top: 3rem;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.06);
+    animation: landing-pulse 4s ease-in-out infinite;
+    pointer-events: none;
 }

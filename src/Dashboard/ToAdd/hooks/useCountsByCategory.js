@@ -1,5 +1,5 @@
 // src/Dashboard/ToAdd/hooks/useCountsByCategory.js
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { menuCounts } from "../../../apiService";
 import { fetchPartitionedMenuCounts } from "../utils/fetchPartitionedMenuCounts";
 
@@ -150,6 +150,8 @@ export function useCountsByCategory({
                                         assortmentId,
                                     }) {
     const [counts, setCounts] = useState({});
+    const [countsLoading, setCountsLoading] = useState(true);
+    const runIdRef = useRef(0);
 
     // stable deps
     const filtersKey = useMemo(() => JSON.stringify(apiFilters), [apiFilters]);
@@ -162,7 +164,8 @@ export function useCountsByCategory({
 
 
     useEffect(() => {
-        let alive = true;
+        const thisRun = ++runIdRef.current;
+        setCountsLoading(true);
 
         (async () => {
             try {
@@ -301,18 +304,16 @@ export function useCountsByCategory({
                     }
                 }
 
-                if (!alive) return;
+                if (thisRun !== runIdRef.current) return;
                 setCounts(out);
+                setCountsLoading(false);
             } catch (e) {
                 console.error("[useCountsByCategory] failed", e);
-                if (!alive) return;
+                if (thisRun !== runIdRef.current) return;
                 setCounts({});
+                setCountsLoading(false);
             }
         })();
-
-        return () => {
-            alive = false;
-        };
     }, [
         groupBy,
         effectiveSection,
@@ -329,5 +330,5 @@ export function useCountsByCategory({
         assortmentId,
     ]);
 
-    return counts;
+    return { counts, countsLoading };
 }

@@ -25,7 +25,7 @@ import AddToMenuModal from './components/AddToMenuModal';
  import { useLayersView } from './hooks/useLayersView';
  import { useRecommendations } from './hooks/useRecommendations';
 
-import { setViewScore, initScoreStore } from './ui/scoreStore';
+import { setViewScore, initScoreStore, getFinal } from './ui/scoreStore';
 import { useAssortment } from '../../context/AssortmentContext';
 
 
@@ -37,14 +37,14 @@ import { buildRecommendations, toKey } from './utils/allocations.js';
 
 import { fetchPartitionedMenuCounts } from "./utils/fetchPartitionedMenuCounts";
 import PresetInfo from './components/PresetInfo';
-import { getWillyMode, setWillyMode, subscribeUIPrefs } from './ui/uiPrefs';
+import { getWillyMode, setWillyMode, getWillyEnabled, subscribeUIPrefs } from './ui/uiPrefs';
 
 import { convertBaseLabel } from './utils/labelMap';
 import { fetchMergedLayers } from './engine/mergedLayersClient';
 import useHoverLists from "./hooks/useHoverLists";
 import useStereotypeBenchmarks from "./hooks/useStereotypeBenchmarks";
 import useEngineDistributions from "./hooks/useEngineDistributions";
-import { useStereotypeFit } from "./hooks/useStereotypeFit";
+import { useStereotypeFit, computePersonaScores } from "./hooks/useStereotypeFit";
 
 
 
@@ -86,6 +86,7 @@ import { normToken } from './utils/normalize';
 import { iconFor } from './utils/iconLoader';
 import RemoveFromMenuModal from "./components/RemoveFromMenuModal"; // still used to build tasteOptions icons
 import StereotypeSatisfactionPanel from './components/StereotypeSatisfactionPanel';
+import SuggestedSwapPanel from './components/SuggestedSwapPanel';
 
 // ---------- helpers ----------
 const DISPLAY_LABELS = {};
@@ -119,8 +120,8 @@ const normalizeCategory = (s) => {
 };
 
 
-  export default function ToAdd({ section = 'beers' }) {
-      const { activeAssortmentId } = useAssortment() || {};
+  export default function ToAdd({ section = 'beers', onGoBack, onViewMenu, assortmentScores = {}, onScoreUpdate }) {
+      const { activeAssortmentId, assortments } = useAssortment() || {};
 
       const {
          activeCategory, currentPreset, presetIndex, setPresetIndex, effectiveSection,
@@ -163,7 +164,7 @@ const normalizeCategory = (s) => {
 
 
 
-  const { benchmarks: stereotypeBenchmarks } = useStereotypeBenchmarks({
+  const { benchmarks: stereotypeBenchmarks, personaWeights } = useStereotypeBenchmarks({
     assortmentId: activeAssortmentId,
     groupBy,
     section: effectiveSection,
@@ -198,10 +199,13 @@ const normalizeCategory = (s) => {
   // show/hide price bars
   const [showPriceBars, setShowPriceBars] = useState(false);          // local only
   const [willyMode, setWillyModeLocal] = useState(getWillyMode());   // mirrors global
+  const [willyEnabled, setWillyEnabledLocal] = useState(getWillyEnabled());
 
   const itemsSectionRef = React.useRef(null);
+  const skipTasteResetRef = React.useRef(false);
 
   const presetInfo = currentPreset?.info ?? {};
+  const effectiveWillyOn = willyEnabled && !(currentPreset?.willyOff === true);
 
 
 
@@ -667,12 +671,13 @@ const normalizeCategory = (s) => {
 
     const unsub = subscribeUIPrefs((s) => {
         setWillyModeLocal(s.willyMode);
+        setWillyEnabledLocal(s.willyEnabled);
       });
       return unsub;
   }, []);
 
 
-     const countsByCategory = useCountsByCategory({
+     const { counts: countsByCategory, countsLoading } = useCountsByCategory({
            groupBy, effectiveSection,
            includeEmpty: currentPreset.includeEmpty ?? false,
            within, apiFilters, presetPredicates,
@@ -698,7 +703,7 @@ const normalizeCategory = (s) => {
     enabled: true,
   });
 
-  const personaFit = useStereotypeFit({
+  const { scores: personaFit, rawDist: personaRawDist } = useStereotypeFit({
     assortmentId: activeAssortmentId,
     groupBy,
     section: effectiveSection,
@@ -830,8 +835,56 @@ const normalizeCategory = (s) => {
 
 
 
-    const { stepSuggestions, alloc, adds: aggAdds, removes: aggRemoves, headerKPI } =
-           useRecommendations({ viewGroups, activeLayers, layerCounts, countsByCategory, displayedCountsByCategory });
+    const { stepSuggestions, alloc, adds: aggAdds, removes: aggRemoves, headerKPI, computing: recoComputing } =
+           useRecommendations({ viewGroups, activeLayers, layerCounts, countsByCategory, displayedCountsByCategory, enabled: effectiveWillyOn });
+
+  // ── Swap pair navigation ───────────────────────────────────────────────────
+  const [swapIndex, setSwapIndex] = useState(0);
+  const swapPairs = useMemo(() => {
+    const len = Math.min((aggAdds?.length ?? 0), (aggRemoves?.length ?? 0));
+    return Array.from({ length: len }, (_, i) => ({
+      removeRec: aggRemoves[i],
+      addRec:    aggAdds[i],
+    }));
+  }, [aggAdds, aggRemoves]);
+  // Reset index when pairs change
+  const prevSwapPairsLen = React.useRef(0);
+  if (prevSwapPairsLen.current !== swapPairs.length) {
+    prevSwapPairsLen.current = swapPairs.length;
+    if (swapIndex >= swapPairs.length) setSwapIndex(0);
+  }
+  const currentSwap = swapPairs[swapIndex] ?? { removeRec: null, addRec: null };
+
+  // ── Weighted satisfaction score ────────────────────────────────────────────
+  const satisfactionScore = useMemo(() => {
+    const personas = ['Belgian', 'French', 'German', 'Dutch'];
+    const totalW = personas.reduce((s, p) => s + (personaWeights[p] ?? 25), 0);
+    const wSum   = personas.reduce((s, p) => s + (personaFit[p] ?? 0) * (personaWeights[p] ?? 25), 0);
+    return totalW > 0 ? Math.round(wSum / totalW * 10) / 10 : null;
+  }, [personaFit, personaWeights]);
+
+  // ── Per-persona score delta for the currently displayed swap ──────────────
+  const personaDeltas = useMemo(() => {
+    if (!personaRawDist || !currentSwap.removeRec || !currentSwap.addRec) return null;
+    const { removeRec, addRec } = currentSwap;
+    const modCounts = { ...countsByCategory };
+    const removeKey = removeRec.label;
+    const addKey    = addRec.label;
+    modCounts[removeKey] = Math.max(0, (modCounts[removeKey] ?? 0) - 1);
+    modCounts[addKey]    = (modCounts[addKey] ?? 0) + 1;
+    const swappedScores = computePersonaScores({
+      rawDist: personaRawDist,
+      rollups: currentPreset?.rollups ?? [],
+      rowDefs,
+      countsByCategory: modCounts,
+      totalMenuCount,
+    });
+    const personas = ['Belgian', 'French', 'German', 'Dutch'];
+    return Object.fromEntries(
+      personas.map(p => [p, Math.round(((swappedScores[p] ?? 0) - (personaFit[p] ?? 0)) * 10) / 10])
+    );
+  }, [personaRawDist, currentSwap, countsByCategory, currentPreset, rowDefs, totalMenuCount, personaFit]);
+
 
 // Map header status → numeric score and persist per view (preset)
     // Map header status → numeric score and persist per view (preset)
@@ -845,6 +898,10 @@ const normalizeCategory = (s) => {
               status === 'orange' ? 0.5 : 0;
 
       setViewScore(activeCategory, viewId, s);
+      if (onScoreUpdate && activeAssortmentId != null) {
+        const { sum, total } = getFinal(activeCategory);
+        onScoreUpdate(activeAssortmentId, { sum, total });
+      }
     }, [activeCategory, currentPreset?.id, headerKPI?.status]);
 
 
@@ -889,6 +946,10 @@ const normalizeCategory = (s) => {
   // preventing an infinite re-render loop when tasteOptions gets a new reference
   // but contains the same ids.
     useEffect(() => {
+      if (skipTasteResetRef.current) {
+        skipTasteResetRef.current = false;
+        return;
+      }
       setFilters((prev) => {
         const newIds = (tasteOptions || []).map((o) => o.id);
         const old = prev.tastes;
@@ -1076,7 +1137,44 @@ const normalizeCategory = (s) => {
 
     const labelFor = makeCategoryLabeler();
 
-  if (loading) return <p>Loading…</p>;
+  const presetLoading = countsLoading || (effectiveWillyOn && recoComputing);
+
+  // ── Combined navigation: swaps within preset, then next preset ──
+  const swapCount = swapPairs.length;
+  const handleNavPrev = React.useCallback(() => {
+    if (effectiveWillyOn && swapCount > 0 && swapIndex > 0) {
+      setSwapIndex(swapIndex - 1);
+    } else {
+      prevPreset();
+      setSwapIndex(0);
+    }
+  }, [effectiveWillyOn, swapCount, swapIndex, prevPreset]);
+
+  const handleNavNext = React.useCallback(() => {
+    if (effectiveWillyOn && swapCount > 0 && swapIndex < swapCount - 1) {
+      setSwapIndex(swapIndex + 1);
+    } else {
+      nextPreset();
+      setSwapIndex(0);
+    }
+  }, [effectiveWillyOn, swapCount, swapIndex, nextPreset]);
+
+  if (loading) return (
+      <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          minHeight: 300, gap: 10,
+          color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600,
+          fontFamily: "'Space Grotesk', sans-serif",
+          letterSpacing: '0.03em',
+      }}>
+          <span style={{
+              width: 20, height: 20, border: '2.5px solid rgba(255,255,255,0.15)',
+              borderTop: '2.5px solid rgba(255,255,255,0.6)', borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+          }} />
+          Loading…
+      </div>
+  );
   if (error) return <p className="error">{error}</p>;
 
 
@@ -1177,6 +1275,7 @@ const normalizeCategory = (s) => {
           : { sparkling: true, not_sparkling: true };
 
       setToAddMode(true);
+      skipTasteResetRef.current = true;
       setFilters(prev => ({
         ...prev,
         tastes: tastesSet,
@@ -1254,6 +1353,7 @@ const normalizeCategory = (s) => {
       return new Set([heritage]);                                    // 'trappist' | 'abbey' | 'normal'
     })();
 
+    skipTasteResetRef.current = true;
     setFilters(prev => ({
       ...prev,
       tastes: new Set([token]),
@@ -1289,8 +1389,30 @@ const normalizeCategory = (s) => {
     });
   };
 
-
-
+  // ── "Yes, see options" from SuggestedSwapPanel ─────────────────────────
+  const handleSwapSeeOptions = (rec, isRemove) => {
+    if (!rec?.label) return;
+    // Reuse handleFocusGroup for filter logic (handles rollups + composite labels)
+    handleFocusGroup(rec.label);
+    // Override toAddMode: To Add for add recs, To Remove for remove recs
+    setToAddMode(!isRemove);
+    // Scroll a bit lower than handleFocusGroup (0.12 vs 0.33) so items list
+    // appears near the top of the viewport
+    requestAnimationFrame(() => {
+      const targetEl = itemsSectionRef.current;
+      if (!targetEl) return;
+      const scroller = getScrollContainer(targetEl);
+      if (scroller === window) {
+        const rect = targetEl.getBoundingClientRect();
+        window.scrollTo({ top: Math.max(0, window.scrollY + rect.top - window.innerHeight * 0.12), behavior: 'smooth' });
+      } else {
+        const scrollerRect = scroller.getBoundingClientRect();
+        const elRect = targetEl.getBoundingClientRect();
+        const relTop = elRect.top - scrollerRect.top + scroller.scrollTop;
+        scroller.scrollTo({ top: Math.max(0, relTop - scroller.clientHeight * 0.12), behavior: 'smooth' });
+      }
+    });
+  };
 
   // recommended deltas per group (tokenized keys)
   const recommendations = buildRecommendations({
@@ -1353,34 +1475,71 @@ const normalizeCategory = (s) => {
 
 
   return (
-      <div className="top-worst-container toadd-grid">
-        <div className="centre-content">
-          <div className="segment-section">
-
-
-            {/* === Compact 3-column header (updated) === */}
+      <div className="toadd-page">
+        {/* === Page-level header === */}
+        <div className="toadd-page-header">
             <KPIHeader
                 personaInfo={personaInfo}
                 headerKPI={headerKPI}
-                prevPreset={prevPreset}
-                nextPreset={nextPreset}
-                activeCategory={activeCategory}      // ← needed for category progress
-                currentPreset={currentPreset}        // ← not strictly used, but fine to pass
-                // NEW ↓ so header can render the row and category rollup
-                category={activeCategory}
-                viewOrder={(Array.isArray(PACK_LEN) ? PACK_LEN : null) ? [] : (Array.isArray(PRESET_FILTERS_BEERS) ? [] : [])}
-                viewOrder={(currentPreset && Array.isArray(PACK_LEN)) ? [] : []} // ignore
-                viewOrder={ (PACK_LEN > 0 && Array.isArray(currentPreset) ) ? [] : [] } // ignore
-                viewOrder={ (PACK_LEN > 0) ? ( // actual value:
-                    (activeCategory === 'beers' ? PRESET_FILTERS_BEERS : PRESET_FILTERS_REFRESHMENTS).map(p => p.id)
-                ) : []}
+                onPrev={handleNavPrev}
+                onNext={handleNavNext}
+                onJumpPreset={setPresetIndex}
+                presetCount={PACK_LEN}
+                activeCategory={activeCategory}
+                currentPreset={currentPreset}
                 presetIndex={presetIndex}
-                totalViews={PACK_LEN}
-                title={currentPreset?.name}
+                onGoBack={onGoBack}
+                onViewMenu={onViewMenu}
+                allAssortments={assortments ?? []}
+                assortmentScores={assortmentScores}
+                willyOffIds={new Set(
+                    (activeCategory === 'beers' ? PRESET_FILTERS_BEERS : PRESET_FILTERS_REFRESHMENTS)
+                        .filter(p => p.willyOff).map(p => String(p.id))
+                )}
+                presetLoading={presetLoading}
+                swapIndex={swapIndex}
+                swapCount={swapCount}
             />
+        </div>
 
+        <div className="top-worst-container toadd-grid">
+        <div className="centre-content">
+          <div className="segment-section">
 
+            {/* Status text above the grid */}
+            <div style={{
+                display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
+                marginBottom: 12, fontSize: 14, fontWeight: 500,
+                opacity: presetLoading ? 0.4 : 0.85,
+                transition: 'opacity 0.2s',
+            }}>
+                <span>
+                    {personaInfo.line1} <strong>{presetLoading ? '…' : headerKPI.total}</strong> {personaInfo.line2}
+                    {effectiveWillyOn && !presetLoading && (
+                        <> {headerKPI.status === 'green' ? 'goed' : headerKPI.status === 'orange' ? 'ok' : 'niet in balans'}</>
+                    )}
+                </span>
+                {effectiveWillyOn && !presetLoading && (
+                    <img src={headerKPI.icon} alt="" style={{ width: 18, height: 18, verticalAlign: 'middle' }} />
+                )}
+            </div>
 
+            {presetLoading ? (
+                <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    gap: 10, padding: '40px 0', minHeight: 200,
+                    color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    letterSpacing: '0.03em',
+                }}>
+                    <span style={{
+                        width: 18, height: 18, border: '2.5px solid rgba(255,255,255,0.15)',
+                        borderTop: '2.5px solid rgba(255,255,255,0.6)', borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite',
+                    }} />
+                    Loading…
+                </div>
+            ) : (
             <SummaryGrid
                 countsByCategory={displayedCountsByCategory}
                 groupBy={groupBy}
@@ -1393,18 +1552,21 @@ const normalizeCategory = (s) => {
                 makeKey={makeKey}
                 showPriceBars={showPriceBars}
                 onFocusGroup={handleFocusGroup}
-                presetId={currentPreset.id} // 👈 add thisrecommendations={recommendations}
-                recommendations={recommendations}
+                presetId={currentPreset.id}
+                recommendations={effectiveWillyOn ? recommendations : {}}
                 activeBadges={activeBadges}
-                summaryAdds={aggAdds}
-                summaryRemoves={aggRemoves}
+                summaryAdds={effectiveWillyOn ? aggAdds : []}
+                summaryRemoves={effectiveWillyOn ? aggRemoves : []}
+                willyDisabled={!effectiveWillyOn}
                 sortPriority={currentPreset.sortPriority || []}
                 columns={gridColumns}
                 showItemsInline={showItemsInline}
                 aggregateTop={aggregateTop}
                 ui={currentPreset?.ui}
                 stereotypeBenchmarks={stereotypeBenchmarks}
+                totalMenuCount={totalMenuCount}
             />
+            )}
           </div>
 
           <div className="items-section" ref={itemsSectionRef}>
@@ -1452,8 +1614,29 @@ const normalizeCategory = (s) => {
 
 
         <div className="stereotype-panel-container">
+          {effectiveWillyOn && (
+            <SuggestedSwapPanel
+              swapPairs={swapPairs}
+              swapIndex={swapIndex}
+              onSwapIndex={setSwapIndex}
+              onSkip={() => {
+                if (swapIndex < swapPairs.length - 1) setSwapIndex(swapIndex + 1);
+                else handleNavNext();
+              }}
+              onSeeOptions={handleSwapSeeOptions}
+              willyMode={willyMode}
+              countsByCategory={countsByCategory}
+              stereotypeBenchmarks={stereotypeBenchmarks}
+              personaWeights={personaWeights}
+              totalMenuCount={totalMenuCount}
+            />
+          )}
           <StereotypeSatisfactionPanel
             personaFit={personaFit}
+            personaWeights={personaWeights}
+            satisfactionScore={satisfactionScore}
+            personaDeltas={personaDeltas}
+            disabled={!effectiveWillyOn}
           />
         </div>
 
@@ -1492,6 +1675,7 @@ const normalizeCategory = (s) => {
         />
 
 
+      </div>
       </div>
   );
 }

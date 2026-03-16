@@ -2,8 +2,9 @@
 // Lightweight global UI state with subscription.
 
 let state = {
-    // 0 = chilly, 1 = stern, 2 = sleepy
+    // 0 = easy, 1 = medium, 2 = hard
     willyMode: Number(localStorage.getItem('willyMode') ?? 0) % 3,
+    willyEnabled: (localStorage.getItem('willyEnabled') ?? '1') === '1',
 };
 
 const subs = new Set();
@@ -27,6 +28,16 @@ export function setWillyMode(v) {
     const n = Math.max(0, Math.min(2, Number(v) || 0)); // clamp 0..2
     state = { ...state, willyMode: n };
     try { localStorage.setItem('willyMode', String(n)); } catch {}
+    emit();
+}
+
+export function getWillyEnabled() {
+    return state.willyEnabled;
+}
+
+export function setWillyEnabled(v) {
+    state = { ...state, willyEnabled: !!v };
+    try { localStorage.setItem('willyEnabled', v ? '1' : '0'); } catch {}
     emit();
 }
 

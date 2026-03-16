@@ -48,8 +48,9 @@ export function useRecommendations({
                                        layerCounts,
                                        countsByCategory,
                                        displayedCountsByCategory,
+                                       enabled = true,
                                    }) {
-    // ---- Willy mode (0=chilly, 1=stern, 2=sleepy)
+    // ---- Willy mode (0=easy/sleepy, 1=medium/chilly, 2=hard/stern)
     const [willyMode, setWillyMode] = React.useState(getWillyMode());
     React.useEffect(() => subscribeUIPrefs((s) => setWillyMode(s.willyMode)), []);
 
@@ -58,11 +59,13 @@ export function useRecommendations({
     // A 2.4% Dutch bucket (e.g. ciders) has addMB≈0.072 at depth=0, so chilly
     // must be below that to catch it.
     const thresholdAbs = React.useMemo(() => {
+        // Thresholds calibrated for log(1 + pct/10) MB scale:
+        // 1% bucket → 0.095, 3% → 0.26, 10% → 0.69, 30% → 1.39
         switch (willyMode) {
-            case 1: return 0.03; // stern
-            case 2: return 0.90; // sleepy
-            case 0:
-            default: return 0.06; // chilly
+            case 2: return 0.04; // hard/stern   — catches ≥0.5% underpresence
+            case 0: return 0.50; // easy/sleepy  — catches only large imbalances (≥10%)
+            case 1:
+            default: return 0.08; // medium/chilly — catches ≥1% underpresence
         }
     }, [willyMode]);
 
@@ -154,16 +157,33 @@ export function useRecommendations({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeLayers, engineGroups, allAddableGroups]);
 
+    // ---- Skip engine entirely when disabled (willyOff / willy toggle off) ----
+    const emptyHeaderKPI = React.useMemo(() => {
+        const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
+        const totalFromDisplayed = Object.values(displayedCountsByCategory || {}).reduce((a, b) => a + Number(b || 0), 0);
+        const total = Number(totalFromCounts || totalFromDisplayed || 0);
+        return { absDelta: 0, total, pct: 0, status: 'green', bg: '#E8F5E9', icon: checkGreen, badgeText: '+0', badgeColor: '#137333' };
+    }, [countsByCategory, displayedCountsByCategory]);
+
     const [planInputs, setPlanInputs] = React.useState(null);
+    const [computing, setComputing] = React.useState(false);
+    const computeRunIdRef = React.useRef(0);
+
     React.useEffect(() => {
+        if (!enabled) { setPlanInputs(null); setComputing(false); return; }
+        const thisRun = ++computeRunIdRef.current;
+        setComputing(true);
         const t = setTimeout(() => {
-            setPlanInputs({ ...planSnapshotRef.current });
+            if (thisRun === computeRunIdRef.current) {
+                setPlanInputs({ ...planSnapshotRef.current });
+            }
         }, 2000);
         return () => clearTimeout(t);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [planDepsKey]);
+    }, [planDepsKey, enabled]);
 
     const stepSuggestions = React.useMemo(() => {
+        if (!enabled) return [];
         const { groups: dGroups, layers: dLayers, counts: dCounts } = planInputs || {};
         if (!dLayers?.length || !dGroups?.length) return [];
 
@@ -185,9 +205,16 @@ export function useRecommendations({
         });
         try { window.__RECO_PLAN__ = plan; } catch {}
         return plan;
-    }, [planInputs, recoOptions]);
+    }, [planInputs, recoOptions, enabled]);
 
-    const alloc = React.useMemo(() => aggregatePlan(stepSuggestions), [stepSuggestions]);
+    // Clear computing flag after plan resolves
+    React.useEffect(() => {
+        if (planInputs != null && enabled) {
+            setComputing(false);
+        }
+    }, [stepSuggestions, planInputs, enabled]);
+
+    const alloc = React.useMemo(() => enabled ? aggregatePlan(stepSuggestions) : null, [stepSuggestions, enabled]);
     try { if (typeof window !== 'undefined') window.__PLAN_FINAL_ALLOC__ = alloc; } catch {}
 
 
@@ -195,6 +222,8 @@ export function useRecommendations({
     try { window.__RECO_ALLOC__ = alloc; } catch {}
 
     const headerKPI = React.useMemo(() => {
+        if (!enabled) return emptyHeaderKPI;
+
         const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
         const totalFromDisplayed = Object.values(displayedCountsByCategory || {}).reduce((a, b) => a + Number(b || 0), 0);
         const total = Number(totalFromCounts || totalFromDisplayed || 0);
@@ -229,8 +258,8 @@ export function useRecommendations({
                     '#b91c1c';
 
         return { absDelta, total, pct, status, bg, icon, badgeText, badgeColor };
-    }, [alloc, countsByCategory, displayedCountsByCategory]);
+    }, [enabled, emptyHeaderKPI, alloc, countsByCategory, displayedCountsByCategory]);
 
     const { adds = [], removes = [] } = alloc || {};
-    return { stepSuggestions, alloc, adds, removes, headerKPI };
+    return { stepSuggestions, alloc, adds, removes, headerKPI, computing: enabled && computing };
 }

@@ -4,9 +4,12 @@ import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useAssortment } from '../context/AssortmentContext';
 import { api } from '../apiService';
+import { iconFor } from './ToAdd/utils/iconLoader';
+import colruytLogo from './Icons/colruyt.png';
 import './AssortmentOverview.css';
 
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
+const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN ||
+    'pk.eyJ1IjoibWlndWVsYW1hbnQiLCJhIjoiY21tb29xOTlzMGVweTJvc2IweGEwb2s2ZyJ9.3j5JPLEn0_D6_-5d_OEuxg';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -24,10 +27,23 @@ function tierLabel(score) {
     return 'red';
 }
 
-function PersonaSlider({ label, value, onChange }) {
+const PERSONA_CFG = [
+    { key: 'belgian', name: 'Belgian', iconToken: 'BELGIUM' },
+    { key: 'french',  name: 'French',  iconToken: 'FRANCE' },
+    { key: 'german',  name: 'German',  iconToken: 'GERMANY' },
+    { key: 'dutch',   name: 'Dutch',   iconToken: 'NETHERLANDS' },
+];
+
+function PersonaSlider({ iconToken, name, value, onChange }) {
+    const icon = iconFor(iconToken);
     return (
         <div className="ao-persona-row">
-            <span className="ao-persona-label">{label}</span>
+            <span className="ao-persona-label">
+                {icon
+                    ? <img src={icon} alt={name} width={20} height={14} className="ao-persona-flag" />
+                    : null}
+                {name}
+            </span>
             <input
                 type="range" min={0} max={100} step={1}
                 value={value}
@@ -41,30 +57,21 @@ function PersonaSlider({ label, value, onChange }) {
 
 // ─── main component ──────────────────────────────────────────────────────────
 
-export default function AssortmentOverview({ category, onSelectStore, onViewMenu }) {
-    const { assortments, setActiveAssortmentId } = useAssortment();
+export default function AssortmentOverview({ category, onSelectStore, scores = {}, onScoreUpdate }) {
+    const { assortments, loaded, setActiveAssortmentId } = useAssortment();
 
-    // index of the "active" (slider-focused) store
     const [activeIdx, setActiveIdx]     = useState(0);
-    // which pin is showing the popup
     const [popupId, setPopupId]         = useState(null);
-    // session-level score cache: { [assortmentId]: { sum, total } }
-    const [scores]                      = useState(() => ({}));
-    // persona edit state for the open popup
-    const [personas, setPersonas]       = useState(null);   // { belgian, french, german, dutch }
+    const [personas, setPersonas]       = useState(null);
     const [saving, setSaving]           = useState(false);
     const [saveOk, setSaveOk]           = useState(false);
 
-    const mapRef = useRef(null);
+    const mapRef     = useRef(null);
+    const marqueeRef = useRef(null);
+    const pausedRef  = useRef(false);
 
     const stores = assortments.filter(a => a.lat != null && a.lng != null);
 
-    // sync activeIdx when assortments load
-    useEffect(() => {
-        if (stores.length > 0) setActiveIdx(0);
-    }, [stores.length]);
-
-    // fly map to active store
     useEffect(() => {
         if (!stores[activeIdx] || !mapRef.current) return;
         mapRef.current.flyTo({
@@ -74,7 +81,6 @@ export default function AssortmentOverview({ category, onSelectStore, onViewMenu
         });
     }, [activeIdx, stores]);
 
-    // open popup → load its persona values
     const openPopup = useCallback((store) => {
         setPopupId(store.id);
         setSaveOk(false);
@@ -92,11 +98,26 @@ export default function AssortmentOverview({ category, onSelectStore, onViewMenu
         setSaveOk(false);
     }, []);
 
-    // slider navigation
-    const prev = () => setActiveIdx(i => Math.max(0, i - 1));
-    const next = () => setActiveIdx(i => Math.min(stores.length - 1, i + 1));
+    // ── marquee auto-scroll ──
+    useEffect(() => {
+        const el = marqueeRef.current;
+        if (!el || stores.length === 0) return;
+        let rafId;
+        const step = () => {
+            if (!pausedRef.current) {
+                el.scrollLeft += 0.5;
+                // seamless loop: when we've scrolled past the first copy, reset
+                const halfWidth = el.scrollWidth / 2;
+                if (el.scrollLeft >= halfWidth) {
+                    el.scrollLeft -= halfWidth;
+                }
+            }
+            rafId = requestAnimationFrame(step);
+        };
+        rafId = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(rafId);
+    }, [stores.length]);
 
-    // save persona targets
     async function savePersonas() {
         if (!personas || !popupId) return;
         setSaving(true);
@@ -107,162 +128,212 @@ export default function AssortmentOverview({ category, onSelectStore, onViewMenu
         setSaving(false);
     }
 
-    // navigate to analysis
     function goToAnalysis(storeId) {
         setActiveAssortmentId(storeId);
         onSelectStore(storeId);
     }
 
-    // navigate to menu
-    function goToMenu(storeId) {
-        setActiveAssortmentId(storeId);
-        onViewMenu(storeId);
-    }
-
-    // center of Belgium as default view
     const initialView = { longitude: 4.47, latitude: 50.5, zoom: 7.5 };
 
-    const popupStore = stores.find(s => s.id === popupId) ?? null;
-    const popupScore = popupId != null ? (scores[popupId] ?? null) : null;
+    const popupStore  = stores.find(s => s.id === popupId) ?? null;
+    const popupScore  = popupId != null ? (scores[popupId] ?? null) : null;
+    const panelOpen   = popupId !== null;
+
+    // Don't render until assortments have loaded
+    if (!loaded) {
+        return (
+            <div className="ao-wrapper" style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600,
+                fontFamily: "'Space Grotesk', sans-serif",
+            }}>
+                <span style={{
+                    width: 20, height: 20, border: '2.5px solid rgba(255,255,255,0.15)',
+                    borderTop: '2.5px solid rgba(255,255,255,0.6)', borderRadius: '50%',
+                    animation: 'spin 0.8s linear infinite', marginRight: 10,
+                }} />
+                Loading…
+            </div>
+        );
+    }
 
     return (
         <div className="ao-wrapper">
-            {/* ── map ── */}
-            <Map
-                ref={mapRef}
-                initialViewState={initialView}
-                style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/dark-v11"
-                mapboxAccessToken={MAPBOX_TOKEN}
-                onClick={() => closePopup()}
-            >
-                <NavigationControl position="top-right" />
+            {/* ── map area ── */}
+            <div className={`ao-map-area${panelOpen ? ' ao-map-area--narrow' : ''}`}>
+                <Map
+                    ref={mapRef}
+                    initialViewState={initialView}
+                    style={{ width: '100%', height: '100%' }}
+                    mapStyle="mapbox://styles/mapbox/light-v11"
+                    mapboxAccessToken={MAPBOX_TOKEN}
+                    projection="mercator"
+                    onClick={() => closePopup()}
+                    onLoad={() => {}}
+                >
+                    <NavigationControl position="top-right" />
 
-                {stores.map((store, idx) => {
-                    const isActive  = idx === activeIdx;
-                    const score     = scores[store.id] ?? null;
-                    const scoreVal  = score ? score.sum / score.total : null;
-                    const color     = scoreColor(scoreVal);
-                    const size      = isActive ? 44 : 32;
+                    {stores.map((store, idx) => {
+                        const isActive  = idx === activeIdx;
+                        const score     = scores[store.id] ?? null;
+                        const scoreVal  = score ? score.sum / score.total : null;
+                        const color     = scoreColor(scoreVal);
+                        const size      = isActive ? 44 : 32;
 
-                    return (
-                        <Marker
-                            key={store.id}
-                            longitude={store.lng}
-                            latitude={store.lat}
-                            anchor="bottom"
-                            onClick={e => { e.originalEvent.stopPropagation(); openPopup(store); setActiveIdx(idx); }}
-                        >
-                            <div
-                                className={`ao-pin${isActive ? ' ao-pin--active' : ''}`}
-                                style={{ '--pin-color': color, '--pin-size': `${size}px` }}
+                        return (
+                            <Marker
+                                key={store.id}
+                                longitude={store.lng}
+                                latitude={store.lat}
+                                anchor="bottom"
+                                onClick={e => { e.originalEvent.stopPropagation(); openPopup(store); setActiveIdx(idx); }}
                             >
-                                <div className="ao-pin-dot" />
-                                {score && (
-                                    <div className="ao-pin-score">
-                                        {score.sum}/{score.total}
+                                <div
+                                    className={`ao-pin${isActive ? ' ao-pin--active' : ''}`}
+                                    style={{ '--pin-color': color, '--pin-size': `${size}px` }}
+                                >
+                                    <div className="ao-pin-dot">
+                                        <img src={colruytLogo} alt="" className="ao-pin-logo" />
+                                    </div>
+                                    <div className="ao-pin-tail" />
+                                </div>
+                            </Marker>
+                        );
+                    })}
+
+                    {/* compact popup */}
+                    {popupStore && (
+                        <Popup
+                            longitude={popupStore.lng}
+                            latitude={popupStore.lat}
+                            anchor="bottom"
+                            offset={52}
+                            closeButton={true}
+                            closeOnClick={false}
+                            onClose={closePopup}
+                            className="ao-popup"
+                        >
+                            <div className="ao-popup-inner" onClick={e => e.stopPropagation()}>
+                                <div className="ao-popup-header">
+                                    <div className="ao-popup-name">{popupStore.name}</div>
+                                    {popupStore.address && (
+                                        <div className="ao-popup-address">{popupStore.address}</div>
+                                    )}
+                                </div>
+
+                                {popupScore ? (
+                                    <div className={`ao-score-badge ao-score-badge--${tierLabel(popupScore.sum / popupScore.total)}`}>
+                                        {popupScore.sum}/{popupScore.total}
+                                        <span className="ao-score-cat">{category}</span>
+                                    </div>
+                                ) : (
+                                    <div className="ao-score-badge ao-score-badge--gray">
+                                        — <span className="ao-score-cat">{category} score not yet computed</span>
                                     </div>
                                 )}
-                                <div className="ao-pin-tail" />
-                            </div>
-                        </Marker>
-                    );
-                })}
 
-                {/* popup */}
-                {popupStore && (
-                    <Popup
-                        longitude={popupStore.lng}
-                        latitude={popupStore.lat}
-                        anchor="bottom"
-                        offset={52}
-                        closeButton={true}
-                        closeOnClick={false}
-                        onClose={closePopup}
-                        className="ao-popup"
-                    >
-                        <div className="ao-popup-inner" onClick={e => e.stopPropagation()}>
-                            <div className="ao-popup-header">
-                                <div className="ao-popup-name">{popupStore.name}</div>
-                                {popupStore.address && (
-                                    <div className="ao-popup-address">{popupStore.address}</div>
-                                )}
-                            </div>
-
-                            {/* score badge */}
-                            {popupScore ? (
-                                <div className={`ao-score-badge ao-score-badge--${tierLabel(popupScore.sum / popupScore.total)}`}>
-                                    {popupScore.sum}/{popupScore.total}
-                                    <span className="ao-score-cat">{category}</span>
-                                </div>
-                            ) : (
-                                <div className="ao-score-badge ao-score-badge--gray">
-                                    — <span className="ao-score-cat">{category} score not yet computed</span>
-                                </div>
-                            )}
-
-                            {/* persona targets */}
-                            {personas && (
-                                <div className="ao-personas">
-                                    <div className="ao-personas-title">Persona targets</div>
-                                    <PersonaSlider label="🇧🇪 Belgian" value={personas.belgian} onChange={v => setPersonas(p => ({ ...p, belgian: v }))} />
-                                    <PersonaSlider label="🇫🇷 French"  value={personas.french}  onChange={v => setPersonas(p => ({ ...p, french: v }))} />
-                                    <PersonaSlider label="🇩🇪 German"  value={personas.german}  onChange={v => setPersonas(p => ({ ...p, german: v }))} />
-                                    <PersonaSlider label="🇳🇱 Dutch"   value={personas.dutch}   onChange={v => setPersonas(p => ({ ...p, dutch: v }))} />
-                                    <button
-                                        className={`ao-save-btn${saveOk ? ' ao-save-btn--ok' : ''}`}
-                                        onClick={savePersonas}
-                                        disabled={saving}
-                                    >
-                                        {saving ? 'Saving…' : saveOk ? '✓ Saved' : 'Save targets'}
-                                    </button>
-                                </div>
-                            )}
-
-                            <div className="ao-popup-actions">
-                                <button className="ao-btn ao-btn--secondary" onClick={() => goToMenu(popupStore.id)}>
-                                    See assortment
-                                </button>
                                 <button className="ao-btn ao-btn--primary" onClick={() => goToAnalysis(popupStore.id)}>
                                     See analysis →
                                 </button>
                             </div>
-                        </div>
-                    </Popup>
-                )}
-            </Map>
+                        </Popup>
+                    )}
+                </Map>
 
-            {/* ── bottom slider bar ── */}
-            <div className="ao-slider-bar">
-                <button className="ao-slider-arrow" onClick={prev} disabled={activeIdx === 0}>‹</button>
-
-                <div className="ao-slider-track">
-                    {stores.map((store, idx) => {
-                        const score    = scores[store.id] ?? null;
-                        const scoreVal = score ? score.sum / score.total : null;
-                        const color    = scoreColor(scoreVal);
-                        return (
-                            <div
-                                key={store.id}
-                                className={`ao-slider-chip${idx === activeIdx ? ' ao-slider-chip--active' : ''}`}
-                                onClick={() => { setActiveIdx(idx); openPopup(store); }}
-                            >
-                                <span className="ao-chip-dot" style={{ background: color }} />
-                                <span className="ao-chip-name">{store.name}</span>
-                                {score && <span className="ao-chip-score">{score.sum}/{score.total}</span>}
-                            </div>
-                        );
-                    })}
+                {/* ── top marquee bar ── */}
+                <div
+                    className="ao-marquee-bar"
+                    onMouseEnter={() => { pausedRef.current = true; }}
+                    onMouseLeave={() => { pausedRef.current = false; }}
+                >
+                    <div className="ao-marquee-track" ref={marqueeRef}>
+                        {[...stores, ...stores].map((store, i) => {
+                            const realIdx  = i % stores.length;
+                            const score    = scores[store.id] ?? null;
+                            const scoreVal = score ? score.sum / score.total : null;
+                            const color    = scoreColor(scoreVal);
+                            return (
+                                <div
+                                    key={`${store.id}-${i < stores.length ? 'a' : 'b'}`}
+                                    className={`ao-marquee-card${realIdx === activeIdx ? ' ao-marquee-card--active' : ''}`}
+                                    onClick={() => { setActiveIdx(realIdx); openPopup(store); }}
+                                >
+                                    <span className="ao-card-dot" style={{ background: color }} />
+                                    <span className="ao-card-name">{store.name}</span>
+                                    {score && <span className="ao-card-score">{score.sum}/{score.total}</span>}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
 
-                <button className="ao-slider-arrow" onClick={next} disabled={activeIdx === stores.length - 1}>›</button>
+                {/* ── category label top-left (below marquee) ── */}
+                <div className="ao-category-label">
+                    <span className="ao-category-dot" />
+                    {category}
+                </div>
             </div>
 
-            {/* ── category label top-left ── */}
-            <div className="ao-category-label">
-                <span className="ao-category-dot" />
-                {category}
-            </div>
+            {/* ── side panel ── */}
+            {panelOpen && popupStore && (
+                <div className="ao-side-panel">
+                    <div className="ao-panel-header">
+                        <div>
+                            <div className="ao-popup-name">{popupStore.name}</div>
+                            {popupStore.address && (
+                                <div className="ao-popup-address">{popupStore.address}</div>
+                            )}
+                        </div>
+                        <button className="ao-panel-close" onClick={closePopup}>×</button>
+                    </div>
+
+                    {popupScore ? (
+                        <div className={`ao-score-badge ao-score-badge--${tierLabel(popupScore.sum / popupScore.total)}`}>
+                            {popupScore.sum}/{popupScore.total}
+                            <span className="ao-score-cat">{category}</span>
+                        </div>
+                    ) : (
+                        <div className="ao-score-badge ao-score-badge--gray">
+                            — <span className="ao-score-cat">{category} score not yet computed</span>
+                        </div>
+                    )}
+
+                    {personas && (
+                        <div className="ao-personas">
+                            <div className="ao-personas-title">Persona distribution</div>
+                            {(() => {
+                                const changePersona = (key, v) => setPersonas(p => {
+                                    const others = (p.belgian + p.french + p.german + p.dutch) - p[key];
+                                    const capped = Math.min(v, Math.max(0, 100 - others));
+                                    return { ...p, [key]: capped };
+                                });
+                                const total = personas.belgian + personas.french + personas.german + personas.dutch;
+                                return (<>
+                                    {PERSONA_CFG.map(({ key, name, iconToken }) => (
+                                        <PersonaSlider
+                                            key={key}
+                                            iconToken={iconToken}
+                                            name={name}
+                                            value={personas[key]}
+                                            onChange={v => changePersona(key, v)}
+                                        />
+                                    ))}
+                                    <div className="ao-persona-total" style={{ color: total > 100 ? '#ef4444' : total === 100 ? '#22c55e' : '#64748b' }}>
+                                        Total: {total}/100
+                                    </div>
+                                </>);
+                            })()}
+                            <button
+                                className={`ao-save-btn${saveOk ? ' ao-save-btn--ok' : ''}`}
+                                onClick={savePersonas}
+                                disabled={saving}
+                            >
+                                {saving ? 'Saving…' : saveOk ? '✓ Saved' : 'Save targets'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

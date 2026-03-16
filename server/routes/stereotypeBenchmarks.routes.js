@@ -158,6 +158,28 @@ router.post("/stereotype-benchmarks", isAuthenticated, async (req, res) => {
     };
     const effPreds = Array.isArray(predicates) ? predicates : [];
 
+    // 0) Persona weights for this assortment
+    let personaWeights = { Belgian: 25, French: 25, German: 25, Dutch: 25 };
+    {
+      const { data: aRow } = await supabase
+        .from('assortments')
+        .select('belgian, french, german, dutch')
+        .eq('id', assortmentId)
+        .single();
+      if (aRow) {
+        const raw = {
+          Belgian: aRow.belgian ?? 25,
+          French:  aRow.french  ?? 25,
+          German:  aRow.german  ?? 25,
+          Dutch:   aRow.dutch   ?? 25,
+        };
+        const tot = Object.values(raw).reduce((s, v) => s + v, 0) || 1;
+        personaWeights = Object.fromEntries(
+          Object.entries(raw).map(([k, v]) => [k, Math.round(v / tot * 100)])
+        );
+      }
+    }
+
     // 1) Counts for the current assortment
     const { countMap: currentMap, total: currentTotal } = await countsForAssortment({
       assortmentId, groupBy, effectiveFilters, predicates: effPreds,
@@ -241,7 +263,7 @@ router.post("/stereotype-benchmarks", isAuthenticated, async (req, res) => {
       benchmarks[stereotype] = result;
     }
 
-    res.json({ currentTotal, benchmarks });
+    res.json({ currentTotal, benchmarks, personaWeights });
   } catch (e) {
     console.error("[stereotype-benchmarks]", e);
     res.status(500).json({ error: "Server error", message: e.message });

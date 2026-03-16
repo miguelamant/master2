@@ -5,6 +5,7 @@ const AssortmentContext = createContext(null);
 
 export function AssortmentProvider({ children }) {
   const [assortments, setAssortments] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [activeAssortmentId, setActiveAssortmentIdRaw] = useState(() => {
     try {
       const v = sessionStorage.getItem('activeAssortmentId');
@@ -16,15 +17,16 @@ export function AssortmentProvider({ children }) {
     let alive = true;
     api.get('/api/assortments')
       .then(({ data }) => {
-        if (!alive || !Array.isArray(data) || !data.length) return;
+        if (!alive || !Array.isArray(data) || !data.length) { if (alive) setLoaded(true); return; }
         setAssortments(data);
         setActiveAssortmentIdRaw(prev => {
           // keep stored value if it's still valid
           if (prev && data.some(a => a.id === prev)) return prev;
           return data[0].id;
         });
+        setLoaded(true);
       })
-      .catch(() => {});
+      .catch(() => { if (alive) setLoaded(true); });
     return () => { alive = false; };
   }, []);
 
@@ -36,7 +38,7 @@ export function AssortmentProvider({ children }) {
   const activeAssortment = assortments.find(a => a.id === activeAssortmentId) ?? assortments[0] ?? null;
 
   return (
-    <AssortmentContext.Provider value={{ assortments, activeAssortmentId, setActiveAssortmentId, activeAssortment }}>
+    <AssortmentContext.Provider value={{ assortments, loaded, activeAssortmentId, setActiveAssortmentId, activeAssortment }}>
       {children}
     </AssortmentContext.Provider>
   );

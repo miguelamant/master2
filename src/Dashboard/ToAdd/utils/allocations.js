@@ -1,4 +1,4 @@
-// NEW: read the global willy mode (0 = chilly_willy, 1 = stern_willy)
+// NEW: read the global willy mode (0 = easy/sleepy, 1 = medium/chilly, 2 = hard/stern)
 import { getWillyMode } from '../ui/uiPrefs';
 
 // Normalize any group label to PARAM key style: UPPER + underscores
@@ -18,16 +18,22 @@ export function toKey(label) {
 
 // Format: [ [maxTotalInclusive, factor], ... ] (ascending)
 const SUBTRACTION_TABLES = {
-    // 0 = chilly_willy (gentler)
+    // 0 = easy/sleepy (gentlest — no subtraction table, use default)
     0: [
-
         [15, 1],
         [30, 2],
         [45, 3],
     ],
 
-    // 1 = stern_willy (stricter)
+    // 1 = medium/chilly (normal)
     1: [
+        [15, 1],
+        [30, 2],
+        [45, 3],
+    ],
+
+    // 2 = hard/stern (strictest)
+    2: [
         [8, 1],
         [15, 2],
         [30, 3],
@@ -38,7 +44,7 @@ function subtractionFactorForTotal(total, willyMode) {
     // Global rule: if total < 8 → no subtraction at all
     if (total < 8) return 0;
 
-    const mode = (willyMode === 1) ? 1 : 0;
+    const mode = (willyMode === 2) ? 2 : (willyMode === 1) ? 1 : 0;
     const table = SUBTRACTION_TABLES[mode] || SUBTRACTION_TABLES[0];
 
     for (const [maxIncl, factor] of table) {

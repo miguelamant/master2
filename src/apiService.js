@@ -45,10 +45,12 @@ export async function menuItems({
                                     pageSize = 100,
                                     orderBy = 'products.name',
                                     assortmentId,
+                                    groupBy,
                                 } = {}) {
     const { data } = await api.post('/api/menu-items', {
         filters, within, predicates, page, pageSize, orderBy,
         ...(assortmentId != null && { assortmentId }),
+        ...(groupBy != null && { groupBy }),
     });
     return data; // { items, page, pageSize, appliedFilters }
 }

@@ -99,6 +99,55 @@ export const LABEL_MAP = {
     GOLDEN_ALES:        'Golden Ales',
     SAISON:             'Saison',
 
+    // Herkomst preset — Belgium
+    BE_BLOND:               'Belgian Blonde',
+    BE_WHITE:               'Witbier / Blanche',
+    BE_BELGIAN_ALE_MISC:    'Enkel, Pale & Brown Ales',
+    BE_DUBBEL:              'Dubbel',
+    BE_TRIPEL_STRONG_GOLDEN:'Tripel & Strong Golden',
+    BE_STRONG_DARK_QUAD:    'Strong Dark & Quadrupel',
+    BE_SAISON_GRISETTE:     'Saison & Grisette',
+    BE_BELGIAN_IPA:         'Belgian IPA',
+    BE_FLANDERS_SOURS:      'Flemish Red & Oud Bruin',
+    BE_LAMBIC_FAMILY:       'Lambic & Gueuze',
+
+    // Herkomst preset — Germany
+    DE_PILS:            'German Pils',
+    DE_LAGER_CLASSIC:   'Helles, Dortmunder & Kellerbier',
+    DE_KOLSCH:          'Kölsch',
+    DE_WEIZEN:          'Weizen & Dunkelweizen',
+    DE_MARZEN_FESTBIER: 'Märzen & Festbier',
+    DE_BOCK_FAMILY:     'Bockbier family',
+    DE_SMOKED:          'Rauchbier',
+    DE_DARK_SPECIALTY:  'Schwarzbier & Munich Dunkel',
+    DE_GERMAN_SOURS:    'Berliner Weisse & Gose',
+
+    // Herkomst preset — UK
+    UK_BITTER:          'Bitter (Ordinary / Best / ESB)',
+    UK_PALE_GOLDEN:     'Pale & Golden Ales',
+    UK_BROWN_MILD:      'Brown Ales & Milds',
+    UK_PORTER_STOUT:    'Porter & Stout',
+    UK_SCOTTISH:        'Scottish & Scotch Ales',
+    UK_BARLEYWINE_STOCK:'Barleywine & Stock Ales',
+    UK_IPA:             'English IPA',
+
+    // Herkomst preset — US
+    US_LAGER:           'American Lager',
+    US_CRAFT_PALE:      'Craft Pale Ales & Blondes',
+    US_IPA:             'IPA (American & NEIPA)',
+    US_DARK:            'American Stout & Porter',
+    US_AMBER_STRONG:    'Amber Red & American Strong',
+    US_SOUR_WILD:       'Wild Ales & Modern Sours',
+
+    // Herkomst preset — Czech
+    CZ_PALE:        'Czech Pale Lager',
+    CZ_AMBER_DARK:  'Czech Amber & Dark Lager',
+
+    // Herkomst preset — Other
+    OTHER_IRISH:    'Irish Stout & Red Ale',
+    OTHER_GLOBAL:   'Australian, NZ & Mexican',
+    OTHER_INTL:     'Other international styles',
+
     // add more as you go...
 };
 

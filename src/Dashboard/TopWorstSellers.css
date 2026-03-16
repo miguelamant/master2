@@ -51,7 +51,7 @@
     margin-top: 0.5rem;
     padding: 0.45rem 1.1rem;
     border: none;
-    background: var(--accent-bright);
+    background: var(--accent-blue-bright);
     color: #fff;
     border-radius: 8px;
     cursor: pointer;
@@ -79,8 +79,8 @@
 /* Scrollbars */
 .items-list::-webkit-scrollbar        { width: 5px; }
 .items-list::-webkit-scrollbar-track  { background: transparent; }
-.items-list::-webkit-scrollbar-thumb  { background: rgba(129,140,248,0.2); border-radius: 6px; }
-.items-list::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.44); }
+.items-list::-webkit-scrollbar-thumb  { background: rgba(0,0,0,0.15); border-radius: 6px; }
+.items-list::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
 .list-header {
     display: flex;
