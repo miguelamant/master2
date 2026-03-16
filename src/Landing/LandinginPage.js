@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import './LandingPage.css';
 import { useNavigate } from 'react-router-dom';
 import { api } from 'apiService';
+import { useAssortment } from '../context/AssortmentContext';
 import octopusIcon from '../Dashboard/Icons/octopus.svg';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const { refresh: refreshAssortments } = useAssortment();
 
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
@@ -31,6 +33,7 @@ const LandingPage = () => {
                 if (res.data.token) localStorage.setItem('token', res.data.token);
                 if (res.data.business_id) localStorage.setItem('business_id', res.data.business_id);
 
+                refreshAssortments();
                 navigate('/dashboard');
             } else {
                 setError('Invalid credentials');

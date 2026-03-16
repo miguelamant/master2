@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '../apiService';
 
 const AssortmentContext = createContext(null);
@@ -6,6 +6,7 @@ const AssortmentContext = createContext(null);
 export function AssortmentProvider({ children }) {
   const [assortments, setAssortments] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [fetchKey, setFetchKey] = useState(0);
   const [activeAssortmentId, setActiveAssortmentIdRaw] = useState(() => {
     try {
       const v = sessionStorage.getItem('activeAssortmentId');
@@ -15,6 +16,7 @@ export function AssortmentProvider({ children }) {
 
   useEffect(() => {
     let alive = true;
+    setLoaded(false);
     api.get('/api/assortments')
       .then(({ data }) => {
         if (!alive || !Array.isArray(data) || !data.length) { if (alive) setLoaded(true); return; }
@@ -28,6 +30,13 @@ export function AssortmentProvider({ children }) {
       })
       .catch(() => { if (alive) setLoaded(true); });
     return () => { alive = false; };
+  }, [fetchKey]);
+
+  /** Call after login to re-fetch assortments for the new user */
+  const refresh = useCallback(() => {
+    try { sessionStorage.removeItem('activeAssortmentId'); } catch {}
+    setActiveAssortmentIdRaw(null);
+    setFetchKey(k => k + 1);
   }, []);
 
   function setActiveAssortmentId(id) {
@@ -38,7 +47,7 @@ export function AssortmentProvider({ children }) {
   const activeAssortment = assortments.find(a => a.id === activeAssortmentId) ?? assortments[0] ?? null;
 
   return (
-    <AssortmentContext.Provider value={{ assortments, loaded, activeAssortmentId, setActiveAssortmentId, activeAssortment }}>
+    <AssortmentContext.Provider value={{ assortments, loaded, activeAssortmentId, setActiveAssortmentId, activeAssortment, refresh }}>
       {children}
     </AssortmentContext.Provider>
   );
