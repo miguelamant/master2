@@ -1,10 +1,6 @@
 // src/Dashboard/ToAdd/components/ItemsList.jsx
-import React from 'react';
-import TooltipIcon from '../../components/TooltipIcon';
+import React, { useState, useEffect, useRef } from 'react';
 
-// add/remove icons for the mode switch
-import addIcon    from '../../Icons/add.svg';
-import removeIcon from '../../Icons/remove.svg';
 
 // small badges
 import badgeZero        from '../../Icons/badges/badge_zero.svg';
@@ -17,17 +13,8 @@ import badgeTrappist    from '../../Icons/badges/badge_trappist.svg';
 import { iconFor } from '../utils/iconLoader';
 import { convertItemLabel } from '../utils/itemLabelMap';
 
-/**
- * Props
- * - items:        array for "To Add" mode
- * - itemsOnMenu:  array for "To Remove" mode
- * - toAdd:        boolean (true = Add mode, false = Remove mode)
- * - onModeChange: fn(nextBool)
- * - onAdd:        fn(item)
- * - onRemove:     fn(item)
- * - groupBy:      'category' | 'subcategory' | 'subsubcategory'
- * - labelFor:     (label) => string
- */
+const PAGE_SIZE = 10;
+
 export default function ItemsList({
                                       items = [],
                                       itemsOnMenu = [],
@@ -40,6 +27,38 @@ export default function ItemsList({
                                   }) {
     const effectiveToAdd = toAdd !== false;
     const list = effectiveToAdd ? items : itemsOnMenu;
+
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const gridRef = useRef(null);
+    const prevListId = useRef(null);
+
+    // Reset page when list identity changes
+    const listId = `${effectiveToAdd ? 'add' : 'rm'}-${list.length}`;
+    if (prevListId.current !== listId) {
+        prevListId.current = listId;
+        if (visibleCount !== PAGE_SIZE) setVisibleCount(PAGE_SIZE);
+    }
+
+    // Scroll-based pagination: listen on the grid itself (has max-height + overflow-y)
+    useEffect(() => {
+        const grid = gridRef.current;
+        if (!grid) return;
+
+        const handleScroll = () => {
+            const distanceFromBottom = grid.scrollHeight - grid.scrollTop - grid.clientHeight;
+            if (distanceFromBottom < 400) {
+                setVisibleCount((prev) => {
+                    const next = prev + PAGE_SIZE;
+                    return next >= list.length ? list.length : next;
+                });
+            }
+        };
+
+        grid.addEventListener('scroll', handleScroll, { passive: true });
+        return () => grid.removeEventListener('scroll', handleScroll);
+    }, [list.length]);
+
+    const visibleItems = list.slice(0, visibleCount);
 
     const setMode = (next) => onModeChange && onModeChange(next);
 
@@ -65,7 +84,7 @@ export default function ItemsList({
                     aria-pressed={effectiveToAdd}
                     className={`mode-btn ${effectiveToAdd ? 'mode-btn--active-add' : ''}`}
                 >
-                    <img src={addIcon} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
+                    <span className="mode-btn-icon">+</span>
                     <span>To Add</span>
                 </button>
 
@@ -75,103 +94,125 @@ export default function ItemsList({
                     aria-pressed={!effectiveToAdd}
                     className={`mode-btn ${!effectiveToAdd ? 'mode-btn--active-remove' : ''}`}
                 >
-                    <img src={removeIcon} alt="" aria-hidden="true" style={{ width: 15, height: 15 }} />
+                    <span className="mode-btn-icon">&minus;</span>
                     <span>To Remove</span>
                 </button>
             </div>
 
+            {/* Debug: pagination indicator */}
+            {list.length > 0 && (
+                <div style={{ fontSize: 12, opacity: 0.55, padding: '4px 0 8px', textAlign: 'right' }}>
+                    Showing {visibleItems.length} of {list.length}
+                </div>
+            )}
+
             {/* Card grid */}
-            <ul className="items-grid">
-                {list.map((item, idx) => {
+            <ul className="items-grid" ref={gridRef}>
+                {visibleItems.map((item, idx) => {
                     const name = item.name ?? item.item_name ?? '';
                     const key  = item.id ?? item.id_menu_item ?? idx;
 
                     const tasteLabel = pickTasteLabel(item);
                     const tasteIcon  = iconFor(tasteLabel);
 
-                    const isZero      = Number(item.is_zero ?? 0) === 1;
-                    const isSpark     = Number(item.is_sparkling ?? 0) === 1;
+                    const isZero       = Number(item.is_zero ?? 0) === 1;
+                    const isSpark      = Number(item.is_sparkling ?? 0) === 1;
                     const isGlutenFree = Number(item.is_gluten_free ?? 0) === 1;
-                    const heritage    = String(item.heritage || 'normal').toLowerCase();
-                    const isAbbey     = heritage === 'abbey';
-                    const isTrappist  = heritage === 'trappist';
-                    const abv         = item.abv != null ? Number(item.abv) : null;
+                    const heritage     = String(item.heritage || 'normal').toLowerCase();
+                    const isAbbey      = heritage === 'abbey';
+                    const isTrappist   = heritage === 'trappist';
+                    const abv          = item.abv != null ? Number(item.abv) : null;
 
                     return (
                         <li key={key} className="item-card">
-                            {/* Top: taste icon + badges row */}
-                            <div className="item-card__header">
-                                {tasteIcon && (
-                                    <div className="item-card__taste">
-                                        <TooltipIcon
-                                            src={tasteIcon}
-                                            alt={labelFor(tasteLabel)}
-                                            tooltip={labelFor(tasteLabel)}
-                                            className="item-card__taste-icon"
-                                        />
-                                        {isZero && (
-                                            <img src={badgeZero} alt="Zero" className="item-card__micro-badge item-card__micro-badge--br" />
-                                        )}
-                                        {isSpark && (
-                                            <img src={badgeSparkling} alt="Sparkling" className="item-card__micro-badge item-card__micro-badge--tl" />
-                                        )}
-                                    </div>
+                            {/* Product image area — generic placeholder indicating future image */}
+                            <div className="item-card__image">
+                                <div className="item-card__image-empty">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                </div>
+                                {/* Floating corner badges */}
+                                {isZero && (
+                                    <img src={badgeZero} alt="Zero" className="item-card__float-badge item-card__float-badge--bl" />
                                 )}
+                                {isSpark && (
+                                    <img src={badgeSparkling} alt="Sparkling" className="item-card__float-badge item-card__float-badge--br" />
+                                )}
+                            </div>
 
-                                {/* Attribute badges */}
-                                <div className="item-card__badges">
+                            {/* Info section */}
+                            <div className="item-card__body">
+                                {/* Attribute pills row */}
+                                <div className="item-card__pills">
+                                    {tasteIcon && (
+                                        <span className="item-card__pill" title={tasteLabel}>
+                                            <img src={tasteIcon} alt="" className="item-card__pill-icon" />
+                                        </span>
+                                    )}
                                     {abv != null && abv > 0 && (
-                                        <span className="item-card__badge item-card__badge--abv" title="ABV">
+                                        <span className="item-card__pill item-card__pill--abv" title="ABV">
                                             {abv.toFixed(1)}%
                                         </span>
                                     )}
                                     {isGlutenFree && (
-                                        <img src={badgeGlutenFree} alt="Gluten free" title="Gluten free"
-                                             className="item-card__badge-icon" />
+                                        <span className="item-card__pill" title="Gluten free">
+                                            <img src={badgeGlutenFree} alt="" className="item-card__pill-icon" />
+                                        </span>
                                     )}
                                     {isAbbey && (
-                                        <img src={badgeAbbey} alt="Abbey" title="Abbey beer"
-                                             className="item-card__badge-icon" />
+                                        <span className="item-card__pill" title="Abbey beer">
+                                            <img src={badgeAbbey} alt="" className="item-card__pill-icon" />
+                                        </span>
                                     )}
                                     {isTrappist && (
-                                        <img src={badgeTrappist} alt="Trappist" title="Trappist beer"
-                                             className="item-card__badge-icon" />
+                                        <span className="item-card__pill" title="Trappist beer">
+                                            <img src={badgeTrappist} alt="" className="item-card__pill-icon" />
+                                        </span>
                                     )}
                                 </div>
-                            </div>
 
-                            {/* Name */}
-                            <div className="item-card__name">
-                                {convertItemLabel(name || item.name)}
-                            </div>
+                                {/* Name */}
+                                <div className="item-card__name">
+                                    {convertItemLabel(name || item.name)}
+                                </div>
 
-                            {/* Category subtitle */}
-                            <div className="item-card__category">
-                                {labelFor(tasteLabel)}
-                            </div>
+                                {/* Category subtitle */}
+                                <div className="item-card__category">
+                                    {labelFor(tasteLabel)}
+                                </div>
 
-                            {/* Action button */}
-                            {effectiveToAdd ? (
-                                <button
-                                    className="item-card__action item-card__action--add"
-                                    onClick={() => onAdd?.(item)}
-                                    title="Add to menu"
-                                >
-                                    + Add
-                                </button>
-                            ) : (
-                                <button
-                                    className="item-card__action item-card__action--remove"
-                                    onClick={() => onRemove?.(item)}
-                                    title="Remove from menu"
-                                >
-                                    &minus; Remove
-                                </button>
-                            )}
+                                {/* Action button */}
+                                {effectiveToAdd ? (
+                                    <button
+                                        className="item-card__action"
+                                        onClick={() => onAdd?.(item)}
+                                        title="Add to menu"
+                                    >
+                                        + Add
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="item-card__action"
+                                        onClick={() => onRemove?.(item)}
+                                        title="Remove from menu"
+                                    >
+                                        &minus; Remove
+                                    </button>
+                                )}
+                            </div>
                         </li>
                     );
                 })}
             </ul>
+
+            {visibleCount < list.length && (
+                <div style={{ textAlign: 'center', padding: '16px 0', opacity: 0.5, fontSize: 13 }}>
+                    Showing {visibleCount} of {list.length} — scroll down for more
+                </div>
+            )}
         </>
     );
 }

@@ -269,24 +269,7 @@ const Menu = () => {
                     </div>
                 </div>
 
-                {/* keep price on the right exactly as before */}
                 <div className="item-right">
-                    <div className="item-price">
-                        {editMode ? (
-                            <div className="price-input-wrapper">
-                                <span className="currency-symbol">€</span>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    className="menu-item-input"
-                                    value={priceMap[i.id_menu_item] ?? ''}
-                                    onChange={e => handlePriceChange(i.id_menu_item, e.target.value)}
-                                />
-                            </div>
-                        ) : (
-                            `€${Number(i.price).toFixed(2)}`
-                        )}
-                    </div>
                 </div>
 
                 {/* item-level hover tooltip with subcategory */}

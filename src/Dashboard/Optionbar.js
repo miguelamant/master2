@@ -11,20 +11,25 @@ import badgeAbbey      from './Icons/badges/badge_abbey.svg';
 import badgeTrappist   from './Icons/badges/badge_trappist.svg';
 import badgeNormal     from './Icons/badges/badge_factory.svg';
 
-function Chip({ icon, label, active, onClick }) {
+function CheckRow({ icon, label, checked, onClick }) {
     return (
         <li
-            className={`option-chip${active ? ' active' : ''}`}
+            className={`optionbar-row${checked ? ' is-checked' : ''}`}
             onClick={onClick}
             role="checkbox"
-            aria-checked={active}
+            aria-checked={checked}
             tabIndex={0}
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
         >
-            {icon && (
-                <img src={icon} alt="" aria-hidden="true" className="option-chip-icon" />
-            )}
-            <span>{label}</span>
+            <span className={`optionbar-check${checked ? ' checked' : ''}`}>
+                {checked && (
+                    <svg className="optionbar-check-tick" viewBox="0 0 12 12">
+                        <polyline points="2.5,6 5.5,9 10,3" />
+                    </svg>
+                )}
+            </span>
+            {icon && <img src={icon} alt="" aria-hidden="true" className="optionbar-row-icon" />}
+            <span className="optionbar-row-label">{label}</span>
         </li>
     );
 }
@@ -81,13 +86,13 @@ export default function Optionbar({
                                     : groupBy === 'subsubcategory' ? 'Variants'
                                         : 'Subcategories'}
                             </h4>
-                            <ul className="optionbar-list">
+                            <ul className="optionbar-checklist">
                                 {tasteOptions.map(opt => (
-                                    <Chip
+                                    <CheckRow
                                         key={opt.id}
                                         icon={opt.icon}
                                         label={opt.label}
-                                        active={tastesSet.has(opt.id)}
+                                        checked={tastesSet.has(opt.id)}
                                         onClick={() => toggleTaste(opt.id)}
                                     />
                                 ))}
@@ -99,17 +104,17 @@ export default function Optionbar({
                         {/* ZERO */}
                         <section className="optionbar-group">
                             <h4 className="optionbar-group-title">Zero</h4>
-                            <ul className="optionbar-list">
-                                <Chip
+                            <ul className="optionbar-checklist">
+                                <CheckRow
                                     icon={badgeZero}
                                     label="Zero"
-                                    active={!!sugar.zero_sugar}
+                                    checked={!!sugar.zero_sugar}
                                     onClick={() => toggleSugar('zero_sugar')}
                                 />
-                                <Chip
+                                <CheckRow
                                     icon={badgeNotZero}
                                     label="Not zero"
-                                    active={!!sugar.with_sugar}
+                                    checked={!!sugar.with_sugar}
                                     onClick={() => toggleSugar('with_sugar')}
                                 />
                             </ul>
@@ -122,17 +127,17 @@ export default function Optionbar({
                             <>
                                 <section className="optionbar-group">
                                     <h4 className="optionbar-group-title">Carbonation</h4>
-                                    <ul className="optionbar-list">
-                                        <Chip
+                                    <ul className="optionbar-checklist">
+                                        <CheckRow
                                             icon={badgeSparkling}
                                             label="Sparkling"
-                                            active={!!sparkling.sparkling}
+                                            checked={!!sparkling.sparkling}
                                             onClick={() => toggleSparkling('sparkling')}
                                         />
-                                        <Chip
+                                        <CheckRow
                                             icon={badgeStill}
                                             label="Not sparkling"
-                                            active={!!sparkling.not_sparkling}
+                                            checked={!!sparkling.not_sparkling}
                                             onClick={() => toggleSparkling('not_sparkling')}
                                         />
                                     </ul>
@@ -146,23 +151,23 @@ export default function Optionbar({
                         {showHeritage && (
                             <section className="optionbar-group">
                                 <h4 className="optionbar-group-title">Heritage</h4>
-                                <ul className="optionbar-list">
-                                    <Chip
+                                <ul className="optionbar-checklist">
+                                    <CheckRow
                                         icon={badgeNormal}
                                         label="Normal"
-                                        active={heritageSet.has('normal')}
+                                        checked={heritageSet.has('normal')}
                                         onClick={() => toggleHeritage('normal')}
                                     />
-                                    <Chip
+                                    <CheckRow
                                         icon={badgeAbbey}
                                         label="Abbey"
-                                        active={heritageSet.has('abbey')}
+                                        checked={heritageSet.has('abbey')}
                                         onClick={() => toggleHeritage('abbey')}
                                     />
-                                    <Chip
+                                    <CheckRow
                                         icon={badgeTrappist}
                                         label="Trappist"
-                                        active={heritageSet.has('trappist')}
+                                        checked={heritageSet.has('trappist')}
                                         onClick={() => toggleHeritage('trappist')}
                                     />
                                 </ul>

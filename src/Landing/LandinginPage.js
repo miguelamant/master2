@@ -32,6 +32,7 @@ const LandingPage = () => {
                 }
                 if (res.data.token) localStorage.setItem('token', res.data.token);
                 if (res.data.business_id) localStorage.setItem('business_id', res.data.business_id);
+                localStorage.setItem('logo', res.data.logo || '');
 
                 refreshAssortments();
                 navigate('/dashboard');

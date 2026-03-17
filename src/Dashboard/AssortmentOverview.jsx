@@ -6,7 +6,19 @@ import { useAssortment } from '../context/AssortmentContext';
 import { api } from '../apiService';
 import { iconFor } from './ToAdd/utils/iconLoader';
 import colruytLogo from './Icons/colruyt.png';
+import delhaizeLogo from './Icons/delhaize.png';
+import albertHeijnLogo from './Icons/albert_heijn.png';
+import okayLogo from './Icons/okay.jpg';
+import jumboLogo from './Icons/jumbo.jpg';
 import './AssortmentOverview.css';
+
+const LOGO_MAP = {
+    colruyt: colruytLogo,
+    delhaize: delhaizeLogo,
+    albert_heijn: albertHeijnLogo,
+    okay: okayLogo,
+    jumbo: jumboLogo,
+};
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN ||
     'pk.eyJ1IjoibWlndWVsYW1hbnQiLCJhIjoiY21tb29xOTlzMGVweTJvc2IweGEwb2s2ZyJ9.3j5JPLEn0_D6_-5d_OEuxg';
@@ -57,18 +69,22 @@ function PersonaSlider({ iconToken, name, value, onChange }) {
 
 // ─── main component ──────────────────────────────────────────────────────────
 
-export default function AssortmentOverview({ category, onSelectStore, scores = {}, onScoreUpdate }) {
+export default function AssortmentOverview({ category, onSelectStore, onGoBack, scores = {}, onScoreUpdate }) {
     const { assortments, loaded, setActiveAssortmentId } = useAssortment();
 
     const [activeIdx, setActiveIdx]     = useState(0);
     const [popupId, setPopupId]         = useState(null);
     const [personas, setPersonas]       = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const [saving, setSaving]           = useState(false);
     const [saveOk, setSaveOk]           = useState(false);
 
     const mapRef     = useRef(null);
     const marqueeRef = useRef(null);
     const pausedRef  = useRef(false);
+
+    const logoKey = localStorage.getItem('logo');
+    const logoSrc = LOGO_MAP[logoKey] ?? null;
 
     const stores = assortments.filter(a => a.lat != null && a.lng != null);
 
@@ -159,6 +175,66 @@ export default function AssortmentOverview({ category, onSelectStore, scores = {
 
     return (
         <div className="ao-wrapper">
+            {/* ── left store list panel ── */}
+            <div className="ao-left-panel">
+                {onGoBack && (
+                    <button className="ao-left-back" onClick={onGoBack}>
+                        ← Back
+                    </button>
+                )}
+                <div className="ao-left-title">Stores</div>
+                <div className="ao-left-search">
+                    <input
+                        type="text"
+                        placeholder="Search stores…"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="ao-left-search-input"
+                    />
+                </div>
+                <div className="ao-left-list">
+                    {stores
+                        .map((store, idx) => ({ store, idx }))
+                        .filter(({ store }) =>
+                            !searchQuery ||
+                            (store.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            (store.address || '').toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map(({ store, idx }) => {
+                            const score    = scores[store.id] ?? null;
+                            const scoreVal = score ? score.sum / score.total : null;
+                            const color    = scoreColor(scoreVal);
+                            const isActive = idx === activeIdx;
+
+                            return (
+                                <div
+                                    key={store.id}
+                                    className={`ao-left-item${isActive ? ' ao-left-item--active' : ''}`}
+                                    onClick={() => { setActiveIdx(idx); openPopup(store); }}
+                                >
+                                    <span className="ao-left-dot" style={{ background: color }} />
+                                    <div className="ao-left-info">
+                                        <span className="ao-left-name">{store.name}</span>
+                                        {store.address && (
+                                            <span className="ao-left-address">{store.address}</span>
+                                        )}
+                                    </div>
+                                    {score && <span className="ao-left-score">{score.sum}/{score.total}</span>}
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+                <div className="ao-left-footer">
+                    <button
+                        className="ao-left-logout"
+                        onClick={() => window.location.assign('/')}
+                    >
+                        ⏻ Logout
+                    </button>
+                </div>
+            </div>
+
             {/* ── map area ── */}
             <div className={`ao-map-area${panelOpen ? ' ao-map-area--narrow' : ''}`}>
                 <Map
@@ -193,7 +269,7 @@ export default function AssortmentOverview({ category, onSelectStore, scores = {
                                     style={{ '--pin-color': color, '--pin-size': `${size}px` }}
                                 >
                                     <div className="ao-pin-dot">
-                                        <img src={colruytLogo} alt="" className="ao-pin-logo" />
+                                        {logoSrc && <img src={logoSrc} alt="" className="ao-pin-logo" />}
                                     </div>
                                     <div className="ao-pin-tail" />
                                 </div>

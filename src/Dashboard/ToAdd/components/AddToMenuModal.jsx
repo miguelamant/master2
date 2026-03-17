@@ -25,24 +25,11 @@ export default function AddToMenuModal({
                     <p>Category: <strong>{item.category}</strong></p>
                 )}
 
-                <div className="add-price-input" style={{ marginTop: '0.5rem' }}>
-                    <span className="modal-price-label">Price: €</span>
-                    <input
-                        type="number"
-                        step="0.01"
-                        value={price}
-                        onChange={(e) => onChangePrice(e.target.value)}
-                        placeholder="Price"
-                        autoFocus
-                    />
-                </div>
-
                 <div className="modal-buttons">
                     <button type="button" onClick={onCancel}>Cancel</button>
                     <button
                         type="button"
                         onClick={onConfirm}
-                        disabled={!price || Number(price) <= 0}
                     >
                         Confirm
                     </button>

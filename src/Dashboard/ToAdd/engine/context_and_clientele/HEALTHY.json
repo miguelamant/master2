@@ -460,7 +460,6 @@
         "BEERS_OTHER",
         "BEERS_SPECIAL",
         "RADLERS",
-        "CIDERS",
         "SPIRIT_FLAVOURED_BEERS"
       ],
       "buckets": {
@@ -477,7 +476,6 @@
         "BEERS_OTHER":                       { "bucket": [0] },
         "BEERS_SPECIAL":                     { "bucket": [0] },
         "RADLERS":                           { "bucket": [0] },
-        "CIDERS":                            { "bucket": [0] },
         "SPIRIT_FLAVOURED_BEERS":            { "bucket": [0] }
       }
     }
@@ -503,7 +501,6 @@
         "BEERS_OTHER",
         "BEERS_SPECIAL",
         "RADLERS",
-        "CIDERS",
         "SPIRIT_FLAVOURED_BEERS"
       ],
       "buckets": {
@@ -520,7 +517,6 @@
         "BEERS_OTHER:0":                       { "bucket": [0] },
         "BEERS_SPECIAL:0":                     { "bucket": [0] },
         "RADLERS:0":                           { "bucket": [0] },
-        "CIDERS:0":                            { "bucket": [0] },
         "SPIRIT_FLAVOURED_BEERS:0":            { "bucket": [0] },
         "LAGERS:1":                            { "bucket": [0] },
         "NORMAL_BLOND_AMBER:1":               { "bucket": [0] },
@@ -535,7 +531,6 @@
         "BEERS_OTHER:1":                       { "bucket": [0] },
         "BEERS_SPECIAL:1":                     { "bucket": [0] },
         "RADLERS:1":                           { "bucket": [0] },
-        "CIDERS:1":                            { "bucket": [0] },
         "SPIRIT_FLAVOURED_BEERS:1":            { "bucket": [0] }
       }
     }

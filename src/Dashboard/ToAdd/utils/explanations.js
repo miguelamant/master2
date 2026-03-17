@@ -69,12 +69,6 @@ const EXPLAIN = {
         examples: ['Amstel Radler', 'Martens Radler']
     }),
 
-    CIDERS: fmtExplain({
-        def: 'Gefermenteerde appel/peerdrank; van droog en strak tot rond en zoeter.',
-        styles: ['Apple Cider', 'Perry (perencider)'],
-        examples: ['Strongbow', 'Magners', 'Savanna Dry']
-    }),
-
     SPIRIT_FLAVOURED_BEERS: fmtExplain({
         def: 'Bieren met spirit-/likeurprofiel of gearomatiseerd met spirits.',
         styles: ['Tequila-geïnspireerd', 'Rum-geïnspireerd'],

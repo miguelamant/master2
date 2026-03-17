@@ -64,6 +64,7 @@ const Layout = ({ children }) => {
             <AssortmentOverview
                 category={selectedOption}
                 onSelectStore={handleSelectStoreForAnalysis}
+                onGoBack={handleGoBack}
                 scores={assortmentScores}
                 onScoreUpdate={(id, s) => setAssortmentScores(prev => ({ ...prev, [id]: s }))}
             />
@@ -127,18 +128,11 @@ const Layout = ({ children }) => {
     }
 
     const isMapView = ANALYSABLE.has(selectedOption) && selectedStoreId === null;
-    const showSidebar = selectedOption === null || isMapView;
+    const isFullBleed = selectedOption === null || isMapView;
 
     return (
         <div className="layout-container">
-            {showSidebar && (
-                <Sidebar
-                    selectedOption={selectedOption}
-                    onSelectionChange={handleCategorySelect}
-                    onGoBack={handleGoBack}
-                />
-            )}
-            <div className={`main-content${isMapView ? ' main-content--map' : ''}`}>
+            <div className={`main-content${isFullBleed ? ' main-content--map' : ''}`}>
                 {MainContent}
                 {children}
             </div>

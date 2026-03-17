@@ -19,7 +19,7 @@ router.post("/login", async (req, res, next) => {
 
     const { data: user, error } = await supabase
         .from("business_info")
-        .select("id,email,password,horeca_name")
+        .select("id,email,password,horeca_name,logo")
         .eq("email", email)
         .maybeSingle();
 
@@ -35,6 +35,7 @@ router.post("/login", async (req, res, next) => {
       id: user.id,
       email: user.email,
       horeca_name: user.horeca_name,
+      logo: user.logo,
     };
 
 // Build per-business matrix ON LOGIN
@@ -65,6 +66,7 @@ router.post("/login", async (req, res, next) => {
         success: true,
         business_id: user.id,
         horeca_name: user.horeca_name,
+        logo: user.logo || null,
         warning,
         layers_matrix: layersMatrix, // <= hydrate client, avoid extra request
       });

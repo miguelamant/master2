@@ -27,11 +27,11 @@ export const PRESET_FILTERS_BEERS = [
                 "LAGERS · With alcohol", "NORMAL_BLOND_AMBER · With alcohol", "BLOND_BITTERS · With alcohol",
                 "DARK_BROWN_MALT_SWEETNESS · With alcohol", "DARK_BROWN_COFFEE_ROAST_BITTER · With alcohol",
                 "FRUIT_BEERS · With alcohol", "WHEAT_BEERS · With alcohol", "SOURS_SAISON_LAMBIC_GUEUZE · With alcohol",
-                "RADLERS · With alcohol", "CIDERS · With alcohol", "SPIRIT_FLAVOURED_BEERS · With alcohol",
+                "RADLERS · With alcohol", "SPIRIT_FLAVOURED_BEERS · With alcohol",
                 "LAGERS · Zero", "NORMAL_BLOND_AMBER · Zero", "BLOND_BITTERS · Zero",
                 "DARK_BROWN_MALT_SWEETNESS · Zero", "DARK_BROWN_COFFEE_ROAST_BITTER · Zero",
                 "FRUIT_BEERS · Zero", "WHEAT_BEERS · Zero", "SOURS_SAISON_LAMBIC_GUEUZE · Zero",
-                "RADLERS · Zero", "CIDERS · Zero", "SPIRIT_FLAVOURED_BEERS · Zero",
+                "RADLERS · Zero", "SPIRIT_FLAVOURED_BEERS · Zero",
             ],
 
             ui: {
@@ -56,7 +56,6 @@ export const PRESET_FILTERS_BEERS = [
                                 "WHEAT_BEERS · With alcohol",
                                 "SOURS_SAISON_LAMBIC_GUEUZE · With alcohol",
                                 "RADLERS · With alcohol",
-                                "CIDERS · With alcohol",
                                 "SPIRIT_FLAVOURED_BEERS · With alcohol",
                                 "BEERS_OTHER · With alcohol",
                                 "BEERS_SPECIAL · With alcohol",
@@ -76,7 +75,6 @@ export const PRESET_FILTERS_BEERS = [
                                 "WHEAT_BEERS · Zero",
                                 "SOURS_SAISON_LAMBIC_GUEUZE · Zero",
                                 "RADLERS · Zero",
-                                "CIDERS · Zero",
                                 "SPIRIT_FLAVOURED_BEERS · Zero",
                                 "BEERS_OTHER · Zero",
                                 "BEERS_SPECIAL · Zero",
@@ -89,285 +87,11 @@ export const PRESET_FILTERS_BEERS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling <strong> alcoholvrij vs normaal</strong> <br/> van jouw</>,
+                line1: <>De verdeling <strong> alcoholvrij vs normaal</strong> van jouw</>,
                 line2: <> <strong> bieren </strong>  op vlak van  is</>
             }
         }
         ,
-
-
-        {
-            id: 2002,
-            name: <> <strong>Jan met de pet - lvl 3</strong>!<br/> Mensen drinken alcohol voor ontspanning, gezelligheid en om het moment te vieren. </>,
-            section: "beers",
-            groupBy: "subcategory",
-            within: { category: "BEERS" },
-            predicates: [{ field: "is_zero", op: "eq", value: 0 }],
-            showOnlyRollups: true,
-            includeEmpty: false,
-
-            forceShow: [
-                "LAGERS", "NORMAL_BLOND_AMBER", "BLOND_BITTERS",
-                "DARK_BROWN_MALT_SWEETNESS", "DARK_BROWN_COFFEE_ROAST_BITTER",
-                "FRUIT_BEERS", "WHEAT_BEERS", "SOURS_SAISON_LAMBIC_GUEUZE",
-                "RADLERS", "CIDERS", "SPIRIT_FLAVOURED_BEERS",
-            ],
-
-            ui: {
-                columns: 1,
-                showItemsInline: false,
-                aggregateRows: {
-                    enabled: true,
-                    deterministic: true,
-                    layout: 'cards',
-                    suppressUnassigned: true,
-                    rows: [
-                        {
-                            title: "Alcoholische bieren",
-                            iconToken: "BEERS",
-                            buckets: [
-                                "LAGERS",
-                                "NORMAL_BLOND_AMBER",
-                                "BLOND_BITTERS",
-                                "DARK_BROWN_MALT_SWEETNESS",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER",
-                                "FRUIT_BEERS",
-                                "WHEAT_BEERS",
-                                "SOURS_SAISON_LAMBIC_GUEUZE",
-                                "RADLERS",
-                                "CIDERS",
-                                "SPIRIT_FLAVOURED_BEERS",
-                                "BEERS_OTHER",
-                                "BEERS_SPECIAL",
-                            ],
-                            keepEmpty: true,
-                        },
-                    ],
-                },
-            },
-
-            sortPriority: [
-                "LAGERS","NORMAL_BLOND_AMBER","BLOND_BITTERS","DARK_BROWN_MALT_SWEETNESS","DARK_BROWN_COFFEE_ROAST_BITTER","FRUIT_BEERS","WHEAT_BEERS","SOURS_SAISON_LAMBIC_GUEUZE","RADLERS","CIDERS","SPIRIT_FLAVOURED_BEERS"
-            ],
-            info: {
-                image: presetImg("Budgetbewust.png"),
-                line1: <>De verdeling van <strong> smaken </strong> van je <br/>  </>,
-                line2: <> <strong> alcoholische bieren </strong> is</>
-            }
-        },
-
-        {
-            id: 2004,
-            willyOff: true,
-            name: <> <strong>Alcoholvrij aanbod</strong><br/> Welke stijlen alcoholvrije bieren heb je op de kaart?</>,
-            section: "beers",
-            groupBy: "subcategory",
-            within: { category: "BEERS" },
-            predicates: [{ field: "is_zero", op: "eq", value: 1 }],
-            showOnlyRollups: true,
-            includeEmpty: false,
-
-            forceShow: [
-                "LAGERS", "NORMAL_BLOND_AMBER", "BLOND_BITTERS",
-                "DARK_BROWN_MALT_SWEETNESS", "DARK_BROWN_COFFEE_ROAST_BITTER",
-                "FRUIT_BEERS", "WHEAT_BEERS", "SOURS_SAISON_LAMBIC_GUEUZE",
-                "RADLERS", "CIDERS", "SPIRIT_FLAVOURED_BEERS",
-            ],
-
-            ui: {
-                columns: 1,
-                showItemsInline: false,
-                aggregateRows: {
-                    enabled: true,
-                    deterministic: true,
-                    layout: 'cards',
-                    suppressUnassigned: true,
-                    rows: [
-                        {
-                            title: "Alcoholvrije bieren",
-                            iconToken: "ZERO",
-                            buckets: [
-                                "LAGERS",
-                                "NORMAL_BLOND_AMBER",
-                                "BLOND_BITTERS",
-                                "DARK_BROWN_MALT_SWEETNESS",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER",
-                                "FRUIT_BEERS",
-                                "WHEAT_BEERS",
-                                "SOURS_SAISON_LAMBIC_GUEUZE",
-                                "RADLERS",
-                                "CIDERS",
-                                "SPIRIT_FLAVOURED_BEERS",
-                                "BEERS_OTHER",
-                                "BEERS_SPECIAL",
-                            ],
-                            keepEmpty: true,
-                        },
-                    ],
-                },
-            },
-
-            info: {
-                image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling van <strong> smaken </strong> van je <br/> </>,
-                line2: <> <strong> alcoholvrije bieren </strong> is</>
-            }
-        },
-
-        {
-            id: 2003,
-            name: <> <strong>Alcoholpercentage</strong><br/> Verdeling van bierstijlen per ABV-range.</>,
-            section: "beers",
-            groupBy: "subcategory",
-            within: { category: "BEERS" },
-            predicates: [{ field: "is_zero", op: "eq", value: 0 }],
-            showOnlyRollups: true,
-            includeEmpty: false,
-
-            partitionBy: [
-                { label: "0.5 – 3.9%", predicates: [{ field: "abv", op: "gte", value: 0.5 }, { field: "abv", op: "lte", value: 3.9 }] },
-                { label: "4 – 5.9%",   predicates: [{ field: "abv", op: "gte", value: 4 },   { field: "abv", op: "lte", value: 5.9 }] },
-                { label: "6 – 7.9%",   predicates: [{ field: "abv", op: "gte", value: 6 },   { field: "abv", op: "lte", value: 7.9 }] },
-                { label: "8%+",        predicates: [{ field: "abv", op: "gte", value: 8 }] },
-            ],
-
-            forceShow: [
-                "LAGERS · 0.5 – 3.9%", "NORMAL_BLOND_AMBER · 0.5 – 3.9%", "BLOND_BITTERS · 0.5 – 3.9%",
-                "DARK_BROWN_MALT_SWEETNESS · 0.5 – 3.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 0.5 – 3.9%",
-                "FRUIT_BEERS · 0.5 – 3.9%", "WHEAT_BEERS · 0.5 – 3.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 0.5 – 3.9%",
-                "RADLERS · 0.5 – 3.9%", "CIDERS · 0.5 – 3.9%",
-
-                "LAGERS · 4 – 5.9%", "NORMAL_BLOND_AMBER · 4 – 5.9%", "BLOND_BITTERS · 4 – 5.9%",
-                "DARK_BROWN_MALT_SWEETNESS · 4 – 5.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 4 – 5.9%",
-                "FRUIT_BEERS · 4 – 5.9%", "WHEAT_BEERS · 4 – 5.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 4 – 5.9%",
-                "RADLERS · 4 – 5.9%", "CIDERS · 4 – 5.9%",
-
-                "LAGERS · 6 – 7.9%", "NORMAL_BLOND_AMBER · 6 – 7.9%", "BLOND_BITTERS · 6 – 7.9%",
-                "DARK_BROWN_MALT_SWEETNESS · 6 – 7.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 6 – 7.9%",
-                "FRUIT_BEERS · 6 – 7.9%", "WHEAT_BEERS · 6 – 7.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 6 – 7.9%",
-
-                "LAGERS · 8%+", "NORMAL_BLOND_AMBER · 8%+", "BLOND_BITTERS · 8%+",
-                "DARK_BROWN_MALT_SWEETNESS · 8%+", "DARK_BROWN_COFFEE_ROAST_BITTER · 8%+",
-                "FRUIT_BEERS · 8%+", "SOURS_SAISON_LAMBIC_GUEUZE · 8%+",
-            ],
-
-            ui: {
-                columns: 2,
-                showItemsInline: false,
-                aggregateRows: {
-                    enabled: true,
-                    deterministic: true,
-                    layout: 'cards',
-                    suppressUnassigned: true,
-                    rows: [
-                        {
-                            title: "0.5 – 3.9% ABV",
-                            iconToken: "LAGERS",
-                            buckets: [
-                                "LAGERS · 0.5 – 3.9%",
-                                "NORMAL_BLOND_AMBER · 0.5 – 3.9%",
-                                "BLOND_BITTERS · 0.5 – 3.9%",
-                                "DARK_BROWN_MALT_SWEETNESS · 0.5 – 3.9%",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER · 0.5 – 3.9%",
-                                "FRUIT_BEERS · 0.5 – 3.9%",
-                                "WHEAT_BEERS · 0.5 – 3.9%",
-                                "SOURS_SAISON_LAMBIC_GUEUZE · 0.5 – 3.9%",
-                                "RADLERS · 0.5 – 3.9%",
-                                "CIDERS · 0.5 – 3.9%",
-                                "SPIRIT_FLAVOURED_BEERS · 0.5 – 3.9%",
-                                "BEERS_OTHER · 0.5 – 3.9%",
-                                "BEERS_SPECIAL · 0.5 – 3.9%",
-                            ],
-                            keepEmpty: true,
-                        },
-                        {
-                            title: "4 – 5.9% ABV",
-                            iconToken: "NORMAL_BLOND_AMBER",
-                            buckets: [
-                                "LAGERS · 4 – 5.9%",
-                                "NORMAL_BLOND_AMBER · 4 – 5.9%",
-                                "BLOND_BITTERS · 4 – 5.9%",
-                                "DARK_BROWN_MALT_SWEETNESS · 4 – 5.9%",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER · 4 – 5.9%",
-                                "FRUIT_BEERS · 4 – 5.9%",
-                                "WHEAT_BEERS · 4 – 5.9%",
-                                "SOURS_SAISON_LAMBIC_GUEUZE · 4 – 5.9%",
-                                "RADLERS · 4 – 5.9%",
-                                "CIDERS · 4 – 5.9%",
-                                "SPIRIT_FLAVOURED_BEERS · 4 – 5.9%",
-                                "BEERS_OTHER · 4 – 5.9%",
-                                "BEERS_SPECIAL · 4 – 5.9%",
-                            ],
-                            keepEmpty: true,
-                        },
-                        {
-                            title: "6 – 7.9% ABV",
-                            iconToken: "DARK_BROWN_MALT_SWEETNESS",
-                            buckets: [
-                                "LAGERS · 6 – 7.9%",
-                                "NORMAL_BLOND_AMBER · 6 – 7.9%",
-                                "BLOND_BITTERS · 6 – 7.9%",
-                                "DARK_BROWN_MALT_SWEETNESS · 6 – 7.9%",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER · 6 – 7.9%",
-                                "FRUIT_BEERS · 6 – 7.9%",
-                                "WHEAT_BEERS · 6 – 7.9%",
-                                "SOURS_SAISON_LAMBIC_GUEUZE · 6 – 7.9%",
-                                "RADLERS · 6 – 7.9%",
-                                "CIDERS · 6 – 7.9%",
-                                "SPIRIT_FLAVOURED_BEERS · 6 – 7.9%",
-                                "BEERS_OTHER · 6 – 7.9%",
-                                "BEERS_SPECIAL · 6 – 7.9%",
-                            ],
-                            keepEmpty: true,
-                        },
-                        {
-                            title: "8%+ ABV",
-                            iconToken: "DARK_BROWN_COFFEE_ROAST_BITTER",
-                            buckets: [
-                                "LAGERS · 8%+",
-                                "NORMAL_BLOND_AMBER · 8%+",
-                                "BLOND_BITTERS · 8%+",
-                                "DARK_BROWN_MALT_SWEETNESS · 8%+",
-                                "DARK_BROWN_COFFEE_ROAST_BITTER · 8%+",
-                                "FRUIT_BEERS · 8%+",
-                                "WHEAT_BEERS · 8%+",
-                                "SOURS_SAISON_LAMBIC_GUEUZE · 8%+",
-                                "RADLERS · 8%+",
-                                "CIDERS · 8%+",
-                                "SPIRIT_FLAVOURED_BEERS · 8%+",
-                                "BEERS_OTHER · 8%+",
-                                "BEERS_SPECIAL · 8%+",
-                            ],
-                            keepEmpty: true,
-                        },
-                    ],
-                },
-            },
-
-            info: {
-                image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling van <strong> bierstijlen </strong> per <br/> </>,
-                line2: <> <strong> alcoholpercentage </strong> is</>
-            }
-        },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         {
             id: 2997,
@@ -392,7 +116,7 @@ export const PRESET_FILTERS_BEERS = [
                 // IPAs
                 "SESSION_IPA", "IPA_CLASSIC", "IPA_HAZY_NE", "IPA_STRONG", "IPA_OTHER", "BIPA",
                 // Special beers
-                "SAISON",
+                "SAISON", "BIERE_DE_GARDE",
                 // Sours — flemish red-brown, berliner weisse, oude geuze, oude kriek
                 "SOUR_LIGHT", "SOUR_DARK", "OUDE_GEUZE", "OUDE_KRIEK",
                 // Malt & Sweet
@@ -477,7 +201,7 @@ export const PRESET_FILTERS_BEERS = [
                         {
                             title: "Special beers",
                             iconToken: "BEERS_SPECIAL",
-                            buckets: ["SPECIAL_ALL", "SPECIAL_BEERS_ALL", "MALT_LIQUOR_ALL", "KELLERBIER", "SAISON", "SOUR_FARMHOUSE"],
+                            buckets: ["SPECIAL_ALL", "SPECIAL_BEERS_ALL", "MALT_LIQUOR_ALL", "KELLERBIER", "SAISON", "BIERE_DE_GARDE", "SOUR_FARMHOUSE"],
                             keepEmpty: true,
                         },
                         {
@@ -568,7 +292,9 @@ export const PRESET_FILTERS_BEERS = [
                 { match: { baseIn: ["SOUR_FLANDERS_OUD_BRUIN","SOUR_FLANDERS_RED_ALE","SOUR_FRUITED","SOUR_OTHER","SOUR_FAMILY","SOUR_SMOOTHIE_/_PASTRY","SMOOTHIE_SOUR","SMOOTHIE_SOUR_IG","IPA_SOUR","WILD_ALE_AMERICAN","WILD_ALE_OTHER","WILD_BRETT","BRETT_BEER"] }, into: "SOUR_DARK", keepZero: true },
                 { match: { baseIn: ["LAMBIC_TRADITIONAL","LAMBIC_GUEUZE","LAMBIC_OTHER"] }, into: "OUDE_GEUZE", keepZero: true },
                 { match: { baseIn: ["LAMBIC_KRIEK"] }, into: "OUDE_KRIEK", keepZero: true },
-                { match: { baseIn: ["FARMHOUSE_ALE_SAISON","FARMHOUSE_ALE_BIERE_DE_GARDE","FARMHOUSE_ALE_BIERE_DE_MARS","FARMHOUSE_ALE_BIERE_DE_COUPAGE","FARMHOUSE_ALE_GRISETTE","FARMHOUSE_ALE_BRETT","FARMHOUSE_ALE_OTHER","FARMHOUSE_ALE_SAHTI","FARMHOUSE_ALE_KORNOL"] }, into: "SOUR_FARMHOUSE", keepZero: true },
+                { match: { baseIn: ["FARMHOUSE_ALE_BIERE_DE_GARDE"] }, into: "BIERE_DE_GARDE", keepZero: true },
+                { match: { baseIn: ["FARMHOUSE_ALE_SAISON","FARMHOUSE_ALE_GRISETTE"] }, into: "SAISON", keepZero: true },
+                { match: { baseIn: ["FARMHOUSE_ALE_BIERE_DE_MARS","FARMHOUSE_ALE_BIERE_DE_COUPAGE","FARMHOUSE_ALE_BRETT","FARMHOUSE_ALE_OTHER","FARMHOUSE_ALE_SAHTI","FARMHOUSE_ALE_KORNOL"] }, into: "SOUR_FARMHOUSE", keepZero: true },
                 { match: { baseIn: ["SOUR_BEER_OTHER"] }, into: "SOUR_OTHER", keepZero: true },
 
                 // ===== FRUIT BEERS =====
@@ -578,7 +304,6 @@ export const PRESET_FILTERS_BEERS = [
                 // ===== RADLERS =====
                 { match: { baseIn: ["SHANDY_/_RADLER","RADLER_SHANDY","NON-ALCOHOLIC_BEER_SHANDY_/_RADLER"] }, into: "RADLER_ALL", keepZero: true },
 
-                // ===== CIDERS & MEADS =====
                 { match: { baseIn: ["CIDER_DRY","CIDER_SWEET","CIDER_TRADITIONAL_/_APFELWEIN","CIDER_PERRY_/_POIRE","CIDER_ROSE","CIDER_ICE","CIDER_BASQUE","CIDER_GRAFF","CIDER_OTHER_FRUIT","NON-ALCOHOLIC_CIDER_/_PERRY"] }, into: "CIDER_CLASSIC", keepZero: true },
                 { match: { baseIn: ["CIDER_HERBED_/_SPICED_/_HOPPED","CIDER_APPLEWINE"] }, into: "CIDER_SPECIALTY", keepZero: true },
                 { match: { baseIn: ["MEAD_TRADITIONAL","MEAD_SESSION_/_SHORT","MEAD_MELOMEL","MEAD_CYSER","MEAD_PYMENT","MEAD_METHEGLIN","MEAD_BRAGGOT","MEAD_ACERGLYN_/_MAPLE_WINE","MEAD_BOCHET","MEAD_OTHER"] }, into: "MEAD_ALL", keepZero: true },
@@ -604,8 +329,138 @@ export const PRESET_FILTERS_BEERS = [
             },
         },
 
+        {
+            id: 2003,
+            name: <> <strong>Alcoholpercentage</strong><br/> Verdeling van bierstijlen per ABV-range.</>,
+            section: "beers",
+            groupBy: "subcategory",
+            within: { category: "BEERS" },
+            predicates: [{ field: "is_zero", op: "eq", value: 0 }],
+            showOnlyRollups: true,
+            includeEmpty: false,
 
+            partitionBy: [
+                { label: "0.5 – 3.9%", predicates: [{ field: "abv", op: "gte", value: 0.5 }, { field: "abv", op: "lte", value: 3.9 }] },
+                { label: "4 – 5.9%",   predicates: [{ field: "abv", op: "gte", value: 4 },   { field: "abv", op: "lte", value: 5.9 }] },
+                { label: "6 – 7.9%",   predicates: [{ field: "abv", op: "gte", value: 6 },   { field: "abv", op: "lte", value: 7.9 }] },
+                { label: "8%+",        predicates: [{ field: "abv", op: "gte", value: 8 }] },
+            ],
 
+            forceShow: [
+                "LAGERS · 0.5 – 3.9%", "NORMAL_BLOND_AMBER · 0.5 – 3.9%", "BLOND_BITTERS · 0.5 – 3.9%",
+                "DARK_BROWN_MALT_SWEETNESS · 0.5 – 3.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 0.5 – 3.9%",
+                "FRUIT_BEERS · 0.5 – 3.9%", "WHEAT_BEERS · 0.5 – 3.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 0.5 – 3.9%",
+                "RADLERS · 0.5 – 3.9%",
+
+                "LAGERS · 4 – 5.9%", "NORMAL_BLOND_AMBER · 4 – 5.9%", "BLOND_BITTERS · 4 – 5.9%",
+                "DARK_BROWN_MALT_SWEETNESS · 4 – 5.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 4 – 5.9%",
+                "FRUIT_BEERS · 4 – 5.9%", "WHEAT_BEERS · 4 – 5.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 4 – 5.9%",
+                "RADLERS · 4 – 5.9%",
+
+                "LAGERS · 6 – 7.9%", "NORMAL_BLOND_AMBER · 6 – 7.9%", "BLOND_BITTERS · 6 – 7.9%",
+                "DARK_BROWN_MALT_SWEETNESS · 6 – 7.9%", "DARK_BROWN_COFFEE_ROAST_BITTER · 6 – 7.9%",
+                "FRUIT_BEERS · 6 – 7.9%", "WHEAT_BEERS · 6 – 7.9%", "SOURS_SAISON_LAMBIC_GUEUZE · 6 – 7.9%",
+
+                "LAGERS · 8%+", "NORMAL_BLOND_AMBER · 8%+", "BLOND_BITTERS · 8%+",
+                "DARK_BROWN_MALT_SWEETNESS · 8%+", "DARK_BROWN_COFFEE_ROAST_BITTER · 8%+",
+                "FRUIT_BEERS · 8%+", "SOURS_SAISON_LAMBIC_GUEUZE · 8%+",
+            ],
+
+            ui: {
+                columns: 2,
+                showItemsInline: false,
+                aggregateRows: {
+                    enabled: true,
+                    deterministic: true,
+                    layout: 'cards',
+                    suppressUnassigned: true,
+                    rows: [
+                        {
+                            title: "0.5 – 3.9% ABV",
+                            iconToken: "NORMAL_BLOND_AMBER",
+                            buckets: [
+                                "LAGERS · 0.5 – 3.9%",
+                                "NORMAL_BLOND_AMBER · 0.5 – 3.9%",
+                                "BLOND_BITTERS · 0.5 – 3.9%",
+                                "DARK_BROWN_MALT_SWEETNESS · 0.5 – 3.9%",
+                                "DARK_BROWN_COFFEE_ROAST_BITTER · 0.5 – 3.9%",
+                                "FRUIT_BEERS · 0.5 – 3.9%",
+                                "WHEAT_BEERS · 0.5 – 3.9%",
+                                "SOURS_SAISON_LAMBIC_GUEUZE · 0.5 – 3.9%",
+                                "RADLERS · 0.5 – 3.9%",
+                                "SPIRIT_FLAVOURED_BEERS · 0.5 – 3.9%",
+                                "BEERS_OTHER · 0.5 – 3.9%",
+                                "BEERS_SPECIAL · 0.5 – 3.9%",
+                            ],
+                            keepEmpty: true,
+                        },
+                        {
+                            title: "4 – 5.9% ABV",
+                            iconToken: "NORMAL_BLOND_AMBER",
+                            buckets: [
+                                "LAGERS · 4 – 5.9%",
+                                "NORMAL_BLOND_AMBER · 4 – 5.9%",
+                                "BLOND_BITTERS · 4 – 5.9%",
+                                "DARK_BROWN_MALT_SWEETNESS · 4 – 5.9%",
+                                "DARK_BROWN_COFFEE_ROAST_BITTER · 4 – 5.9%",
+                                "FRUIT_BEERS · 4 – 5.9%",
+                                "WHEAT_BEERS · 4 – 5.9%",
+                                "SOURS_SAISON_LAMBIC_GUEUZE · 4 – 5.9%",
+                                "RADLERS · 4 – 5.9%",
+                                "SPIRIT_FLAVOURED_BEERS · 4 – 5.9%",
+                                "BEERS_OTHER · 4 – 5.9%",
+                                "BEERS_SPECIAL · 4 – 5.9%",
+                            ],
+                            keepEmpty: true,
+                        },
+                        {
+                            title: "6 – 7.9% ABV",
+                            iconToken: "NORMAL_BLOND_AMBER",
+                            buckets: [
+                                "LAGERS · 6 – 7.9%",
+                                "NORMAL_BLOND_AMBER · 6 – 7.9%",
+                                "BLOND_BITTERS · 6 – 7.9%",
+                                "DARK_BROWN_MALT_SWEETNESS · 6 – 7.9%",
+                                "DARK_BROWN_COFFEE_ROAST_BITTER · 6 – 7.9%",
+                                "FRUIT_BEERS · 6 – 7.9%",
+                                "WHEAT_BEERS · 6 – 7.9%",
+                                "SOURS_SAISON_LAMBIC_GUEUZE · 6 – 7.9%",
+                                "RADLERS · 6 – 7.9%",
+                                "SPIRIT_FLAVOURED_BEERS · 6 – 7.9%",
+                                "BEERS_OTHER · 6 – 7.9%",
+                                "BEERS_SPECIAL · 6 – 7.9%",
+                            ],
+                            keepEmpty: true,
+                        },
+                        {
+                            title: "8%+ ABV",
+                            iconToken: "NORMAL_BLOND_AMBER",
+                            buckets: [
+                                "LAGERS · 8%+",
+                                "NORMAL_BLOND_AMBER · 8%+",
+                                "BLOND_BITTERS · 8%+",
+                                "DARK_BROWN_MALT_SWEETNESS · 8%+",
+                                "DARK_BROWN_COFFEE_ROAST_BITTER · 8%+",
+                                "FRUIT_BEERS · 8%+",
+                                "WHEAT_BEERS · 8%+",
+                                "SOURS_SAISON_LAMBIC_GUEUZE · 8%+",
+                                "RADLERS · 8%+",
+                                "SPIRIT_FLAVOURED_BEERS · 8%+",
+                                "BEERS_OTHER · 8%+",
+                                "BEERS_SPECIAL · 8%+",
+                            ],
+                            keepEmpty: true,
+                        },
+                    ],
+                },
+            },
+
+            info: {
+                image: presetImg("Fijn-proever.png"),
+                line1: <>De verdeling van <strong> bierstijlen </strong> per </>,
+                line2: <> <strong> alcoholpercentage </strong> is</>
+            }
+        },
 
 
 
@@ -629,7 +484,6 @@ export const PRESET_FILTERS_BEERS = [
                 "DARK_BROWN_COFFEE_ROAST_BITTER",
                 "WHEAT_BEERS",
                 "RADLERS",
-                "CIDERS",
                 "SPIRIT_FLAVOURED_BEERS",
                 "BEERS_OTHER",
                 "BEERS_SPECIAL",
@@ -650,55 +504,63 @@ export const PRESET_FILTERS_BEERS = [
                 suppressUnassigned: true,
                 rows: [
                     {
-                        title: "Traditionele bieren - Trappisten & Gueuzes",
-                        iconToken: "TRADITIONAL",
+                        title: "Trappisten & Gueuzes",
+                        iconToken: "BADGE_TRAPPIST",
                         buckets: [
+                            "NORMAL_BLOND_AMBER · Trappist",
+                            "DARK_BROWN_MALT_SWEETNESS · Trappist",
+                            "FRUIT_BEERS · Trappist",
+                            "SOURS_SAISON_LAMBIC_GUEUZE · Trappist",
+                            "DARK_BROWN_COFFEE_ROAST_BITTER · Trappist",
+                            "BEERS_SPECIAL · Trappist",
+                            "BLOND_BITTERS · Trappist",
+                            "WHEAT_BEERS · Trappist",
                             "NORMAL_BLOND_AMBER · Traditional",
                             "DARK_BROWN_MALT_SWEETNESS · Traditional",
                             "FRUIT_BEERS · Traditional",
                             "SOURS_SAISON_LAMBIC_GUEUZE · Traditional",
                             "DARK_BROWN_COFFEE_ROAST_BITTER · Traditional",
                             "BEERS_SPECIAL · Traditional",
+                            "BLOND_BITTERS · Traditional",
+                            "WHEAT_BEERS · Traditional",
                         ],
                         keepEmpty: true,
                     },
                     {
-                        title: "Normale of abdijbieren",
-                        iconToken: "NORMAL",
+                        title: "Abdijbieren",
+                        iconToken: "BADGE_ABBEY",
                         buckets: [
-                            "LAGERS · Normal/Abbey",
-                            "NORMAL_BLOND_AMBER · Normal/Abbey",
-                            "BLOND_BITTERS · Normal/Abbey",
-                            "DARK_BROWN_MALT_SWEETNESS · Normal/Abbey",
-                            "FRUIT_BEERS · Normal/Abbey",
-                            "SOURS_SAISON_LAMBIC_GUEUZE · Normal/Abbey",
-                            "DARK_BROWN_COFFEE_ROAST_BITTER · Normal/Abbey",
-                            "WHEAT_BEERS · Normal/Abbey",
-                            "RADLERS · Normal/Abbey",
-                            "CIDERS · Normal/Abbey",
-                            "SPIRIT_FLAVOURED_BEERS · Normal/Abbey",
-                            "BEERS_OTHER · Normal/Abbey",
-                            "BEERS_SPECIAL · Normal/Abbey",
+                            "LAGERS · Abbey",
+                            "NORMAL_BLOND_AMBER · Abbey",
+                            "BLOND_BITTERS · Abbey",
+                            "DARK_BROWN_MALT_SWEETNESS · Abbey",
+                            "FRUIT_BEERS · Abbey",
+                            "SOURS_SAISON_LAMBIC_GUEUZE · Abbey",
+                            "DARK_BROWN_COFFEE_ROAST_BITTER · Abbey",
+                            "WHEAT_BEERS · Abbey",
+                            "RADLERS · Abbey",
+                            "SPIRIT_FLAVOURED_BEERS · Abbey",
+                            "BEERS_OTHER · Abbey",
+                            "BEERS_SPECIAL · Abbey",
                         ],
                         keepEmpty: true,
                     },
                     {
-                        title: "Modern/Explorative",
-                        iconToken: "IG_TRENDY",
+                        title: "Andere bieren",
+                        iconToken: "BADGE_FACTORY",
                         buckets: [
-                            "LAGERS · Modern",
-                            "NORMAL_BLOND_AMBER · Modern",
-                            "BLOND_BITTERS · Modern",
-                            "DARK_BROWN_MALT_SWEETNESS · Modern",
-                            "FRUIT_BEERS · Modern",
-                            "SOURS_SAISON_LAMBIC_GUEUZE · Modern",
-                            "DARK_BROWN_COFFEE_ROAST_BITTER · Modern",
-                            "WHEAT_BEERS · Modern",
-                            "RADLERS · Modern",
-                            "CIDERS · Modern",
-                            "SPIRIT_FLAVOURED_BEERS · Modern",
-                            "BEERS_OTHER · Modern",
-                            "BEERS_SPECIAL · Modern",
+                            "LAGERS · Other",
+                            "NORMAL_BLOND_AMBER · Other",
+                            "BLOND_BITTERS · Other",
+                            "DARK_BROWN_MALT_SWEETNESS · Other",
+                            "FRUIT_BEERS · Other",
+                            "SOURS_SAISON_LAMBIC_GUEUZE · Other",
+                            "DARK_BROWN_COFFEE_ROAST_BITTER · Other",
+                            "WHEAT_BEERS · Other",
+                            "RADLERS · Other",
+                            "SPIRIT_FLAVOURED_BEERS · Other",
+                            "BEERS_OTHER · Other",
+                            "BEERS_SPECIAL · Other",
                         ],
                         keepEmpty: true,
                     },
@@ -709,9 +571,9 @@ export const PRESET_FILTERS_BEERS = [
 
         // split by heritage
         partitionBy: [
-            {label: "Normal/Abbey", predicates: [{field: "heritage", op: "in", value: ["NORMAL", "ABBEY"]}]},
-            {label: "Traditional", predicates: [{field: "heritage", op: "in", value: ["TRAPPIST", "TRADITIONAL"]}]},
-            {label: "Modern", predicates: [{field: "heritage", op: "eq", value: "MODERN"}]},
+            {label: "Trappist", predicates: [{field: "heritage", op: "in", value: ["TRAPPIST", "TRADITIONAL"]}]},
+            {label: "Abbey", predicates: [{field: "heritage", op: "eq", value: "ABBEY"}]},
+            {label: "Other", predicates: [{field: "heritage", op: "in", value: ["NORMAL", "MODERN"]}]},
         ],
 
         // ensure these composites render even when count = 0
@@ -727,7 +589,7 @@ export const PRESET_FILTERS_BEERS = [
         info: {
             image: presetImg("Fijn-proever.png"),
             line1: <>De verdeling van deze </>,
-            line2: <> <strong> bieren </strong> <br/> op vlak van <strong> herkomst </strong>  is</>
+            line2: <> <strong> bieren </strong> op vlak van de <strong> oorsprong van de bierstijlen </strong> die je aanbiedt is</>
         }
 
     },
@@ -857,7 +719,7 @@ export const PRESET_FILTERS_BEERS = [
             info: {
                 image: presetImg("Fijn-proever.png"),
                 line1: <>De verdeling van deze </>,
-                line2: <> <strong> bieren </strong> <br/> op vlak van <strong> herkomst </strong>  is</>
+                line2: <> <strong> bieren </strong> op vlak van de <strong> oorsprong van de bierstijlen </strong> die je aanbiedt is</>
             }
         }
         ,

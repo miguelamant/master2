@@ -65,9 +65,9 @@ router.post('/explain-recommendation', async (req, res) => {
         const b = top.B.toFixed(1);
         let text;
         if (delta > 0) {
-            text = `${top.name} customers (${top.pct}% of your mix) benchmark at ${b} ${bucketName} — you currently have ${actual}, adding one brings you to ${recommended}.`;
+            text = `${top.name} customers (${top.pct}% of your mix) benchmark at ${b} ${bucketName} — you currently have ${actual}. Adding one should increase satisfaction.`;
         } else {
-            text = `${top.name} customers (${top.pct}% of your mix) only benchmark at ${b} ${bucketName} — you currently have ${actual}, removing one brings you to ${recommended}.`;
+            text = `${top.name} customers (${top.pct}% of your mix) only benchmark at ${b} ${bucketName} — you currently have ${actual}. Removing one should increase satisfaction.`;
         }
 
         res.json({ text });

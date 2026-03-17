@@ -41,12 +41,14 @@ export function convertItemLabel(raw) {
     if (ITEM_LABEL_MAP[key]) return ITEM_LABEL_MAP[key];
 
     // 2) Clean + normalize
+    // - repair broken Unicode (replacement char → best-guess accented letter)
     // - remove pipes
     // - split on pipes (if any) and drop any "core" tokens
     // - replace underscores with spaces
     // - collapse whitespace
     // - Title Case each word
     let s = String(key)
+        .replace(/\uFFFD/g, "\u00e8") // � → è (most common: Bière, Liégeoise, etc.)
         .replace(/\|/g, " ")         // remove all pipes
         .replace(/_/g, " ");         // underscores → space
 

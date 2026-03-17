@@ -104,11 +104,12 @@ export function useRecommendations({
         return rebuilt;
     }, [activeLayers, engineGroups, layerCounts]);
 
-    // Inject zero-count groups for Dutch distribution buckets not present in the
+    // Inject zero-count groups for distribution buckets not present in the
     // current menu.  The current menu only returns categories with ≥1 item, so
-    // groups like "ciders" with 0 items are invisible to the planner.
+    // groups with 0 items are invisible to the planner.
     // These phantom groups have depth=0 in all layers → never removable, but
     // they do have a positive addMB (series[0]) so the engine can recommend them.
+    const isCiderKey = (k) => /^CIDER/i.test(k);
     const allAddableGroups = React.useMemo(() => {
         if (!Array.isArray(activeLayers) || !activeLayers.length) return engineGroups || [];
         const existingKeys = new Set(
@@ -120,6 +121,7 @@ export function useRecommendations({
             if (layer.field === 'rowLabel') continue; // row-aggregate layers, skip
             for (const bucketKey of Object.keys(layer.buckets || {})) {
                 const norm = String(bucketKey).toUpperCase();
+                if (isCiderKey(norm)) continue; // CIDERS moved to own category
                 if (!existingKeys.has(norm)) {
                     existingKeys.add(norm);
                     extras.push({
@@ -159,9 +161,9 @@ export function useRecommendations({
 
     // ---- Skip engine entirely when disabled (willyOff / willy toggle off) ----
     const emptyHeaderKPI = React.useMemo(() => {
-        const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
         const totalFromDisplayed = Object.values(displayedCountsByCategory || {}).reduce((a, b) => a + Number(b || 0), 0);
-        const total = Number(totalFromCounts || totalFromDisplayed || 0);
+        const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
+        const total = Number(totalFromDisplayed || totalFromCounts || 0);
         return { absDelta: 0, total, pct: 0, status: 'green', bg: '#E8F5E9', icon: checkGreen, badgeText: '+0', badgeColor: '#137333' };
     }, [countsByCategory, displayedCountsByCategory]);
 
@@ -224,9 +226,9 @@ export function useRecommendations({
     const headerKPI = React.useMemo(() => {
         if (!enabled) return emptyHeaderKPI;
 
-        const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
         const totalFromDisplayed = Object.values(displayedCountsByCategory || {}).reduce((a, b) => a + Number(b || 0), 0);
-        const total = Number(totalFromCounts || totalFromDisplayed || 0);
+        const totalFromCounts    = Object.values(countsByCategory || {}).reduce((sum, n) => sum + (n ?? 0), 0);
+        const total = Number(totalFromDisplayed || totalFromCounts || 0);
 
         const rows = alloc?.byId ? Object.values(alloc.byId) : [];
         const absDelta = rows.reduce((acc, r) => acc + Math.abs(Number(r?.delta || 0)), 0);

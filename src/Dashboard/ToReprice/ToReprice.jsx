@@ -291,17 +291,6 @@ export default function ToReprice({ section = "beers" }) {
                             {selectedItem?.name ? selectedItem.name : "Selecteer een item"}
                         </p>
 
-                        {/* ✅ PriceBar at top of the top-section */}
-                        {selectedItem && (
-                            <PriceBar
-                                currentPrice={selectedItem.currentPrice}
-                                lowPrice={selectedItem.lowPrice}
-                                highPrice={selectedItem.highPrice}
-                                minPrice={selectedItem.minPrice}
-                                maxPrice={selectedItem.maxPrice}
-                            />
-                        )}
-
                         {selectedItem && (
                             <>
                                 <div className="reprice-indicators">
@@ -346,7 +335,7 @@ export default function ToReprice({ section = "beers" }) {
                                 </div>
 
                                 <button className="set-optimal-button" onClick={handleSetOptimalPrice}>
-                                    Zet prijs op optimale waarde (€{selectedItem.optimalPrice.toFixed(2)})
+                                    Zet prijs op optimale waarde
                                 </button>
                             </>
                         )}
@@ -382,17 +371,6 @@ export default function ToReprice({ section = "beers" }) {
                                 onClick={() => setSelectedIndex(idx)}
                             >
                                 <span>{idx + 1}. {item.name}</span>
-                                <div className="verandering-prijs">
-                                    <div className="lijst-jouw-prijs">
-                                        <div>€ {item.currentPrice.toFixed(2)}</div>
-                                        <div>jouw prijs</div>
-                                    </div>
-                                    <div className="lijst-pijl">&#8594;</div>
-                                    <div className="lijst-nieuwe-prijs">
-                                        <div>€ {item.optimalPrice.toFixed(2)}</div>
-                                        <div>betere prijs</div>
-                                    </div>
-                                </div>
                             </li>
                         ))}
                     </ul>

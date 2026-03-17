@@ -19,7 +19,7 @@ export async function login(req, res) {
     const { email, password } = req.body;
     const { data: user, error } = await supabase
         .from('business_info')
-        .select(`id,email,password,horeca_name,manager_first_name,manager_last_name`)
+        .select(`id,email,password,horeca_name,manager_first_name,manager_last_name,logo`)
         .eq('email', email)
         .maybeSingle();
 
@@ -33,7 +33,8 @@ export async function login(req, res) {
         email: user.email,
         horeca_name: user.horeca_name,
         manager_first_name: user.manager_first_name,
-        manager_last_name: user.manager_last_name
+        manager_last_name: user.manager_last_name,
+        logo: user.logo,
     };
 
     return { success: true, business_id: user.id, horeca_name: user.horeca_name };

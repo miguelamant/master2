@@ -417,7 +417,6 @@ export default function SummaryGridRow(props) {
                                     {itemsForHover.map((p) => (
                                         <li key={p.id_menu_item || p.id_product || p.name} style={{ fontSize: 12, margin: '2px 0', color: '#000' }}>
                                             {convertItemLabel(p.item_name || p.name)}
-                                            {p.price != null && <span style={{ marginLeft: 6, color: 'rgba(0,0,0,0.5)' }}>€{Number(p.price).toFixed(2)}</span>}
                                         </li>
                                     ))}
                                 </ul>
@@ -545,7 +544,6 @@ export default function SummaryGridRow(props) {
                                     {itemsForHover.map((p) => (
                                         <li key={p.id_menu_item || p.id_product || p.name}>
                                             <span className="hover-name">{convertItemLabel(p.item_name || p.name)}</span>
-                                            {p.price != null && <span className="hover-price">€{Number(p.price).toFixed(2)}</span>}
                                         </li>
                                     ))}
                                 </ul>
@@ -633,9 +631,6 @@ export default function SummaryGridRow(props) {
                                 {visibleInlineItems.map((p) => (
                                     <li key={p.id_menu_item || p.id_product || p.name} style={{ margin: "4px 0" }}>
                                         <span style={{ opacity: 0.95 }}>{convertItemLabel(p.item_name || p.name)}</span>
-                                        {p.price != null && (
-                                            <span style={{ marginLeft: 8, opacity: 0.85 }}>€{Number(p.price).toFixed(2)}</span>
-                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -734,16 +729,6 @@ export default function SummaryGridRow(props) {
                 </div>
             )}
 
-            {showPriceBars && (
-                <PriceBar
-                    currentPrice={4.5}
-                    lowPrice={4.0}
-                    highPrice={5.0}
-                    minPrice={3.0}
-                    maxPrice={6.0}
-                    showLabels={false}
-                />
-            )}
         </div>
     );
 }

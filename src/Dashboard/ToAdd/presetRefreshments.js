@@ -113,7 +113,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling <strong> van sport vs normaal</strong> <br/> van jouw</>,
+                line1: <>De verdeling <strong> van sport vs normaal</strong> van jouw</>,
                 line2: <> <strong> non-alcoholische bieren </strong> is</>
             }
         }
@@ -244,7 +244,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling <strong> van sport vs normaal</strong> <br/> van jouw</>,
+                line1: <>De verdeling <strong> van sport vs normaal</strong> van jouw</>,
                 line2: <> <strong> non-alcoholische bieren </strong> is</>
             }
         }
@@ -272,7 +272,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
         ],
         info: {
             image: presetImg("Fijn-proever.png"),
-            line1: <>De verdeling tussen <strong> smaken </strong> voor je <br/> </>,
+            line1: <>De verdeling tussen <strong> smaken </strong> voor je </>,
             line2: <> <strong> verfrissende dranken </strong> is <strong>  </strong> </>
         }
     },
@@ -312,7 +312,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> suikervrij </strong> en normaal  <br/>  voor je</>,
+                line1: <>De verdeling tussen <strong> suikervrij </strong> en normaal   voor je</>,
                 line2: <> <strong> verfrissende dranken </strong> is <strong>  </strong> </>
             }
         }
@@ -370,7 +370,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken </strong> en normaal, <br/> voor deze </>,
+                line1: <>De verdeling tussen <strong> smaken </strong> en normaal, voor deze </>,
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         }
@@ -406,7 +406,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> bruisend vs plat </strong> voor je <br/> </>,
+                line1: <>De verdeling tussen <strong> bruisend vs plat </strong> voor je </>,
                 line2: <> <strong> ice-tea's </strong> is <strong>  </strong> </>
             }
         }
@@ -444,7 +444,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> zero vs normaal </strong> voor je <br/> </>,
+                line1: <>De verdeling tussen <strong> zero vs normaal </strong> voor je </>,
                 line2: <> <strong> ice-tea's </strong> is <strong>  </strong> </>
             }
         }
@@ -469,7 +469,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             ],
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken </strong> voor je <br/> </>,
+                line1: <>De verdeling tussen <strong> smaken </strong> voor je </>,
                 line2: <> <strong> lemonades </strong> is <strong>  </strong> </>
             }
         }
@@ -603,7 +603,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> suikervrij </strong> en normaal, <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> suikervrij </strong> en normaal, voor jouw </>,
                 line2: <> <strong> lemonades </strong> is <strong>  </strong> </>
             }
         },
@@ -624,7 +624,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             ],
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken en suikervrij </strong> <br/> voor je </>,
+                line1: <>De verdeling tussen <strong> smaken en suikervrij </strong> voor je </>,
                 line2: <> <strong> cola's </strong> is <strong>  </strong> </>
             }
         },
@@ -649,7 +649,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             ],
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken </strong> <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> smaken </strong> voor jouw </>,
                 line2: <> <strong> sappen </strong> is <strong>  </strong> </>
             }
         },
@@ -779,7 +779,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken en suikergehaltes </strong> <br/> voor je </>,
+                line1: <>De verdeling tussen <strong> smaken en suikergehaltes </strong> voor je </>,
                 line2: <> <strong> gemberdranken </strong> is <strong>  </strong> </>
             }
         },
@@ -809,7 +809,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
             ],
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> smaken en suikergehaltes  </strong> <br/> voor je </>,
+                line1: <>De verdeling tussen <strong> smaken en suikergehaltes  </strong> voor je </>,
                 line2: <> <strong> tonics </strong> is <strong>  </strong> </>
             }
         },
@@ -852,7 +852,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> homemade </strong> en normaal, <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> homemade </strong> en normaal, voor jouw </>,
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         }
@@ -947,7 +947,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> gezond </strong> en normaal, <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> gezond </strong> en normaal, voor jouw </>,
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         }
@@ -1042,7 +1042,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> sport </strong> en normaal, <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> sport </strong> en normaal, voor jouw </>,
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         },
@@ -1136,7 +1136,7 @@ export const PRESET_FILTERS_REFRESHMENTS = [
 
             info: {
                 image: presetImg("Fijn-proever.png"),
-                line1: <>De verdeling tussen <strong> sport </strong> en normaal, <br/> voor jouw </>,
+                line1: <>De verdeling tussen <strong> sport </strong> en normaal, voor jouw </>,
                 line2: <> <strong> dranken </strong> is <strong>  </strong> </>
             }
         }

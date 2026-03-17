@@ -172,6 +172,7 @@ const normalizeCategory = (s) => {
     filters: apiFilters,
     predicates: presetPredicates,
     rollups: currentPreset?.rollups ?? [],
+    partitionBy: partitionBy?.length ? partitionBy : null,
     enabled: true,
   });
 
@@ -677,13 +678,23 @@ const normalizeCategory = (s) => {
   }, []);
 
 
-     const { counts: countsByCategory, countsLoading } = useCountsByCategory({
+     const { counts: countsByCategoryRaw, countsLoading } = useCountsByCategory({
            groupBy, effectiveSection,
            includeEmpty: currentPreset.includeEmpty ?? false,
            within, apiFilters, presetPredicates,
            partitionBy, forceShow, rollups: currentPreset.rollups || [], presetId, filterKey, showOnlyRollups: currentPreset.showOnlyRollups ?? false,
            assortmentId: activeAssortmentId,
      });
+
+     // Filter out CIDERS — moved to its own category; stale DB links may still return it under BEERS
+     const countsByCategory = useMemo(() => {
+       if (!countsByCategoryRaw) return {};
+       const out = {};
+       for (const [k, v] of Object.entries(countsByCategoryRaw)) {
+         if (!/^CIDER/i.test(k) && !/· CIDER/i.test(k)) out[k] = v;
+       }
+       return out;
+     }, [countsByCategoryRaw]);
 
   const totalMenuCount = useMemo(
     () => Object.values(countsByCategory || {}).reduce((s, n) => s + (n ?? 0), 0) || 75,
@@ -945,20 +956,27 @@ const normalizeCategory = (s) => {
   // Use an updater that bails out (returns prev) when the set content is unchanged,
   // preventing an infinite re-render loop when tasteOptions gets a new reference
   // but contains the same ids.
+    // Reset taste selection to "all" only when the preset or category changes,
+    // NOT when tasteOptions changes — otherwise unchecking a filter triggers
+    // a feedback loop that re-selects everything.
+    const tasteOptionsRef = useRef(tasteOptions);
+    tasteOptionsRef.current = tasteOptions;
+
     useEffect(() => {
       if (skipTasteResetRef.current) {
         skipTasteResetRef.current = false;
         return;
       }
       setFilters((prev) => {
-        const newIds = (tasteOptions || []).map((o) => o.id);
+        const newIds = (tasteOptionsRef.current || []).map((o) => o.id);
         const old = prev.tastes;
         if (old instanceof Set && old.size === newIds.length && newIds.every(id => old.has(id))) {
-          return prev; // same content — no state update, no re-render
+          return prev;
         }
         return { ...prev, tastes: new Set(newIds) };
       });
-    }, [activeCategory, presetIndex, tasteOptions]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeCategory, presetIndex]);
 
 
   // —— Items not on menu (bottom list) ——
@@ -1250,13 +1268,8 @@ const normalizeCategory = (s) => {
     if (rollupOv) {
       const preds = Array.isArray(rollupOv.predicates) ? rollupOv.predicates : [];
 
-      // baseIn predicate → tastes Set (real subsubcategory/subcategory tokens)
-      const baseInPred = preds.find(
-          p => String(p.op || '').toLowerCase() === 'in' && p.field === (rollupOv.groupBy || groupBy)
-      );
-      const tastesSet = baseInPred && Array.isArray(baseInPred.value)
-          ? new Set(baseInPred.value.map(normToken))
-          : new Set();
+      // Use the rollup bucket ID itself so it matches tasteOptions
+      const tastesSet = new Set([normToken(groupValue)]);
 
       // is_zero predicate → sugar state
       const zeroEq = preds.find(p => p.field === 'is_zero' && String(p.op || '').toLowerCase() === 'eq');
@@ -1508,13 +1521,20 @@ const normalizeCategory = (s) => {
 
             {/* Status text above the grid */}
             <div style={{
-                display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: 8, flexWrap: 'wrap', textAlign: 'center',
                 marginBottom: 12, fontSize: 14, fontWeight: 500,
                 opacity: presetLoading ? 0.4 : 0.85,
                 transition: 'opacity 0.2s',
             }}>
                 <span>
-                    {personaInfo.line1} <strong>{presetLoading ? '…' : headerKPI.total}</strong> {personaInfo.line2}
+                    {personaInfo.line1} <strong>{presetLoading ? '…' : (() => {
+                        // Sum only buckets visible in the grid rows (matches SummaryGrid)
+                        const allBuckets = rowDefs.flatMap(r => r?.buckets || []);
+                        if (!allBuckets.length) return headerKPI.total;
+                        const cbc = displayedCountsByCategory || {};
+                        return allBuckets.reduce((s, b) => s + Number(cbc[b] ?? 0), 0);
+                    })()}</strong> {personaInfo.line2}
                     {effectiveWillyOn && !presetLoading && (
                         <> {headerKPI.status === 'green' ? 'goed' : headerKPI.status === 'orange' ? 'ok' : 'niet in balans'}</>
                     )}
@@ -1640,15 +1660,13 @@ const normalizeCategory = (s) => {
           />
         </div>
 
-        <nav className="optionbar-container">
-          <Optionbar
-              groupBy={groupBy}
-              category={activeCategory}
-              tasteOptions={tasteOptions}
-              filters={filters}
-              onChange={setFilters}
-          />
-        </nav>
+        <Optionbar
+            groupBy={groupBy}
+            category={activeCategory}
+            tasteOptions={tasteOptions}
+            filters={filters}
+            onChange={setFilters}
+        />
 
         {/* Modal */}
         <AddToMenuModal

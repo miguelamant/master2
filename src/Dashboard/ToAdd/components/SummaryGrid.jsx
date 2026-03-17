@@ -391,7 +391,7 @@ export default function SummaryGrid(props) {
             {cardsMode ? (
                 <>
                     <div style={rowDefs.length <= safeCols
-                        ? { display: 'grid', gridTemplateColumns: `repeat(${rowDefs.length}, 1fr)`, gap: 14, alignItems: 'start' }
+                        ? { display: 'grid', gridTemplateColumns: `repeat(${safeCols}, 1fr)`, gap: 14, alignItems: 'start' }
                         : { columns: safeCols, columnGap: 14 }
                     }>
                         {rowDefs.map((row, rowIdx) => {

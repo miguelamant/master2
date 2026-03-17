@@ -6,10 +6,10 @@ import { normToken } from './normalize'; // you already have this
 //the normToken() function is converting all labels, so must take care.
 export const LABEL_MAP = {
     PALE_ALE_BELGIAN:"Belgian Amber",
-    BLOND_BITTERS: 'Hoppy & Bitter',
-    NORMAL_BLOND_AMBER: 'Normal Blond & Amber',
+    BLOND_BITTERS: 'IPA & Refreshing Pale Ale',
+    NORMAL_BLOND_AMBER: 'Classic Blonds',
     LAGERS:'Lagers',
-    DARK_BROWN_MALT_SWEETNESS:'Dark/Brown | Malt & Sweet',
+    DARK_BROWN_MALT_SWEETNESS:'Dark/Brown/Ambrée | Malt & Sweet',
     DARK_BROWN_COFFEE_ROAST_BITTER:'Dark/Brown | Coffee, Roast & Bitter ',
     FRUIT_BEERS:'Fruit Beers',
     WHEAT_BEERS:'Wheat Beers',
@@ -57,9 +57,9 @@ export const LABEL_MAP = {
 
     /*
        BLOND_BITTERS: 'Hoppy & Bitter - IPA, Tripel Hop etc. ',
-    NORMAL_BLOND_AMBER: 'Normal Blond & Amber - Singles, Tripels etc.',
+    NORMAL_BLOND_AMBER: 'Classic Blonds - Singles, Tripels etc.',
     LAGERS:'Lagers - Pilsner etc.',
-    DARK_BROWN_MALT_SWEETNESS:'Dark/Brown | Malt & Sweet - Dubbels etc.',
+    DARK_BROWN_MALT_SWEETNESS:'Dark/Brown/Ambrée | Malt & Sweet - Dubbels etc.',
     DARK_BROWN_COFFEE_ROAST_BITTER:'Dark/Brown | Coffee, Roast & Bitter - Stouts etc.',
     FRUIT_BEERS:'Fruit Beers - Kriek, Ruby etc.',
     WHEAT_BEERS:'Wheat Beers - Wit',
@@ -80,7 +80,7 @@ export const LABEL_MAP = {
     BIPA:           'BIPA',
     APA:            'APA',
     SPECIALE_BELGE: 'Speciale Belge',
-    BELGE_AMBREE:   'Belge Ambrée',
+    BELGE_AMBREE:   'Ambrée',
     BOCKS_ALL:      'Bocks',
     DARK_DUBBEL:    'Dubbel',
     ALTBIER:        'Altbier',
@@ -98,6 +98,7 @@ export const LABEL_MAP = {
     BELGIAN_BLONDE:     'Belgian Blonde',
     GOLDEN_ALES:        'Golden Ales',
     SAISON:             'Saison',
+    BIERE_DE_GARDE:     'Bière de Garde',
 
     // Herkomst preset — Belgium
     BE_BLOND:               'Belgian Blonde',

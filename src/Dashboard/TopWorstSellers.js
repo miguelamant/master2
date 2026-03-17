@@ -194,12 +194,10 @@ const TopWorstSellers = () => {
                         <div className="stat-card">
                             <h3>Most profit</h3>
                             <h1 className="stat-card-item">{mostProfit.name || '–'}</h1>
-                            <div className="stat-card-number"> €{(mostProfit.price * mostProfit.count).toFixed(2)}</div>
                         </div>
                         <div className="stat-card">
                             <h3>Least profit</h3>
                             <h1 className="stat-card-item">{leastProfit.name || '–'}</h1>
-                            <div className="stat-card-number"> €{(leastProfit.price * leastProfit.count).toFixed(2)}</div>
                         </div>
                     </div>
                 </div>

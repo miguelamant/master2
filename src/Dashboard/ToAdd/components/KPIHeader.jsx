@@ -99,16 +99,17 @@ export default function KPIHeader({
     const scoreCol = scorePercent >= 75 ? '#34d399' : scorePercent >= 45 ? '#fbbf24' : '#f87171';
 
     const arrowBtnStyle = {
-        width: 44, height: 44, borderRadius: 12,
-        border: '1px solid rgba(59,130,246,0.25)',
-        background: 'linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0.08) 100%)',
+        width: 56, height: 56, borderRadius: 16,
+        border: '1.5px solid rgba(59,130,246,0.35)',
+        background: 'linear-gradient(135deg, rgba(59,130,246,0.22) 0%, rgba(59,130,246,0.10) 100%)',
         color: '#3b82f6',
         cursor: 'pointer',
-        fontSize: 22, fontWeight: 700, lineHeight: 1,
+        fontSize: 28, fontWeight: 800, lineHeight: 1,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all 0.15s',
+        transition: 'all 0.18s ease',
         flexShrink: 0,
-        boxShadow: '0 2px 8px rgba(59,130,246,0.12)',
+        boxShadow: '0 3px 14px rgba(59,130,246,0.18)',
+        animation: 'preset-arrow-glow 2.5s ease-in-out infinite',
     };
 
     return (

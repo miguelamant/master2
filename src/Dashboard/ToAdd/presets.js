@@ -238,30 +238,6 @@ export const PRESET_FILTERS = [
 
 
             // =========================
-            // CIDERS (unchanged)
-            // =========================
-            {
-                match: {
-                    baseIn: [
-                        "CIDER_APPLEWINE",
-                        "CIDER_BASQUE",
-                        "CIDER_DRY",
-                        "CIDER_GRAFF",
-                        "CIDER_HERBED_/_SPICED_/_HOPPED",
-                        "CIDER_ICE",
-                        "CIDER_OTHER_FRUIT",
-                        "CIDER_PERRY_/_POIRE",
-                        "CIDER_ROSE",
-                        "CIDER_SWEET",
-                        "CIDER_TRADITIONAL_/_APFELWEIN",
-                        "NON-ALCOHOLIC_CIDER_/_PERRY",
-                    ],
-                },
-                into: "CIDERS",
-                keepZero: true,
-            },
-
-            // =========================
             // SAISON (unchanged)
             // =========================
             {
@@ -1911,16 +1887,16 @@ export const PRESET_FILTERS = [
                     keepZero: true,
                 },
 
-                // RADLERS + CIDERS + SPIRIT_FLAVOURED_BEERS -> one bucket
+                // RADLERS + SPIRIT_FLAVOURED_BEERS -> one bucket
                 {
-                    match: { baseIn: ["RADLERS", "CIDERS", "SPIRIT_FLAVOURED_BEERS"] },
-                    into: "RADLERS_&_CIDERS_&_SPIRIT",
+                    match: { baseIn: ["RADLERS", "SPIRIT_FLAVOURED_BEERS"] },
+                    into: "RADLERS_&_SPIRIT",
                     keepZero: true,
                 },
                 // Add this extra rollup at the end of your rollups array
                 {
                     // Anything not caught by earlier rollups becomes "OTHERS"
-                    match: { baseNotIn: ["LAGERS", "BLOND_AMBER_&_BITTERS", "DARK_BROWN", "FRUIT_BEERS", "WHEAT_BEERS", "SOURS_SAISON_LAMBIC_GUEUZE", "RADLERS_&_CIDERS_&_SPIRIT"] },
+                    match: { baseNotIn: ["LAGERS", "BLOND_AMBER_&_BITTERS", "DARK_BROWN", "FRUIT_BEERS", "WHEAT_BEERS", "SOURS_SAISON_LAMBIC_GUEUZE", "RADLERS_&_SPIRIT"] },
                     into: "OTHERS",
                     keepZero: true,
                 },
@@ -2140,30 +2116,6 @@ export const PRESET_FILTERS = [
                         ],
                     },
                     into: "SOUR_BEERS",
-                    keepZero: true,
-                },
-
-                // =========================
-                // CIDERS (unchanged)
-                // =========================
-                {
-                    match: {
-                        baseIn: [
-                            "CIDER_APPLEWINE",
-                            "CIDER_BASQUE",
-                            "CIDER_DRY",
-                            "CIDER_GRAFF",
-                            "CIDER_HERBED_/_SPICED_/_HOPPED",
-                            "CIDER_ICE",
-                            "CIDER_OTHER_FRUIT",
-                            "CIDER_PERRY_/_POIRE",
-                            "CIDER_ROSE",
-                            "CIDER_SWEET",
-                            "CIDER_TRADITIONAL_/_APFELWEIN",
-                            "NON-ALCOHOLIC_CIDER_/_PERRY",
-                        ],
-                    },
-                    into: "CIDERS",
                     keepZero: true,
                 },
 
