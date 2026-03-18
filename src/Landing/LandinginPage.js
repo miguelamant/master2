@@ -9,9 +9,16 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const { refresh: refreshAssortments } = useAssortment();
 
-    const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const [loginData, setLoginData] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            email: params.get('email') || '',
+            password: params.get('password') || '',
+        };
+    });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -44,6 +51,15 @@ const LandingPage = () => {
         }
         setLoading(false);
     };
+
+    // Auto-login if email & password provided via URL params
+    React.useEffect(() => {
+        if (!autoLoginAttempted && loginData.email && loginData.password) {
+            setAutoLoginAttempted(true);
+            handleLogin();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') handleLogin();
