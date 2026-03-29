@@ -28,6 +28,11 @@ export const FILTERS = {
   subcategory_in:    { path: 'products.subcategories.subcat_name',           op: 'in',  coerce: toArr },
   subsubcategory_in: { path: 'products.subsubcategories.subsubcat_name',     op: 'in',  coerce: toArr },
 
+  spice_level:    { path: 'products.spice_level',    op: 'eq' },
+  is_vegan:       { path: 'products.is_vegan',       op: 'eq', coerce: toInt },
+  is_vegetarian:  { path: 'products.is_vegetarian',  op: 'eq', coerce: toInt },
+  is_crispy:      { path: 'products.is_crispy',      op: 'eq', coerce: toInt },
+
   search: { op: 'search', fields: ['products.name','products.brand'] },
 
   'products.is_high_margin': { aliasOf: 'is_high_margin' },
@@ -114,7 +119,18 @@ export function applyFilters(baseQuery, rawFilters = {}, options = {}) {
            ceiling_price,
 
            price_retail,
+           price_foodservice,
+           volume_foodservice,
            sugar_content,
+           taste_score,
+           star_rating,
+           spice_level,
+           prep_deep_fryer,
+           prep_oven,
+           prep_airfryer,
+           is_crispy,
+           is_vegan,
+           is_vegetarian,
 
            is_high_margin,
            is_trending,

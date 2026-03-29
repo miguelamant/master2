@@ -14,7 +14,7 @@ router.get('/assortments', isAuthenticated, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('assortments')
-      .select('id, name, address, sort_order, lat, lng, belgian, french, german, dutch')
+      .select('id, name, address, sort_order, lat, lng, belgian, french, german, dutch, conservative, normal, progressive')
       .eq('business_id', businessId)
       .order('sort_order', { ascending: true });
 
@@ -34,7 +34,7 @@ router.get('/assortments/persona-weights', isAuthenticated, async (req, res) => 
   try {
     const { data, error } = await supabase
       .from('assortments')
-      .select('id, belgian, french, german, dutch')
+      .select('id, belgian, french, german, dutch, conservative, normal, progressive')
       .eq('business_id', businessId)
       .order('sort_order', { ascending: true })
       .limit(1)
@@ -42,22 +42,26 @@ router.get('/assortments/persona-weights', isAuthenticated, async (req, res) => 
 
     if (error || !data) return res.status(404).json({ error: 'No assortment found for this business' });
 
-    const raw = {
-      belgian: data.belgian ?? 25,
-      french:  data.french  ?? 25,
-      german:  data.german  ?? 25,
-      dutch:   data.dutch   ?? 25,
-    };
-    const total = raw.belgian + raw.french + raw.german + raw.dutch;
-    const normalise = (v) => total > 0 ? Math.round((v / total) * 100) : 25;
+    // Two independent axes — each sums to 100%
+    const geo   = { belgian: data.belgian ?? 25, french: data.french ?? 25, german: data.german ?? 25, dutch: data.dutch ?? 25 };
+    const style = { conservative: data.conservative ?? 33, normal: data.normal ?? 34, progressive: data.progressive ?? 33 };
+    const geoTot   = Object.values(geo).reduce((s, v) => s + v, 0) || 1;
+    const styleTot = Object.values(style).reduce((s, v) => s + v, 0) || 1;
+    const norm = (v, tot) => Math.round((v / tot) * 100);
     const normalised = {
-      belgian: normalise(raw.belgian),
-      french:  normalise(raw.french),
-      german:  normalise(raw.german),
-      dutch:   normalise(raw.dutch),
+      belgian:      norm(geo.belgian, geoTot),
+      french:       norm(geo.french, geoTot),
+      german:       norm(geo.german, geoTot),
+      dutch:        norm(geo.dutch, geoTot),
+      conservative: norm(style.conservative, styleTot),
+      normal:       norm(style.normal, styleTot),
+      progressive:  norm(style.progressive, styleTot),
     };
-    const nTotal = normalised.belgian + normalised.french + normalised.german + normalised.dutch;
-    normalised.belgian += 100 - nTotal;
+    // Fix rounding for each axis
+    const geoSum = normalised.belgian + normalised.french + normalised.german + normalised.dutch;
+    normalised.belgian += 100 - geoSum;
+    const styleSum = normalised.conservative + normalised.normal + normalised.progressive;
+    normalised.conservative += 100 - styleSum;
 
     res.json({ id: data.id, ...normalised });
   } catch (e) {
@@ -71,10 +75,11 @@ router.get('/assortments/persona-weights', isAuthenticated, async (req, res) => 
  */
 router.patch('/assortments/persona-weights', isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
-  const { belgian, french, german, dutch } = req.body || {};
+  const { belgian, french, german, dutch, conservative, normal, progressive } = req.body || {};
 
-  const values = [belgian, french, german, dutch].map(Number);
-  if (values.some(v => !Number.isFinite(v) || v < 0 || v > 100)) {
+  const allVals = { belgian, french, german, dutch, conservative, normal, progressive };
+  const provided = Object.values(allVals).filter(v => v != null).map(Number);
+  if (provided.some(v => !Number.isFinite(v) || v < 0 || v > 100)) {
     return res.status(400).json({ error: 'Each weight must be a number between 0 and 100' });
   }
 
@@ -89,9 +94,14 @@ router.patch('/assortments/persona-weights', isAuthenticated, async (req, res) =
 
     if (findErr || !existing) return res.status(404).json({ error: 'No assortment found for this business' });
 
+    const update = {};
+    for (const [k, v] of Object.entries(allVals)) {
+      if (v != null) update[k] = Number(v);
+    }
+
     const { error } = await supabase
       .from('assortments')
-      .update({ belgian: values[0], french: values[1], german: values[2], dutch: values[3] })
+      .update(update)
       .eq('id', existing.id);
 
     if (error) return res.status(500).json({ error: 'Database error', message: error.message });
@@ -108,14 +118,15 @@ router.patch('/assortments/persona-weights', isAuthenticated, async (req, res) =
 router.patch('/assortments/:id/persona-weights', isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
   const assortmentId = Number(req.params.id);
-  const { belgian, french, german, dutch } = req.body || {};
+  const { belgian, french, german, dutch, conservative, normal, progressive } = req.body || {};
 
   if (!Number.isFinite(assortmentId)) {
     return res.status(400).json({ error: 'Invalid assortment id' });
   }
 
-  const values = [belgian, french, german, dutch].map(Number);
-  if (values.some(v => !Number.isFinite(v) || v < 0 || v > 100)) {
+  const allVals = { belgian, french, german, dutch, conservative, normal, progressive };
+  const provided = Object.values(allVals).filter(v => v != null).map(Number);
+  if (provided.some(v => !Number.isFinite(v) || v < 0 || v > 100)) {
     return res.status(400).json({ error: 'Each weight must be a number between 0 and 100' });
   }
 
@@ -130,9 +141,14 @@ router.patch('/assortments/:id/persona-weights', isAuthenticated, async (req, re
 
     if (findErr || !existing) return res.status(404).json({ error: 'Assortment not found' });
 
+    const update = {};
+    for (const [k, v] of Object.entries(allVals)) {
+      if (v != null) update[k] = Number(v);
+    }
+
     const { error } = await supabase
       .from('assortments')
-      .update({ belgian: values[0], french: values[1], german: values[2], dutch: values[3] })
+      .update(update)
       .eq('id', assortmentId);
 
     if (error) return res.status(500).json({ error: 'Database error', message: error.message });

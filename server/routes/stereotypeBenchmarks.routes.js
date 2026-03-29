@@ -66,6 +66,7 @@ const PARENT_BY_SECTION = {
   beers: "BEERS", sodas: "REFRESHMENTS", refreshments: "REFRESHMENTS",
   wines: "WINES", cocktails: "COCKTAILS", liquors: "LIQUORS",
   snacks: "SNACKS", meals: "MEALS",
+  deep_fried_snacks: "DEEP_FRIED_SNACKS",
 };
 
 const abvToBand = (x) => {
@@ -131,7 +132,7 @@ router.post("/stereotype-benchmarks", isAuthenticated, async (req, res) => {
       within = {},
       filters = {},
       predicates = [],
-      stereotypes = ["Belgian", "French", "German", "Dutch"],
+      stereotypes = ["Belgian", "French", "German", "Dutch", "Conservative", "Normal", "Progressive"],
     } = req.body || {};
 
     // Resolve assortmentId from body or fall back to session business's first assortment
@@ -159,24 +160,23 @@ router.post("/stereotype-benchmarks", isAuthenticated, async (req, res) => {
     const effPreds = Array.isArray(predicates) ? predicates : [];
 
     // 0) Persona weights for this assortment
-    let personaWeights = { Belgian: 25, French: 25, German: 25, Dutch: 25 };
+    let personaWeights = { Belgian: 25, French: 25, German: 25, Dutch: 25, Conservative: 33, Normal: 34, Progressive: 33 };
     {
       const { data: aRow } = await supabase
         .from('assortments')
-        .select('belgian, french, german, dutch')
+        .select('belgian, french, german, dutch, conservative, normal, progressive')
         .eq('id', assortmentId)
         .single();
       if (aRow) {
-        const raw = {
-          Belgian: aRow.belgian ?? 25,
-          French:  aRow.french  ?? 25,
-          German:  aRow.german  ?? 25,
-          Dutch:   aRow.dutch   ?? 25,
+        // Two independent axes — each normalised to 100% separately
+        const geo   = { Belgian: aRow.belgian ?? 25, French: aRow.french ?? 25, German: aRow.german ?? 25, Dutch: aRow.dutch ?? 25 };
+        const style = { Conservative: aRow.conservative ?? 33, Normal: aRow.normal ?? 34, Progressive: aRow.progressive ?? 33 };
+        const geoTot   = Object.values(geo).reduce((s, v) => s + v, 0) || 1;
+        const styleTot = Object.values(style).reduce((s, v) => s + v, 0) || 1;
+        personaWeights = {
+          ...Object.fromEntries(Object.entries(geo).map(([k, v]) => [k, Math.round(v / geoTot * 100)])),
+          ...Object.fromEntries(Object.entries(style).map(([k, v]) => [k, Math.round(v / styleTot * 100)])),
         };
-        const tot = Object.values(raw).reduce((s, v) => s + v, 0) || 1;
-        personaWeights = Object.fromEntries(
-          Object.entries(raw).map(([k, v]) => [k, Math.round(v / tot * 100)])
-        );
       }
     }
 

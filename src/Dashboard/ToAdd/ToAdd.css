@@ -368,6 +368,39 @@
     flex-grow: 1;
 }
 
+/* ── Frituur extras (stars, taste, price) ────── */
+.item-card__frituur-extras {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.68rem;
+    color: var(--text-muted, #6b7280);
+}
+
+.item-card__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.item-card__taste-score {
+    background: #f3f0e8;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-weight: 600;
+    color: #6b5b2e;
+}
+
+.item-card__price-portion {
+    background: #e8f5e9;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
 /* ── Action button (white + black border) ────── */
 .item-card__action {
     width: 100%;

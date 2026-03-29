@@ -2,12 +2,18 @@ import React from 'react';
 import '../StereotypeSatisfactionPanel.css';
 import { iconFor } from '../utils/iconLoader';
 
-const PERSONA_MAP = [
+const GEO_PERSONAS = [
   { key: 'Belgian', country: 'Belgium',     iconToken: 'BELGIUM'     },
   { key: 'French',  country: 'France',      iconToken: 'FRANCE'      },
   { key: 'German',  country: 'Germany',     iconToken: 'GERMANY'     },
   { key: 'Dutch',   country: 'Netherlands', iconToken: 'NETHERLANDS' },
 ];
+const STYLE_PERSONAS = [
+  { key: 'Conservative', country: 'Conservative', iconToken: 'TRADITIONAL' },
+  { key: 'Normal',       country: 'Normal',       iconToken: 'DUNNO'       },
+  { key: 'Progressive',  country: 'Progressive',  iconToken: 'EXPLORATIVE' },
+];
+const PERSONA_MAP = [...GEO_PERSONAS, ...STYLE_PERSONAS];
 
 function scoreColor(score) {
   if (score >= 7.5) return '#34d399';
@@ -47,17 +53,82 @@ export default function StereotypeSatisfactionPanel({
   const hasWeights = Object.keys(personaWeights).length > 0;
   const G = '#d1d5db';  // grey used when disabled
 
-  const entries = PERSONA_MAP
+  const makeEntries = (list) => list
     .map(({ key, country, iconToken }) => ({
-      name: key,
-      country,
-      iconToken,
+      name: key, country, iconToken,
       score: personaFit[key] ?? 0,
       weight: personaWeights[key] ?? null,
     }))
     .sort((a, b) => b.score - a.score);
 
+  const geoEntries   = makeEntries(GEO_PERSONAS);
+  const styleEntries = makeEntries(STYLE_PERSONAS);
+
   const overallColor = disabled ? G : (satisfactionScore !== null ? scoreColor(satisfactionScore) : '#9ca3af');
+
+  const renderPersonaRows = (entries) => entries.map(({ name, country, iconToken, score, weight }) => {
+    const delta = personaDeltas?.[name];
+    const color = disabled ? G : scoreColor(score);
+    return (
+      <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          {hasWeights && (
+            <div style={{ width: 46, display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
+              {weight != null && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 3,
+                  background: 'rgba(0,0,0,0.04)', borderRadius: 5, padding: '2px 5px',
+                }}>
+                  <PersonIcon size={10} style={{ opacity: 0.6 }} />
+                  <span style={{
+                    fontSize: 11, fontWeight: 800,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    color: disabled ? G : 'var(--text-primary)',
+                  }}>{weight}%</span>
+                </div>
+              )}
+            </div>
+          )}
+          <img src={iconFor(iconToken)} alt={country}
+               style={{
+                 width: 20, height: 14, objectFit: 'cover', borderRadius: 2, flexShrink: 0,
+                 filter: disabled ? 'grayscale(100%)' : 'none',
+               }} />
+          <span style={{
+            fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
+            color: disabled ? '#9ca3af' : 'var(--text-primary)', flex: 1,
+          }}>{country}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, flexShrink: 0 }}>
+            <span style={{
+              fontSize: 15, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif", color,
+            }}>{disabled ? '—' : score.toFixed(1)}</span>
+            {!disabled && delta != null && delta !== 0 && (
+              <span style={{
+                fontSize: 10, fontWeight: 700,
+                color: delta > 0 ? '#34d399' : '#f87171', minWidth: 28,
+              }}>{delta > 0 ? `+${delta}` : String(delta)}</span>
+            )}
+          </div>
+        </div>
+        <div style={{ paddingLeft: hasWeights ? 53 : 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ position: 'relative', flex: 1, height: 6 }}>
+            <div style={{
+              position: 'absolute', inset: 0, borderRadius: 3,
+              border: '1px dashed rgba(0,0,0,0.12)', background: 'rgba(0,0,0,0.02)',
+            }} />
+            <div style={{
+              position: 'relative', height: '100%',
+              width: disabled ? '0%' : `${Math.min(score / 10 * 100, 100)}%`,
+              borderRadius: 3,
+              background: disabled ? G : `linear-gradient(to right, #374151 0%, #4b5563 75%, ${color} 100%)`,
+              transition: 'width 0.4s ease',
+            }} />
+          </div>
+          <HappyFace size={12} color={disabled ? G : '#111827'} />
+        </div>
+      </div>
+    );
+  });
 
   return (
     <div className="stereotype-panel" style={disabled ? { opacity: 0.55, pointerEvents: 'none' } : undefined}>
@@ -110,95 +181,22 @@ export default function StereotypeSatisfactionPanel({
       {/* Divider */}
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '-4px 0 0' }} />
 
-      {/* Per-persona rows */}
-      {entries.map(({ name, country, iconToken, score, weight }) => {
-        const delta = personaDeltas?.[name];
-        const color = disabled ? G : scoreColor(score);
+      {/* ── Geographic axis ── */}
+      <div style={{
+        fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+        color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+      }}>Culture</div>
+      {renderPersonaRows(geoEntries)}
 
-        return (
-          <div key={country} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      {/* Axis separator */}
+      <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
 
-            {/* Row: weight + flag + country + score + delta */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-
-              {/* Weight badge */}
-              {hasWeights && (
-                <div style={{ width: 46, display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
-                  {weight != null && (
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: 3,
-                      background: 'rgba(0,0,0,0.04)', borderRadius: 5,
-                      padding: '2px 5px',
-                    }}>
-                      <PersonIcon size={10} style={{ opacity: 0.6 }} />
-                      <span style={{
-                        fontSize: 11, fontWeight: 800,
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        color: disabled ? G : 'var(--text-primary)',
-                      }}>{weight}%</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Flag */}
-              <img src={iconFor(iconToken)} alt={country}
-                   style={{
-                     width: 20, height: 14, objectFit: 'cover', borderRadius: 2, flexShrink: 0,
-                     filter: disabled ? 'grayscale(100%)' : 'none',
-                   }} />
-
-              {/* Country */}
-              <span style={{
-                fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
-                color: disabled ? '#9ca3af' : 'var(--text-primary)', flex: 1,
-              }}>{country}</span>
-
-              {/* Score */}
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, flexShrink: 0 }}>
-                <span style={{
-                  fontSize: 15, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif",
-                  color,
-                }}>{disabled ? '—' : score.toFixed(1)}</span>
-
-                {/* Delta */}
-                {!disabled && delta != null && delta !== 0 && (
-                  <span style={{
-                    fontSize: 10, fontWeight: 700,
-                    color: delta > 0 ? '#34d399' : '#f87171',
-                    minWidth: 28,
-                  }}>
-                    {delta > 0 ? `+${delta}` : String(delta)}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Score bar */}
-            <div style={{ paddingLeft: hasWeights ? 53 : 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div style={{ position: 'relative', flex: 1, height: 6 }}>
-                <div style={{
-                  position: 'absolute', inset: 0, borderRadius: 3,
-                  border: '1px dashed rgba(0,0,0,0.12)',
-                  background: 'rgba(0,0,0,0.02)',
-                }} />
-                <div
-                  style={{
-                    position: 'relative',
-                    height: '100%',
-                    width: disabled ? '0%' : `${Math.min(score / 10 * 100, 100)}%`,
-                    borderRadius: 3,
-                    background: disabled ? G : `linear-gradient(to right, #374151 0%, #4b5563 75%, ${color} 100%)`,
-                    transition: 'width 0.4s ease',
-                  }}
-                />
-              </div>
-              <HappyFace size={12} color={disabled ? G : '#111827'} />
-            </div>
-
-          </div>
-        );
-      })}
+      {/* ── Style axis ── */}
+      <div style={{
+        fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+        color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+      }}>Style</div>
+      {renderPersonaRows(styleEntries)}
     </div>
   );
 }

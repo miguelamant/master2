@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { api } from "../../../apiService";
 import { applyRollups } from "./useCountsByCategory";
 
-const PERSONAS = ["Belgian", "French", "German", "Dutch"];
+const PERSONAS = ["Belgian", "French", "German", "Dutch", "Conservative", "Normal", "Progressive"];
 
 // Copied from useEngineDistributions — pure functions, no shared state
 function buildSeries(pct, totalMenuCount = 75) {

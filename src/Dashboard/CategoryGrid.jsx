@@ -16,6 +16,7 @@ const CATEGORIES = [
     { id: 'hotdrinks',    label: 'Hot Drinks',  token: 'HOT_DRINKS', locked: true },
     { id: 'snacks',       label: 'Snacks',      token: 'SNACKS',     locked: true },
     { id: 'meals',        label: 'Meals',       token: 'MEALS',      locked: true },
+    { id: 'deep_fried_snacks', label: 'Frituur', token: 'DEEP_FRIED_SNACKS', locked: false },
 ];
 
 function tierFromScore(sum, total) {

@@ -1,0 +1,7 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Loempia/spring roll icon -->
+<rect x="6" y="22" width="48" height="16" rx="5" fill="#E8C870" stroke="#333" stroke-width="1.5" transform="rotate(-8 30 30)"/>
+<path d="M14 26l8-2M26 24l8-2M38 22l8-2" stroke="#D4A850" stroke-width="1" stroke-opacity="0.5"/>
+<path d="M12 32l10-1M28 30l10-1" stroke="#D4A850" stroke-width="1" stroke-opacity="0.5"/>
+<circle cx="48" cy="28" r="3" fill="#C8A040" stroke="#333" stroke-width="1"/>
+</svg>

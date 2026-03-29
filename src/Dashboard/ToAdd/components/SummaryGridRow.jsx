@@ -15,6 +15,7 @@ import { iconFor } from "../utils/iconLoader";
 
 const PERSONA_FLAG_TOKEN = {
     Belgian: 'BELGIUM', French: 'FRANCE', German: 'GERMANY', Dutch: 'NETHERLANDS',
+    Conservative: 'TRADITIONAL', Normal: 'DUNNO', Progressive: 'EXPLORATIVE',
 };
 
 const _aiExplCache = new Map(); // key -> { text } | '__loading__'

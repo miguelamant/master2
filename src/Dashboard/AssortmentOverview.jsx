@@ -72,8 +72,17 @@ function PersonaSlider({ iconToken, name, value, onChange }) {
 export default function AssortmentOverview({ category, onSelectStore, onGoBack, scores = {}, onScoreUpdate }) {
     const { assortments, loaded, setActiveAssortmentId } = useAssortment();
 
-    const [activeIdx, setActiveIdx]     = useState(0);
-    const [popupId, setPopupId]         = useState(null);
+    const [activeIdx, setActiveIdx]     = useState(() => {
+        const saved = sessionStorage.getItem('ao_lastStoreId');
+        if (!saved) return 0;
+        const id = Number(saved);
+        const idx = assortments.filter(a => a.lat != null && a.lng != null).findIndex(a => a.id === id);
+        return idx >= 0 ? idx : 0;
+    });
+    const [popupId, setPopupId]         = useState(() => {
+        const saved = sessionStorage.getItem('ao_lastStoreId');
+        return saved ? Number(saved) : null;
+    });
     const [personas, setPersonas]       = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [saving, setSaving]           = useState(false);
@@ -145,11 +154,15 @@ export default function AssortmentOverview({ category, onSelectStore, onGoBack, 
     }
 
     function goToAnalysis(storeId) {
+        sessionStorage.setItem('ao_lastStoreId', String(storeId));
         setActiveAssortmentId(storeId);
         onSelectStore(storeId);
     }
 
-    const initialView = { longitude: 4.47, latitude: 50.5, zoom: 7.5 };
+    const lastStore = stores.find(s => s.id === popupId) || stores[activeIdx];
+    const initialView = lastStore
+        ? { longitude: lastStore.lng, latitude: lastStore.lat, zoom: 12 }
+        : { longitude: 4.47, latitude: 50.5, zoom: 7.5 };
 
     const popupStore  = stores.find(s => s.id === popupId) ?? null;
     const popupScore  = popupId != null ? (scores[popupId] ?? null) : null;

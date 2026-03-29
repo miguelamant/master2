@@ -1,0 +1,247 @@
+.scan-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 32px 40px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.scan-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.scan-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+.scan-header__back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+  padding: 0;
+}
+.scan-header__back:hover { color: #111827; }
+
+/* ── Sections ── */
+.scan-section {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.scan-section__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.scan-section__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #111827;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ── Location ── */
+.scan-location-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+.scan-location-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+.scan-location-selected {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(99,102,241,0.04);
+  border-radius: 8px;
+  border: 1px solid rgba(99,102,241,0.12);
+}
+.scan-location-info {
+  flex: 1;
+}
+.scan-location-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+.scan-location-address {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.scan-location-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #9ca3af;
+  padding: 0;
+  line-height: 1;
+}
+.scan-location-clear:hover { color: #ef4444; }
+.scan-map-preview {
+  width: 100%;
+  height: 350px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+/* ── Upload ── */
+.scan-dropzone {
+  border: 2px dashed rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.scan-dropzone:hover, .scan-dropzone--active {
+  border-color: #6366f1;
+  background: rgba(99,102,241,0.03);
+}
+.scan-dropzone__text {
+  font-size: 13px;
+  color: #6b7280;
+}
+.scan-dropzone__text strong { color: #6366f1; }
+.scan-thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.scan-thumb {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ── Extract button ── */
+.scan-extract-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.scan-extract-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.scan-extract-btn:hover:not(:disabled) { background: #1f2937; }
+
+/* ── Items table ── */
+.scan-table-wrap {
+  overflow-x: auto;
+  margin-top: 14px;
+}
+.scan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.scan-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 2px solid rgba(0,0,0,0.08);
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+}
+.scan-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  color: #111827;
+}
+.scan-table tr:hover td { background: rgba(0,0,0,0.01); }
+.scan-table input {
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  background: transparent;
+  box-sizing: border-box;
+}
+.scan-table input:focus {
+  border-color: #6366f1;
+  background: #fff;
+  outline: none;
+}
+.scan-table .scan-row-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d1d5db;
+  font-size: 16px;
+  padding: 2px;
+}
+.scan-table .scan-row-delete:hover { color: #ef4444; }
+
+/* ── Export ── */
+.scan-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.scan-export-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.scan-export-btn:hover:not(:disabled) { background: #047857; }
+
+/* ── Status messages ── */
+.scan-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-left: 12px;
+}
+.scan-status--error { color: #ef4444; }
+.scan-status--success { color: #059669; }

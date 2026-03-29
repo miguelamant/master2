@@ -62,11 +62,26 @@ const BORDER_NL_DE = [
   [53.35, 7.20],                                 // northern tip
 ];
 
-// FR/BE border — only relevant for Belgian Jumbo stores
+// FR/BE border — accurate trace from coast to Luxembourg
 const BORDER_FR = [
-  [51.09, 2.55], [50.84, 2.60], [50.50, 2.90], [50.10, 3.40],
-  [49.95, 3.80], [49.85, 4.15], [49.70, 4.45], [49.58, 4.85],
-  [49.50, 5.10], [49.50, 5.48],
+  [51.09, 2.54],  // coast near De Panne
+  [50.82, 2.60],  // south of Veurne
+  [50.75, 2.88],  // Comines-Warneton
+  [50.74, 3.10],  // Mouscron — right on the border
+  [50.74, 3.22],  // Mouscron east
+  [50.60, 3.35],  // near Tournai
+  [50.48, 3.55],  // south of Tournai toward Mons
+  [50.40, 3.70],  // Quiévrain area
+  [50.35, 3.85],  // south of Mons
+  [50.30, 4.05],  // Erquelinnes
+  [50.25, 4.20],  // Beaumont
+  [50.10, 4.35],  // Chimay
+  [50.05, 4.50],  // Couvin
+  [49.95, 4.80],  // Fumay area
+  [49.85, 5.00],  // Rocroi
+  [49.65, 5.25],  // Montmédy area
+  [49.55, 5.50],  // Virton area
+  [49.50, 5.82],  // Arlon south
 ];
 
 // DE/BE border — only relevant for Belgian Jumbo stores

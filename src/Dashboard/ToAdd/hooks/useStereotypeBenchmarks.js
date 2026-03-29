@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { api } from "../../../apiService";
 import { applyRollups } from "./useCountsByCategory";
 
-const DEFAULT_STEREOTYPES = ["Belgian", "French", "German", "Dutch"];
+const DEFAULT_STEREOTYPES = ["Belgian", "French", "German", "Dutch", "Conservative", "Normal", "Progressive"];
 
 /**
  * Fetches stereotype benchmark values for the current filter view.

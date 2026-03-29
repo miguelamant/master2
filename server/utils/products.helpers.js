@@ -7,6 +7,7 @@
   liquors: "LIQUORS",
   snacks: "SNACKS",
   meals: "MEALS",
+  deep_fried_snacks: "DEEP_FRIED_SNACKS",
 };
 
 export const SELECT_COLS_PRODUCTS_WITH_RELATIONS = `
@@ -32,7 +33,19 @@ export const SELECT_COLS_PRODUCTS_WITH_RELATIONS = `
   is_vitamin,
   is_collagen,
   is_trending,
-  is_high_margin
+  is_high_margin,
+  price_retail,
+  price_foodservice,
+  volume_foodservice,
+  taste_score,
+  star_rating,
+  spice_level,
+  prep_deep_fryer,
+  prep_oven,
+  prep_airfryer,
+  is_crispy,
+  is_vegan,
+  is_vegetarian
 `;
 
 export function prettifyLabel(t) {
@@ -84,5 +97,19 @@ export function flattenProductRow(p) {
 // ALSO include these
     is_trending:      p.is_trending ?? 0,
     is_high_margin:   p.is_high_margin ?? 0,
+
+    // frituur / extra fields
+    price_retail:       p.price_retail ?? null,
+    price_foodservice:  p.price_foodservice ?? null,
+    volume_foodservice: p.volume_foodservice ?? null,
+    taste_score:        p.taste_score ?? null,
+    star_rating:        p.star_rating ?? null,
+    spice_level:        p.spice_level ?? null,
+    prep_deep_fryer:    p.prep_deep_fryer ?? 0,
+    prep_oven:          p.prep_oven ?? 0,
+    prep_airfryer:      p.prep_airfryer ?? 0,
+    is_crispy:          p.is_crispy ?? 0,
+    is_vegan:           p.is_vegan ?? 0,
+    is_vegetarian:      p.is_vegetarian ?? 0,
   };
 }

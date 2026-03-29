@@ -245,6 +245,19 @@ const handleMenuItems = async (req, res) => {
       low_price:      mi.products?.low_price ?? null,
       high_price:     mi.products?.high_price ?? null,
       ceiling_price:  mi.products?.ceiling_price ?? null,
+
+      price_retail:       mi.products?.price_retail ?? null,
+      price_foodservice:  mi.products?.price_foodservice ?? null,
+      volume_foodservice: mi.products?.volume_foodservice ?? null,
+      taste_score:        mi.products?.taste_score ?? null,
+      star_rating:        mi.products?.star_rating ?? null,
+      spice_level:        mi.products?.spice_level ?? null,
+      prep_deep_fryer:    Number(mi.products?.prep_deep_fryer ?? 0),
+      prep_oven:          Number(mi.products?.prep_oven ?? 0),
+      prep_airfryer:      Number(mi.products?.prep_airfryer ?? 0),
+      is_crispy:          Number(mi.products?.is_crispy ?? 0),
+      is_vegan:           Number(mi.products?.is_vegan ?? 0),
+      is_vegetarian:      Number(mi.products?.is_vegetarian ?? 0),
     }));
 
     res.json({
@@ -387,6 +400,7 @@ async function handleMenuCounts(req, res) {
     beers: "BEERS", sodas: "REFRESHMENTS", refreshments: "REFRESHMENTS",
     wines: "WINES", cocktails: "COCKTAILS", liquors: "LIQUORS",
     snacks: "SNACKS", meals: "MEALS",
+    deep_fried_snacks: "DEEP_FRIED_SNACKS",
   };
   const parentName = section ? PARENT_BY_SECTION[String(section).toLowerCase()] : null;
 

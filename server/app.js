@@ -22,6 +22,7 @@ import explainRoutes from "./routes/explain.routes.js";
 import assortmentsRoutes from "./routes/assortments.routes.js";
 import stereotypeBenchmarksRoutes from "./routes/stereotypeBenchmarks.routes.js";
 import engineDistributionsRoutes from "./routes/engineDistributions.routes.js";
+import scanRoutes from "./routes/scan.routes.js";
 
 export const app = express();
 
@@ -37,7 +38,7 @@ if (process.env.NODE_ENV !== "production") {
     app.use(cors(corsOptions));
 }
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(session(sessionConfig));
 app.use(requestLogger);
 
@@ -57,6 +58,7 @@ app.use("/api", explainRoutes);
 app.use("/api", assortmentsRoutes);
 app.use("/api", stereotypeBenchmarksRoutes);
 app.use("/api", engineDistributionsRoutes);
+app.use("/api", scanRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {

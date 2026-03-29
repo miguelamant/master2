@@ -1,0 +1,8 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Shrimp/seafood croquette icon -->
+<path d="M15 35c-3-8 2-18 15-18s18 10 15 18" fill="#F5A070" stroke="#333" stroke-width="1.5"/>
+<path d="M15 35h30c2 0 3 2 2 4l-2 4c-1 2-3 3-5 3H20c-2 0-4-1-5-3l-2-4c-1-2 0-4 2-4z" fill="#E8923C" stroke="#333" stroke-width="1.5"/>
+<path d="M20 38h20M22 42h16" stroke="#D4782A" stroke-width="1" stroke-opacity="0.6"/>
+<circle cx="25" cy="27" r="1.5" fill="#333" opacity="0.3"/>
+<circle cx="35" cy="27" r="1.5" fill="#333" opacity="0.3"/>
+</svg>

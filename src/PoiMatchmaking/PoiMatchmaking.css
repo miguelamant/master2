@@ -1,0 +1,162 @@
+/* ── POI Detail layout ── */
+.poi-detail {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.poi-detail__left {
+  width: 340px;
+  min-width: 300px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 24px 20px;
+  border-right: 1px solid rgba(0,0,0,0.07);
+  background: #fff;
+}
+
+.poi-detail__right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 24px;
+}
+
+.poi-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0;
+  margin-bottom: 16px;
+}
+.poi-detail__back:hover { color: #111827; }
+
+.poi-detail__store-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.poi-detail__store-address {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+.poi-detail__section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+/* ── Item list ── */
+.poi-items__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.poi-items__title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.poi-items__count {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  color: #9ca3af;
+  background: rgba(0,0,0,0.04);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.poi-items__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.poi-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.poi-item__name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  flex: 1;
+}
+
+.poi-item__brand {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.poi-item__heritage {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.poi-item__heritage--TRAPPIST   { background: #fef3c7; color: #92400e; }
+.poi-item__heritage--ABBEY      { background: #ede9fe; color: #5b21b6; }
+.poi-item__heritage--TRADITIONAL { background: #e0e7ff; color: #3730a3; }
+.poi-item__heritage--MODERN     { background: #d1fae5; color: #065f46; }
+.poi-item__heritage--NORMAL     { background: #f3f4f6; color: #6b7280; }
+
+.poi-item__price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: right;
+}
+
+.poi-item__subcat {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+
+/* ── Loading ── */
+.poi-detail__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+}

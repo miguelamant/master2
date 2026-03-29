@@ -1,0 +1,8 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Frikandel/minced stick icon -->
+<rect x="8" y="22" width="44" height="16" rx="8" fill="#8B5E3C" stroke="#333" stroke-width="1.5"/>
+<path d="M16 28h28" stroke="#6B3F1F" stroke-width="1" stroke-opacity="0.5"/>
+<path d="M16 32h28" stroke="#6B3F1F" stroke-width="1" stroke-opacity="0.5"/>
+<ellipse cx="12" cy="30" rx="4" ry="7" fill="#7A5233" stroke="#333" stroke-width="1"/>
+<ellipse cx="48" cy="30" rx="4" ry="7" fill="#7A5233" stroke="#333" stroke-width="1"/>
+</svg>

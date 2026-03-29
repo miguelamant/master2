@@ -40,9 +40,10 @@ const LandingPage = () => {
                 if (res.data.token) localStorage.setItem('token', res.data.token);
                 if (res.data.business_id) localStorage.setItem('business_id', res.data.business_id);
                 localStorage.setItem('logo', res.data.logo || '');
+                localStorage.setItem('product_type', res.data.product_type ?? 2);
 
                 refreshAssortments();
-                navigate('/dashboard');
+                navigate(res.data.product_type === 1 ? '/poi-matchmaking' : '/dashboard');
             } else {
                 setError('Invalid credentials');
             }

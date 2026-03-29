@@ -16,7 +16,7 @@ const ToRemoveComponent = () => (
 );
 
 // Categories that go through the assortment overview map before analysis
-const ANALYSABLE = new Set(['beers', 'refreshments', 'liquors', 'wines', 'hotdrinks', 'meals', 'snacks', 'cocktails']);
+const ANALYSABLE = new Set(['beers', 'refreshments', 'liquors', 'wines', 'hotdrinks', 'meals', 'snacks', 'cocktails', 'deep_fried_snacks']);
 
 const Layout = ({ children }) => {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -112,6 +112,11 @@ const Layout = ({ children }) => {
                 break;
             case 'cocktails':
                 MainContent = <ToAdd section="cocktails" {...toAddProps} />;
+                break;
+            case 'deep_fried_snacks':
+                MainContent = overviewAction === 'menu'
+                    ? <Menu />
+                    : <ToAdd section="deep_fried_snacks" {...toAddProps} />;
                 break;
             case 'to-remove':
                 MainContent = <ToRemoveComponent />;

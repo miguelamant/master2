@@ -3,18 +3,24 @@ import { api } from "../../../apiService";
 import { applyRollups } from "./useCountsByCategory";
 
 const PERSONA_LAYER_IDS = {
-  Belgian: 9001,
-  French:  9002,
-  German:  9003,
-  Dutch:   9004,
+  Belgian:      9001,
+  French:       9002,
+  German:       9003,
+  Dutch:        9004,
+  Conservative: 9005,
+  Normal:       9006,
+  Progressive:  9007,
 };
 
 // Row-aggregate layers — same personas, 2× weight, field = "rowLabel"
 const PERSONA_ROW_LAYER_IDS = {
-  Belgian: 9011,
-  French:  9012,
-  German:  9013,
-  Dutch:   9014,
+  Belgian:      9011,
+  French:       9012,
+  German:       9013,
+  Dutch:        9014,
+  Conservative: 9015,
+  Normal:       9016,
+  Progressive:  9017,
 };
 
 // Adaptive decay: at `idealCount` items, ~50% of total benefit captured.

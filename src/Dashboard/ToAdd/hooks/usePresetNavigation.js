@@ -1,11 +1,13 @@
 import React from 'react';
 import { PRESET_FILTERS_BEERS } from '../presetBeers';
 import { PRESET_FILTERS_REFRESHMENTS } from '../presetRefreshments';
+import { PRESET_FILTERS_DEEP_FRIED_SNACKS } from '../presetDeepFriedSnacks';
 import { registerPack, setCurrentPosition } from '../ui/scoreStore';
 
 const normalizeCategory = (s) => {
     const t = String(s || '').toLowerCase();
     if (['beer','beers','bier'].includes(t)) return 'beers';
+    if (t === 'deep_fried_snacks') return 'deep_fried_snacks';
     return 'refreshments';
 };
 
@@ -13,7 +15,11 @@ export function usePresetNavigation(section = 'beers') {
     const activeCategory = React.useMemo(() => normalizeCategory(section), [section]);
 
     const PRESET_PACK = React.useMemo(
-        () => (activeCategory === 'beers' ? (PRESET_FILTERS_BEERS || []) : (PRESET_FILTERS_REFRESHMENTS || [])),
+        () => {
+            if (activeCategory === 'beers') return PRESET_FILTERS_BEERS || [];
+            if (activeCategory === 'deep_fried_snacks') return PRESET_FILTERS_DEEP_FRIED_SNACKS || [];
+            return PRESET_FILTERS_REFRESHMENTS || [];
+        },
         [activeCategory]
     );
 
@@ -56,15 +62,20 @@ export function usePresetNavigation(section = 'beers') {
 
     const personaInfo = React.useMemo(() => {
         const info = currentPreset?.info || {};
-        const categoryTitle = activeCategory === 'refreshments' ? 'Refreshments' : 'Beers';
+        const categoryTitle = activeCategory === 'refreshments' ? 'Refreshments'
+            : activeCategory === 'deep_fried_snacks' ? 'Frituur' : 'Beers';
         return {
             title: info.title || (currentPreset?.name || categoryTitle),
             image: info.image || null,
             line1: info.line1 || (activeCategory === 'refreshments'
                 ? 'Balance your soft drinks: more Zero, right mix of flavors.'
+                : activeCategory === 'deep_fried_snacks'
+                ? 'Balance your frituur: right mix of snack types and diets.'
                 : 'Balance your beers: right mix by style and ABV.'),
             line2: info.line2 || (activeCategory === 'refreshments'
                 ? 'Tip: start by fixing Zero vs With sugar, then sub-flavors.'
+                : activeCategory === 'deep_fried_snacks'
+                ? 'Tip: start with subcategories, then refine by diet or spice.'
                 : 'Tip: start with styles, then refine by ABV/format.'),
         };
     }, [currentPreset, activeCategory]);

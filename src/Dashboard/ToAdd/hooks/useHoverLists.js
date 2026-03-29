@@ -22,6 +22,13 @@ function sectionToCategory(section) {
     const s = String(section || "").toLowerCase();
     if (s === "beers" || s === "beer") return "BEERS";
     if (s === "refreshments" || s === "sodas" || s === "soda") return "REFRESHMENTS";
+    if (s === "deep_fried_snacks") return "DEEP_FRIED_SNACKS";
+    if (s === "wines") return "WINES";
+    if (s === "cocktails") return "COCKTAILS";
+    if (s === "liquors") return "LIQUORS";
+    if (s === "snacks") return "SNACKS";
+    if (s === "meals") return "MEALS";
+    if (s === "hotdrinks") return "HOT_DRINKS";
     return null;
 }
 

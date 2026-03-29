@@ -123,6 +123,13 @@ export default function ItemsList({
                     const isTrappist   = heritage === 'trappist';
                     const abv          = item.abv != null ? Number(item.abv) : null;
 
+                    // Frituur-specific fields
+                    const catName      = (item.category ?? item.category_name ?? '').toUpperCase();
+                    const isFrituur    = catName === 'DEEP_FRIED_SNACKS';
+                    const starRating   = isFrituur && item.star_rating != null ? Number(item.star_rating) : null;
+                    const tasteScore   = isFrituur && item.taste_score != null ? Number(item.taste_score) : null;
+                    const pricePortion = isFrituur && item.price_foodservice != null ? Number(item.price_foodservice) : null;
+
                     return (
                         <li key={key} className="item-card">
                             {/* Product image area — generic placeholder indicating future image */}
@@ -183,6 +190,33 @@ export default function ItemsList({
                                 <div className="item-card__category">
                                     {labelFor(tasteLabel)}
                                 </div>
+
+                                {/* Frituur extras: stars, taste score, price per portion */}
+                                {isFrituur && (starRating != null || tasteScore != null || pricePortion != null) && (
+                                    <div className="item-card__frituur-extras">
+                                        {starRating != null && (
+                                            <span className="item-card__stars" title={`Rating: ${starRating}/5`}>
+                                                {[1,2,3,4,5].map(i => (
+                                                    <svg key={i} width="12" height="12" viewBox="0 0 24 24"
+                                                         fill={i <= Math.round(starRating) ? '#F5A623' : 'none'}
+                                                         stroke="#F5A623" strokeWidth="2">
+                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+                                                    </svg>
+                                                ))}
+                                            </span>
+                                        )}
+                                        {tasteScore != null && (
+                                            <span className="item-card__taste-score" title="Taste score">
+                                                🍴 {tasteScore}/10
+                                            </span>
+                                        )}
+                                        {pricePortion != null && (
+                                            <span className="item-card__price-portion" title="Price per portion (foodservice)">
+                                                €{pricePortion.toFixed(2)}/st
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Action button */}
                                 {effectiveToAdd ? (

@@ -32,6 +32,7 @@ const PARENT_BY_SECTION = {
   beers: "BEERS", sodas: "REFRESHMENTS", refreshments: "REFRESHMENTS",
   wines: "WINES", cocktails: "COCKTAILS", liquors: "LIQUORS",
   snacks: "SNACKS", meals: "MEALS",
+  deep_fried_snacks: "DEEP_FRIED_SNACKS",
 };
 
 const abvToBand = (x) => {
@@ -129,14 +130,14 @@ router.post("/engine-distributions", isAuthenticated, async (req, res) => {
       within = {},
       filters = {},
       predicates = [],
-      stereotypes = ["Belgian", "French", "German", "Dutch"],
+      stereotypes = ["Belgian", "French", "German", "Dutch", "Conservative", "Normal", "Progressive"],
     } = req.body || {};
 
     // 1. Resolve assortment + fetch bar's persona weights
     let assortmentId = req.body?.assortmentId != null ? Number(req.body.assortmentId) : null;
-    let barWeights = { Belgian: 50, French: 50, German: 50, Dutch: 50 };
+    let barWeights = { Belgian: 50, French: 50, German: 50, Dutch: 50, Conservative: 50, Normal: 50, Progressive: 50 };
 
-    const weightFields = "id, belgian, french, german, dutch";
+    const weightFields = "id, belgian, french, german, dutch, conservative, normal, progressive";
     if (assortmentId) {
       const { data, error } = await supabase
         .from("assortments")
@@ -144,7 +145,7 @@ router.post("/engine-distributions", isAuthenticated, async (req, res) => {
         .eq("id", assortmentId)
         .single();
       if (!error && data) {
-        barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50 };
+        barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50, Conservative: data.conservative ?? 50, Normal: data.normal ?? 50, Progressive: data.progressive ?? 50 };
       }
     } else {
       const businessId = req.session.user.id;
@@ -157,7 +158,7 @@ router.post("/engine-distributions", isAuthenticated, async (req, res) => {
         .single();
       if (error || !data) return res.status(400).json({ error: "No assortment found for this business" });
       assortmentId = data.id;
-      barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50 };
+      barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50, Conservative: data.conservative ?? 50, Progressive: data.progressive ?? 50 };
     }
 
     // 2. Build effective filters

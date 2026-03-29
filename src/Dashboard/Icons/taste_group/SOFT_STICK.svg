@@ -1,0 +1,8 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Soft stick / zigeunerstick icon -->
+<rect x="8" y="24" width="44" height="12" rx="6" fill="#C09050" stroke="#333" stroke-width="1.5"/>
+<path d="M14 28h32" stroke="#A07838" stroke-width="1" stroke-dasharray="4 3"/>
+<path d="M14 32h32" stroke="#A07838" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="11" cy="30" rx="3" ry="5.5" fill="#B08040" stroke="#333" stroke-width="1"/>
+<ellipse cx="49" cy="30" rx="3" ry="5.5" fill="#B08040" stroke="#333" stroke-width="1"/>
+</svg>
