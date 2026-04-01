@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import OpenAI from "openai";
 import ExcelJS from "exceljs";
 import { supabase } from "../integrations/supabase.js";
+import { isAuthenticated } from "../middleware/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +24,7 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 
 
 // ── POST /api/scan/upload ─────────────────────────────────────────────────
 // Upload a menu card image to Supabase Storage
-router.post("/scan/upload", upload.single("image"), async (req, res) => {
+router.post("/scan/upload", isAuthenticated, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No image file provided" });
 
@@ -51,7 +52,7 @@ router.post("/scan/upload", upload.single("image"), async (req, res) => {
 
 // ── POST /api/scan/extract ────────────────────────────────────────────────
 // Send image to GPT-4o vision to extract menu items
-router.post("/scan/extract", async (req, res) => {
+router.post("/scan/extract", isAuthenticated, async (req, res) => {
   try {
     const { imageUrl } = req.body;
     if (!imageUrl) return res.status(400).json({ error: "imageUrl is required" });
@@ -110,7 +111,7 @@ Return ONLY valid JSON in this exact format (no markdown, no backticks):
 
 // ── POST /api/scan/export ─────────────────────────────────────────────────
 // Generate Excel in scan_images format and upload to Supabase Storage
-router.post("/scan/export", async (req, res) => {
+router.post("/scan/export", isAuthenticated, async (req, res) => {
   try {
     const { location = {}, images = [], items = [] } = req.body;
 
@@ -198,7 +199,7 @@ router.post("/scan/export", async (req, res) => {
 
 // ── POST /api/scan/push-menu ──────────────────────────────────────────────
 // Run the Python pipeline to match, validate, and import menu items into Supabase
-router.post("/scan/push-menu", async (req, res) => {
+router.post("/scan/push-menu", isAuthenticated, async (req, res) => {
   let workdir = null;
   try {
     const { location = {}, images = [], items = [] } = req.body;
@@ -207,9 +208,84 @@ router.post("/scan/push-menu", async (req, res) => {
     // 1. Create temp workdir
     workdir = await mkdtemp(path.join(tmpdir(), "pipeline_run_"));
 
-    // 2. Build the input Excel in the format ACTIVE_MATCHED_2_1.PY expects
-    //    Columns: scan_session_id, location_id, category_name, product_name,
-    //             product_description, product_price, key
+    // 2. Ensure venue exists in Supabase (auto-create if needed)
+    const placeId = location.place_id || "";
+    let businessId = null;
+
+    if (placeId) {
+      // Check if an assortment with this place_id already exists
+      const { data: existing } = await supabase
+        .from("assortments")
+        .select("id, business_id")
+        .eq("place_id", placeId)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        businessId = existing[0].business_id;
+        console.log(`[push-menu] Found existing business ${businessId} for place_id ${placeId}`);
+      } else {
+        // Create a new business_info entry
+        const venueName = location.name || "Unknown Venue";
+        const uniqueEmail = `scan_${placeId.slice(0, 20)}_${Date.now()}@auto.local`;
+        const { data: newBiz, error: bizErr } = await supabase
+          .from("business_info")
+          .insert({ horeca_name: venueName, email: uniqueEmail, password: "auto" })
+          .select("id")
+          .single();
+
+        if (bizErr) {
+          console.error("[push-menu] Failed to create business:", bizErr);
+          return res.status(500).json({ error: "Failed to create venue", detail: bizErr.message });
+        }
+
+        businessId = newBiz.id;
+
+        // Create an assortment for this business
+        const { error: assErr } = await supabase
+          .from("assortments")
+          .insert({
+            business_id: businessId,
+            name: venueName,
+            address: location.formatted_address || "",
+            place_id: placeId,
+            location_address_place_id: placeId,
+            lat: location.latitude || null,
+            lng: location.longitude || null,
+            sort_order: 0,
+          });
+
+        if (assErr) console.error("[push-menu] Failed to create assortment:", assErr);
+        console.log(`[push-menu] Created new business ${businessId} + assortment for "${venueName}"`);
+      }
+    }
+
+    // 3. Look up the actual assortment_id for this business
+    let assortmentId = null;
+    if (businessId) {
+      const { data: assortments } = await supabase
+        .from("assortments")
+        .select("id")
+        .eq("business_id", businessId)
+        .order("sort_order", { ascending: true })
+        .limit(1);
+      if (assortments && assortments.length > 0) {
+        assortmentId = assortments[0].id;
+      }
+    }
+
+    // 4. Write a workdir-local MAPS_VENUE.xlsx with the venue mapping
+    //    Use assortment_id as location_willy_id so the pipeline maps correctly
+    const willyId = assortmentId || businessId;
+    if (willyId && placeId) {
+      const mapsWb = new ExcelJS.Workbook();
+      const mapsWs = mapsWb.addWorksheet("Sheet1");
+      mapsWs.addRow(["location_willy_id", "location_name", "location_address_place_id"]);
+      mapsWs.addRow([willyId, location.name || "", placeId]);
+      const mapsPath = path.join(workdir, "MAPS_VENUE.xlsx");
+      await writeFile(mapsPath, Buffer.from(await mapsWb.xlsx.writeBuffer()));
+    }
+
+    // 4. Build the input Excel in the format ACTIVE_MATCHED_2_1.PY expects
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet("Sheet1");
 
@@ -220,7 +296,7 @@ router.post("/scan/push-menu", async (req, res) => {
     ws.addRow(headers);
 
     const sessionId = randomUUID();
-    const locationId = location.place_id || randomUUID();
+    const locationId = placeId || randomUUID();
 
     for (const [idx, item] of items.entries()) {
       // Convert price from cents to euros (pipeline expects euro value)

@@ -23,6 +23,8 @@ import assortmentsRoutes from "./routes/assortments.routes.js";
 import stereotypeBenchmarksRoutes from "./routes/stereotypeBenchmarks.routes.js";
 import engineDistributionsRoutes from "./routes/engineDistributions.routes.js";
 import scanRoutes from "./routes/scan.routes.js";
+import claimRoutes from "./routes/claim.routes.js";
+import menuConfigRoutes from "./routes/menuConfig.routes.js";
 
 export const app = express();
 
@@ -59,6 +61,8 @@ app.use("/api", assortmentsRoutes);
 app.use("/api", stereotypeBenchmarksRoutes);
 app.use("/api", engineDistributionsRoutes);
 app.use("/api", scanRoutes);
+app.use("/api", claimRoutes);
+app.use("/api", menuConfigRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {

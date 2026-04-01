@@ -10,6 +10,7 @@ export const env = {
     SESSION_SECRET: process.env.SESSION_SECRET || 'dev-secret',
     SUPABASE_URL: requireEnv('SUPABASE_URL'),
     SUPABASE_SERVICE_KEY: requireEnv('SUPABASE_SERVICE_KEY'),
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY || ""
-
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
+    GMAIL_USER: process.env.GMAIL_USER || "",
+    GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD || "",
 };

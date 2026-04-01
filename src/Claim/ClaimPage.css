@@ -1,0 +1,198 @@
+.claim-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 32px 40px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.claim-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.claim-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+.claim-header__back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+  padding: 0;
+}
+.claim-header__back:hover { color: #111827; }
+
+/* ── Venue info banner ── */
+.claim-venue-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(99,102,241,0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(99,102,241,0.12);
+  margin-bottom: 20px;
+}
+.claim-venue-banner__info { flex: 1; }
+.claim-venue-banner__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+.claim-venue-banner__address {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.claim-venue-banner__website {
+  font-size: 12px;
+  color: #6366f1;
+  margin-top: 4px;
+}
+
+/* ── Email input ── */
+.claim-email-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+.claim-email-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+
+.claim-domain-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+.claim-domain-hint--error {
+  color: #ef4444;
+}
+.claim-domain-hint--ok {
+  color: #059669;
+}
+
+/* ── Code input ── */
+.claim-code-input {
+  width: 180px;
+  padding: 12px 16px;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 8px;
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+}
+.claim-code-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+
+/* ── Password input ── */
+.claim-password-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 10px 14px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+.claim-password-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+
+/* ── Buttons ── */
+.claim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.claim-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.claim-btn:hover:not(:disabled) { background: #1f2937; }
+
+.claim-btn--success {
+  background: #059669;
+}
+.claim-btn--success:hover:not(:disabled) { background: #047857; }
+
+.claim-resend {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 12px;
+}
+.claim-resend:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ── Success ── */
+.claim-success {
+  text-align: center;
+  padding: 40px 20px;
+}
+.claim-success__check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #059669;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+.claim-success h2 {
+  font-size: 20px;
+  color: #111827;
+  margin: 0 0 8px;
+}
+.claim-success p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+.claim-success__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}

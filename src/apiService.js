@@ -54,3 +54,24 @@ export async function menuItems({
     });
     return data; // { items, page, pageSize, appliedFilters }
 }
+
+// Menu config (digital twin layout)
+export async function getMenuConfig(assortmentId) {
+  const { data } = await api.get('/api/menu-config', { params: { assortmentId } });
+  return data;
+}
+
+export async function updateMenuConfig(assortmentId, config) {
+  const { data } = await api.put('/api/menu-config', { assortmentId, ...config });
+  return data;
+}
+
+export async function updateMenuItemDetails(id, details) {
+  const { data } = await api.patch(`/api/menu-items/${id}/details`, details);
+  return data;
+}
+
+export async function updateMenuItemsLayout(updates) {
+  const { data } = await api.patch('/api/menu-items/layout', { updates });
+  return data;
+}

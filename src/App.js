@@ -28,6 +28,7 @@ import Specialiteit from "./Wrapped/Specialiteit";
 import Dashboard from "./Dashboard/Dashboard";
 import PoiMatchmaking from "./PoiMatchmaking/PoiMatchmaking";
 import ScanPage from "./Scan/ScanPage";
+import ClaimPage from "./Claim/ClaimPage";
 import Categorieen from "./Wrapped/Categorieen";
 import TopverkopersEten from "./Wrapped/TopverkopersEten";
 import StijgersDrank from "./Wrapped/StijgersDrank";
@@ -126,6 +127,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/poi-matchmaking" element={<PoiMatchmaking />} />
                     <Route path="/scan" element={<ScanPage />} />
+                    <Route path="/claim" element={<ClaimPage />} />
                     <Route path="/welcome" element={<LandingPage />} />
 
                     {/* Wrapped Routes */}

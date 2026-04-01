@@ -55,7 +55,8 @@ export function computePersonaScores({ rawDist, rollups = [], rowDefs = [], coun
     );
   }
   const scores = {};
-  for (const persona of PERSONAS) {
+  const activePersonas = Object.keys(rawDist);
+  for (const persona of activePersonas) {
     const dist = applyRollups(rawDist[persona] || {}, rollups);
     const rowDist = buildRowDist(dist, rowDefs);
     let actual = 0, max = 0;
@@ -93,6 +94,7 @@ export function useStereotypeFit({
   within = {},
   filters = {},
   predicates = [],
+  stereotypes,
   rollups = [],
   rowDefs = [],
   countsByCategory = {},
@@ -102,8 +104,8 @@ export function useStereotypeFit({
   const [rawDist, setRawDist] = useState(null);
 
   const depsKey = useMemo(
-    () => JSON.stringify({ assortmentId, groupBy, section, within, filters, predicates }),
-    [assortmentId, groupBy, section, within, filters, predicates]
+    () => JSON.stringify({ assortmentId, groupBy, section, within, filters, predicates, stereotypes }),
+    [assortmentId, groupBy, section, within, filters, predicates, stereotypes]
   );
 
   useEffect(() => {
@@ -117,6 +119,7 @@ export function useStereotypeFit({
       within,
       filters,
       predicates,
+      ...(stereotypes ? { stereotypes } : {}),
     }).then(({ data }) => {
       if (!alive) return;
       setRawDist(data?.distributions ?? null);

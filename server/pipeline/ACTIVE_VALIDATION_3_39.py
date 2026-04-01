@@ -32,7 +32,13 @@ def main():
 
     in_path = Path(args.input).resolve() if args.input else workdir / "ACTIVE_VALIDATION_3_38.xlsx"
     out_path = Path(args.output).resolve() if args.output else workdir / "ACTIVE_VALIDATION_3_39.xlsx"
-    venue_path = Path(args.venue_map).resolve() if args.venue_map else datadir / "MAPS_VENUE.xlsx"
+    # Check workdir first (run-specific), then datadir (global)
+    if args.venue_map:
+        venue_path = Path(args.venue_map).resolve()
+    elif (workdir / "MAPS_VENUE.xlsx").is_file():
+        venue_path = workdir / "MAPS_VENUE.xlsx"
+    else:
+        venue_path = datadir / "MAPS_VENUE.xlsx"
 
     if not in_path.is_file():
         log.error("Input not found: %s", in_path); sys.exit(1)

@@ -9,6 +9,7 @@ import './Layout.css';
 import '../index.css';
 import ToAdd from './ToAdd';
 import CategoryGrid from './CategoryGrid';
+import DigitalTwin from './DigitalTwin/DigitalTwin';
 import AssortmentOverview from './AssortmentOverview';
 
 const ToRemoveComponent = () => (
@@ -126,6 +127,9 @@ const Layout = ({ children }) => {
                 break;
             case 'edit-menu':
                 MainContent = <Menu />;
+                break;
+            case 'digital-twin':
+                MainContent = <DigitalTwin />;
                 break;
             default:
                 MainContent = <ToAdd section="beers" {...toAddProps} />;

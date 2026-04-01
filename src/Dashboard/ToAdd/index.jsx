@@ -164,6 +164,8 @@ const normalizeCategory = (s) => {
 
 
 
+  const GEO_ONLY = ['Belgian', 'French', 'German', 'Dutch'];
+
   const { benchmarks: stereotypeBenchmarks, personaWeights } = useStereotypeBenchmarks({
     assortmentId: activeAssortmentId,
     groupBy,
@@ -171,6 +173,7 @@ const normalizeCategory = (s) => {
     within,
     filters: apiFilters,
     predicates: presetPredicates,
+    stereotypes: GEO_ONLY,
     rollups: currentPreset?.rollups ?? [],
     partitionBy: partitionBy?.length ? partitionBy : null,
     enabled: true,
@@ -722,6 +725,7 @@ const normalizeCategory = (s) => {
     within,
     filters: apiFilters,
     predicates: presetPredicates,
+    stereotypes: GEO_ONLY,
     rollups: currentPreset?.rollups ?? [],
     rowDefs,
     countsByCategory,
@@ -869,19 +873,11 @@ const normalizeCategory = (s) => {
 
   // ── Weighted satisfaction score ────────────────────────────────────────────
   const satisfactionScore = useMemo(() => {
-    // Two independent axes — each weighted internally, then averaged 50/50
-    const geoP   = ['Belgian', 'French', 'German', 'Dutch'];
-    const styleP = ['Conservative', 'Normal', 'Progressive'];
-    const axisScore = (list) => {
-      const tW = list.reduce((s, p) => s + (personaWeights[p] ?? 25), 0);
-      const wS = list.reduce((s, p) => s + (personaFit[p] ?? 0) * (personaWeights[p] ?? 25), 0);
-      return tW > 0 ? wS / tW : null;
-    };
-    const geo   = axisScore(geoP);
-    const style = axisScore(styleP);
-    if (geo === null && style === null) return null;
-    const avg = geo !== null && style !== null ? (geo + style) / 2 : (geo ?? style);
-    return Math.round(avg * 10) / 10;
+    const geoP = ['Belgian', 'French', 'German', 'Dutch'];
+    const tW = geoP.reduce((s, p) => s + (personaWeights[p] ?? 25), 0);
+    const wS = geoP.reduce((s, p) => s + (personaFit[p] ?? 0) * (personaWeights[p] ?? 25), 0);
+    if (tW === 0) return null;
+    return Math.round((wS / tW) * 10) / 10;
   }, [personaFit, personaWeights]);
 
   // ── Per-persona score delta for the currently displayed swap ──────────────
@@ -900,9 +896,8 @@ const normalizeCategory = (s) => {
       countsByCategory: modCounts,
       totalMenuCount,
     });
-    const personas = ['Belgian', 'French', 'German', 'Dutch', 'Conservative', 'Normal', 'Progressive'];
     return Object.fromEntries(
-      personas.map(p => [p, Math.round(((swappedScores[p] ?? 0) - (personaFit[p] ?? 0)) * 10) / 10])
+      GEO_ONLY.map(p => [p, Math.round(((swappedScores[p] ?? 0) - (personaFit[p] ?? 0)) * 10) / 10])
     );
   }, [personaRawDist, currentSwap, countsByCategory, currentPreset, rowDefs, totalMenuCount, personaFit]);
 
@@ -1667,6 +1662,7 @@ const normalizeCategory = (s) => {
             satisfactionScore={satisfactionScore}
             personaDeltas={personaDeltas}
             disabled={!effectiveWillyOn}
+            compact
           />
         </div>
 

@@ -62,10 +62,10 @@ export function useRecommendations({
         // Thresholds calibrated for log(1 + pct/10) MB scale:
         // 1% bucket → 0.095, 3% → 0.26, 10% → 0.69, 30% → 1.39
         switch (willyMode) {
-            case 2: return 0.04; // hard/stern   — catches ≥0.5% underpresence
+            case 2: return 0.20; // hard/stern   — catches ≥0.5% underpresence
             case 0: return 0.50; // easy/sleepy  — catches only large imbalances (≥10%)
             case 1:
-            default: return 0.08; // medium/chilly — catches ≥1% underpresence
+            default: return 0.35; // medium/chilly — catches ≥1% underpresence
         }
     }, [willyMode]);
 

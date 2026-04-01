@@ -11,15 +11,23 @@ const router = Router();
  */
 router.get('/assortments', isAuthenticated, async (req, res) => {
   const businessId = req.session.user.id;
+  const CHUNK = 1000;
   try {
-    const { data, error } = await supabase
-      .from('assortments')
-      .select('id, name, address, sort_order, lat, lng, belgian, french, german, dutch, conservative, normal, progressive')
-      .eq('business_id', businessId)
-      .order('sort_order', { ascending: true });
+    let allRows = [];
+    for (let from = 0; ; from += CHUNK) {
+      const { data, error } = await supabase
+        .from('assortments')
+        .select('id, name, address, sort_order, lat, lng, belgian, french, german, dutch, conservative, normal, progressive')
+        .eq('business_id', businessId)
+        .order('sort_order', { ascending: true })
+        .range(from, from + CHUNK - 1);
 
-    if (error) return res.status(500).json({ error: 'Database error', message: error.message });
-    res.json(data || []);
+      if (error) return res.status(500).json({ error: 'Database error', message: error.message });
+      if (!data?.length) break;
+      allRows.push(...data);
+      if (data.length < CHUNK) break;
+    }
+    res.json(allRows);
   } catch (e) {
     res.status(500).json({ error: 'Server error', message: e.message });
   }

@@ -3,7 +3,7 @@
 
 let state = {
     // 0 = easy, 1 = normal (default), 2 = hard
-    willyMode: Number(sessionStorage.getItem('willyMode') ?? 1) % 3,
+    willyMode: Number(sessionStorage.getItem('willyMode') ?? 0) % 3,
     willyEnabled: (localStorage.getItem('willyEnabled') ?? '1') === '1',
 };
 

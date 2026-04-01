@@ -36,7 +36,14 @@ def main():
     datadir = Path(args.datadir) if args.datadir else workdir
 
     in_path = Path(args.input).resolve() if args.input else workdir / "ACTIVE_MAPPED_3_1.xlsx"
-    maps_path = Path(args.maps).resolve() if args.maps else datadir / "MAPS_VENUE.xlsx"
+    # Check workdir first (run-specific mapping from Express), then datadir (global)
+    if args.maps:
+        maps_path = Path(args.maps).resolve()
+    elif (workdir / "MAPS_VENUE.xlsx").is_file():
+        maps_path = workdir / "MAPS_VENUE.xlsx"
+        log.info("Using workdir MAPS_VENUE.xlsx (run-specific)")
+    else:
+        maps_path = datadir / "MAPS_VENUE.xlsx"
     out_path = workdir / "ACTIVE_MAP_LOC_3_3.xlsx"
 
     if not in_path.is_file():

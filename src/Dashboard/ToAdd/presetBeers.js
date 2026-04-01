@@ -466,6 +466,7 @@ export const PRESET_FILTERS_BEERS = [
 
     {
         id: 2012,
+        willyOff: true,
         name: <> <strong>Touristen & Traditionalisten</strong>!<br/> Trappisten- en abdijbieren zijn voor Belgen een tastbaar stuk erfgoed en identiteit, en voor toeristen een authentieke en unieke manier om België te beleven. </>,
         section: "beers",
         groupBy: "subcategory",

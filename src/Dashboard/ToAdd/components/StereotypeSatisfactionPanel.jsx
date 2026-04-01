@@ -9,11 +9,33 @@ const GEO_PERSONAS = [
   { key: 'Dutch',   country: 'Netherlands', iconToken: 'NETHERLANDS' },
 ];
 const STYLE_PERSONAS = [
-  { key: 'Conservative', country: 'Conservative', iconToken: 'TRADITIONAL' },
-  { key: 'Normal',       country: 'Normal',       iconToken: 'DUNNO'       },
-  { key: 'Progressive',  country: 'Progressive',  iconToken: 'EXPLORATIVE' },
+  { key: 'Conservative', country: 'Conservative', iconToken: 'CONSERVATIVE' },
+  { key: 'Normal',       country: 'Normal',       iconToken: 'NORMAL_STYLE' },
+  { key: 'Progressive',  country: 'Progressive',  iconToken: 'PROGRESSIVE'  },
 ];
-const PERSONA_MAP = [...GEO_PERSONAS, ...STYLE_PERSONAS];
+const DIET_PERSONAS = [
+  { key: 'Ecological', country: 'Eco / Veggie / Vegan', iconToken: 'ECOLOGICAL' },
+  { key: 'Omnivore',   country: 'Fish / Omnivore',      iconToken: 'FISH'       },
+];
+const PRICE_PERSONAS = [
+  { key: 'Cheap',        country: 'Cheap',   iconToken: 'EURO_1' },
+  { key: 'Normal_Price', country: 'Normal',  iconToken: 'EURO_2' },
+  { key: 'Premium',      country: 'Premium', iconToken: 'EURO_3' },
+];
+const LIFESTYLE_PERSONAS = [
+  { key: 'Sport',      country: 'Sport',      iconToken: 'SPORT_PERSON' },
+  { key: 'Health',     country: 'Health',      iconToken: 'HEARTBEAT'    },
+  { key: 'Biological', country: 'Biological',  iconToken: 'BIOLOGICAL' },
+  { key: 'Local',      country: 'Local',       iconToken: 'LOCAL'      },
+];
+const PERSONA_MAP = [...GEO_PERSONAS, ...STYLE_PERSONAS, ...DIET_PERSONAS, ...PRICE_PERSONAS, ...LIFESTYLE_PERSONAS];
+
+// Demo only — randomly generated placeholder scores
+const MOCK_SCORES = {
+  Ecological: 6.8, Omnivore: 7.4,
+  Cheap: 5.2, Normal_Price: 7.0, Premium: 8.1,
+  Sport: 6.5, Health: 5.9, Biological: 4.8, Local: 7.3,
+};
 
 function scoreColor(score) {
   if (score >= 7.5) return '#34d399';
@@ -21,25 +43,11 @@ function scoreColor(score) {
   return '#f87171';
 }
 
-function scoreBarClass(score) {
-  if (score >= 7.5) return 'bar-green';
-  if (score >= 5.0) return 'bar-orange';
-  return 'bar-red';
-}
-
-const PersonIcon = ({ size = 11, style }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={style}>
-    <circle cx="12" cy="7" r="4" />
-    <path d="M12 14c-6 0-9 2.5-9 4v1h18v-1c0-1.5-3-4-9-4z" />
-  </svg>
-);
-
-const HappyFace = ({ size = 14, color = '#111827' }) => (
+const MatchIcon = ({ size = 14, color = '#111827' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="2" />
-    <circle cx="8.5" cy="10" r="1.2" fill={color} />
-    <circle cx="15.5" cy="10" r="1.2" fill={color} />
-    <path d="M8 15c1.5 2 6.5 2 8 0" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.6" />
+    <circle cx="12" cy="12" r="3" stroke={color} strokeWidth="1.6" />
+    <path d="M12 3v4M12 17v4M3 12h4M17 12h4" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
   </svg>
 );
 
@@ -49,46 +57,32 @@ export default function StereotypeSatisfactionPanel({
   satisfactionScore = null,
   personaDeltas = null,
   disabled = false,
+  compact = false,
 }) {
-  const hasWeights = Object.keys(personaWeights).length > 0;
   const G = '#d1d5db';  // grey used when disabled
 
   const makeEntries = (list) => list
     .map(({ key, country, iconToken }) => ({
       name: key, country, iconToken,
-      score: personaFit[key] ?? 0,
-      weight: personaWeights[key] ?? null,
+      score: personaFit[key] ?? MOCK_SCORES[key] ?? 0,
     }))
     .sort((a, b) => b.score - a.score);
 
-  const geoEntries   = makeEntries(GEO_PERSONAS);
-  const styleEntries = makeEntries(STYLE_PERSONAS);
+  const geoEntries       = makeEntries(GEO_PERSONAS);
+  const styleEntries     = makeEntries(STYLE_PERSONAS);
+  const dietEntries      = makeEntries(DIET_PERSONAS);
+  const priceEntries     = makeEntries(PRICE_PERSONAS);
+  const lifestyleEntries = makeEntries(LIFESTYLE_PERSONAS);
 
   const overallColor = disabled ? G : (satisfactionScore !== null ? scoreColor(satisfactionScore) : '#9ca3af');
 
-  const renderPersonaRows = (entries) => entries.map(({ name, country, iconToken, score, weight }) => {
+  const renderPersonaRows = (entries) => entries.map(({ name, country, iconToken, score }) => {
     const delta = personaDeltas?.[name];
     const color = disabled ? G : scoreColor(score);
+    const weight = personaWeights[name];
     return (
       <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          {hasWeights && (
-            <div style={{ width: 46, display: 'flex', justifyContent: 'flex-end', flexShrink: 0 }}>
-              {weight != null && (
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 3,
-                  background: 'rgba(0,0,0,0.04)', borderRadius: 5, padding: '2px 5px',
-                }}>
-                  <PersonIcon size={10} style={{ opacity: 0.6 }} />
-                  <span style={{
-                    fontSize: 11, fontWeight: 800,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    color: disabled ? G : 'var(--text-primary)',
-                  }}>{weight}%</span>
-                </div>
-              )}
-            </div>
-          )}
           <img src={iconFor(iconToken)} alt={country}
                style={{
                  width: 20, height: 14, objectFit: 'cover', borderRadius: 2, flexShrink: 0,
@@ -97,7 +91,14 @@ export default function StereotypeSatisfactionPanel({
           <span style={{
             fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 12,
             color: disabled ? '#9ca3af' : 'var(--text-primary)', flex: 1,
-          }}>{country}</span>
+          }}>
+            {country}
+            {compact && weight != null && (
+              <span style={{ fontWeight: 400, fontSize: 10, color: 'rgba(0,0,0,0.4)', marginLeft: 4 }}>
+                {weight}%
+              </span>
+            )}
+          </span>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, flexShrink: 0 }}>
             <span style={{
               fontSize: 15, fontWeight: 800, fontFamily: "'Space Grotesk', sans-serif", color,
@@ -110,7 +111,7 @@ export default function StereotypeSatisfactionPanel({
             )}
           </div>
         </div>
-        <div style={{ paddingLeft: hasWeights ? 53 : 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <div style={{ position: 'relative', flex: 1, height: 6 }}>
             <div style={{
               position: 'absolute', inset: 0, borderRadius: 3,
@@ -124,7 +125,7 @@ export default function StereotypeSatisfactionPanel({
               transition: 'width 0.4s ease',
             }} />
           </div>
-          <HappyFace size={12} color={disabled ? G : '#111827'} />
+          <MatchIcon size={12} color={disabled ? G : '#111827'} />
         </div>
       </div>
     );
@@ -135,48 +136,9 @@ export default function StereotypeSatisfactionPanel({
 
       {/* Title */}
       <div className="stereotype-panel__title">
-        Satisfaction KPI's
+        {compact ? 'Satisfaction KPIs' : 'Identity Distribution'}
         {disabled && <span style={{ marginLeft: 6, fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>— off</span>}
       </div>
-
-      {/* Overall score */}
-      {satisfactionScore !== null && (
-        <div style={{ marginBottom: 4 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 6 }}>
-            <span style={{
-              fontSize: 36, fontWeight: 900, lineHeight: 1,
-              fontFamily: "'Space Grotesk', sans-serif",
-              color: disabled ? G : overallColor,
-            }}>
-              {disabled ? '—' : satisfactionScore.toFixed(1)}
-            </span>
-            <span style={{ fontSize: 11, opacity: 0.5 }}>/10</span>
-            <span style={{ fontSize: 11, opacity: 0.45, marginLeft: 2 }}>weighted</span>
-          </div>
-
-          {/* Overall bar */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <div style={{ position: 'relative', flex: 1, height: 5 }}>
-              <div style={{
-                position: 'absolute', inset: 0, borderRadius: 3,
-                border: '1px dashed rgba(0,0,0,0.12)',
-                background: 'rgba(0,0,0,0.02)',
-              }} />
-              <div
-                style={{
-                  position: 'relative',
-                  height: '100%',
-                  width: disabled ? '0%' : `${Math.min(satisfactionScore / 10 * 100, 100)}%`,
-                  borderRadius: 3,
-                  background: disabled ? G : `linear-gradient(to right, #374151 0%, #4b5563 75%, ${overallColor} 100%)`,
-                  transition: 'width 0.4s ease',
-                }}
-              />
-            </div>
-            <HappyFace size={14} color={disabled ? G : '#111827'} />
-          </div>
-        </div>
-      )}
 
       {/* Divider */}
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '-4px 0 0' }} />
@@ -188,15 +150,49 @@ export default function StereotypeSatisfactionPanel({
       }}>Culture</div>
       {renderPersonaRows(geoEntries)}
 
-      {/* Axis separator */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
+      {!compact && (<>
+        {/* Axis separator */}
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
 
-      {/* ── Style axis ── */}
-      <div style={{
-        fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
-        color: 'rgba(0,0,0,0.35)', marginBottom: -2,
-      }}>Style</div>
-      {renderPersonaRows(styleEntries)}
+        {/* ── Style axis ── */}
+        <div style={{
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+          color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+        }}>Style</div>
+        {renderPersonaRows(styleEntries)}
+      </>)}
+
+      {!compact && (<>
+        {/* Axis separator */}
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
+
+        {/* ── Diet axis ── */}
+        <div style={{
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+          color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+        }}>Diet</div>
+        {renderPersonaRows(dietEntries)}
+
+        {/* Axis separator */}
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
+
+        {/* ── Price axis ── */}
+        <div style={{
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+          color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+        }}>Price</div>
+        {renderPersonaRows(priceEntries)}
+
+        {/* Axis separator */}
+        <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
+
+        {/* ── Lifestyle axis ── */}
+        <div style={{
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+          color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+        }}>Lifestyle</div>
+        {renderPersonaRows(lifestyleEntries)}
+      </>)}
     </div>
   );
 }

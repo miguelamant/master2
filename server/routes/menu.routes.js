@@ -258,6 +258,11 @@ const handleMenuItems = async (req, res) => {
       is_crispy:          Number(mi.products?.is_crispy ?? 0),
       is_vegan:           Number(mi.products?.is_vegan ?? 0),
       is_vegetarian:      Number(mi.products?.is_vegetarian ?? 0),
+
+      description:        mi.description ?? null,
+      volumes_prices:     mi.volumes_prices ?? [],
+      page_number:        mi.page_number ?? 1,
+      sort_order:         mi.sort_order ?? 0,
     }));
 
     res.json({
@@ -600,6 +605,64 @@ router.delete('/menu-items/:id', isAuthenticated, async (req, res) => {
 });
 
 
+// PATCH /api/menu-items/:id/details — update description + volumes_prices
+router.patch('/menu-items/:id/details', isAuthenticated, async (req, res) => {
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Valid id required' });
+
+  const updates = {};
+  if (req.body.description !== undefined)    updates.description = req.body.description;
+  if (req.body.volumes_prices !== undefined) updates.volumes_prices = req.body.volumes_prices;
+
+  if (!Object.keys(updates).length) return res.status(400).json({ error: 'Nothing to update' });
+
+  const { error } = await supabase
+    .from('menu_items')
+    .update(updates)
+    .eq('id_menu_item', id)
+    .eq('assortment_id', assortmentId);
+
+  if (error) return res.status(500).json({ error: 'Database error', detail: error.message });
+  res.json({ success: true });
+});
+
+
+// PATCH /api/menu-items/layout — bulk update page_number + sort_order
+router.patch('/menu-items/layout', isAuthenticated, async (req, res) => {
+  let assortmentId;
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+  const { updates } = req.body || {};
+  if (!Array.isArray(updates) || !updates.length) {
+    return res.status(400).json({ error: 'updates array required' });
+  }
+
+  try {
+    for (const { id_menu_item, page_number, sort_order } of updates) {
+      const row = {};
+      if (page_number !== undefined) row.page_number = page_number;
+      if (sort_order !== undefined)  row.sort_order = sort_order;
+      if (!Object.keys(row).length) continue;
+
+      const { error } = await supabase
+        .from('menu_items')
+        .update(row)
+        .eq('id_menu_item', id_menu_item)
+        .eq('assortment_id', assortmentId);
+
+      if (error) throw error;
+    }
+    res.json({ success: true });
+  } catch (e) {
+    console.error('[menu-items/layout] error:', e);
+    res.status(500).json({ error: 'Database error', detail: e.message });
+  }
+});
 
 
 /* ===== NEW: /api/menu-groups (POST) ===== */
