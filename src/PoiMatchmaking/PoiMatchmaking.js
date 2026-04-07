@@ -161,6 +161,7 @@ function IdentityPanel({ personaFit, personaWeights, satisfactionScore, items, l
         satisfactionScore={satisfactionScore}
         personaDeltas={null}
         disabled={items.length === 0 && !loading}
+        hideCulture
       />
     </div>
   );

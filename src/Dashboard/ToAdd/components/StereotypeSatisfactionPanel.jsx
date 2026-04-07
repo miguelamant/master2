@@ -58,6 +58,7 @@ export default function StereotypeSatisfactionPanel({
   personaDeltas = null,
   disabled = false,
   compact = false,
+  hideCulture = false,
 }) {
   const G = '#d1d5db';  // grey used when disabled
 
@@ -144,11 +145,13 @@ export default function StereotypeSatisfactionPanel({
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '-4px 0 0' }} />
 
       {/* ── Geographic axis ── */}
-      <div style={{
-        fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
-        color: 'rgba(0,0,0,0.35)', marginBottom: -2,
-      }}>Culture</div>
-      {renderPersonaRows(geoEntries)}
+      {!hideCulture && (<>
+        <div style={{
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
+          color: 'rgba(0,0,0,0.35)', marginBottom: -2,
+        }}>Culture</div>
+        {renderPersonaRows(geoEntries)}
+      </>)}
 
       {!compact && (<>
         {/* Axis separator */}
