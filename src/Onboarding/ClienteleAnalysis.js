@@ -113,7 +113,7 @@ export default function ClienteleAnalysis() {
             updateOnboardingData('personaDistribution', percentages);
             const { data } = await api.post('/api/business-personas', payloadForDB);
             if (!data?.success) throw new Error('Save failed');
-            navigate('/dashboard');
+            navigate('/optimize-assortment');
         } catch (e) {
             console.error(e);
             setError('Opslaan mislukt');

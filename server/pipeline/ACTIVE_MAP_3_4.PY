@@ -111,6 +111,10 @@ def main():
         "product_id":  exported["product_id"].astype("Int64"),
         "price":       exported["__price"].round(2),
     })
+    # ── pass-through digital twin columns ──
+    for dt_col in ["DT_page_number", "DT_column_number", "DT_position_in_column", "DT_description", "DT_serve_format"]:
+        if dt_col in exported.columns:
+            out[dt_col] = exported[dt_col].values
 
     log.info("Writing: %s (rows: %d / %d)", out_path, len(out), len(df))
     out.to_excel(out_path, index=False)

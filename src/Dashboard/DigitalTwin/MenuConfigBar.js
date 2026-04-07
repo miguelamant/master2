@@ -7,7 +7,7 @@ const FORMATS = [
   { value: 'quadfold', label: 'Quadfold' },
 ];
 
-const MenuConfigBar = ({ config, onUpdate }) => {
+const MenuConfigBar = ({ config, onUpdate, hideFormat = false }) => {
   if (!config) return null;
 
   const { format, columns, show_euro, decimal_sep } = config;
@@ -16,20 +16,22 @@ const MenuConfigBar = ({ config, onUpdate }) => {
 
   return (
     <div className="twin-config">
-      <div className="twin-config__group">
-        <label className="twin-config__label">Format</label>
-        <div className="twin-config__segments">
-          {FORMATS.map(f => (
-            <button
-              key={f.value}
-              className={`twin-config__seg ${format === f.value ? 'twin-config__seg--active' : ''}`}
-              onClick={() => set({ format: f.value })}
-            >
-              {f.label}
-            </button>
-          ))}
+      {!hideFormat && (
+        <div className="twin-config__group">
+          <label className="twin-config__label">Format</label>
+          <div className="twin-config__segments">
+            {FORMATS.map(f => (
+              <button
+                key={f.value}
+                className={`twin-config__seg ${format === f.value ? 'twin-config__seg--active' : ''}`}
+                onClick={() => set({ format: f.value })}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="twin-config__group">
         <label className="twin-config__label">Columns</label>

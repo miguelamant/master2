@@ -1,8 +1,10 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { supabase } from "../integrations/supabase.js";
 import { sendVerificationCode } from "../services/email.service.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { env } from "../config/env.js";
 
 const router = Router();
 
@@ -317,6 +319,197 @@ router.post("/claim/set-password", isAuthenticated, async (req, res, next) => {
 
     res.json({ success: true });
   } catch (e) {
+    next(e);
+  }
+});
+
+// ── Facebook / Instagram OAuth verification ─────────────────────────────────
+
+const FB_REDIRECT_URI =
+  process.env.NODE_ENV === "production"
+    ? "https://master2-1-xm2m.onrender.com/api/claim/facebook/callback"
+    : "http://localhost:3007/api/claim/facebook/callback";
+
+// GET /api/claim/facebook/start — redirect user to Facebook OAuth
+router.get("/claim/facebook/start", (req, res) => {
+  const { place_id, venue_name, website } = req.query;
+
+  if (!place_id || !website) {
+    return res.status(400).json({ success: false, message: "place_id and website are required" });
+  }
+
+  // Store claim context in session so we can use it in the callback
+  const state = crypto.randomBytes(16).toString("hex");
+  req.session.fbClaim = { place_id, venue_name, website, state };
+  req.session.save();
+
+  const params = new URLSearchParams({
+    client_id: env.FB_APP_ID,
+    redirect_uri: FB_REDIRECT_URI,
+    state,
+    scope: "pages_show_list",
+    response_type: "code",
+  });
+
+  res.redirect(`https://www.facebook.com/v21.0/dialog/oauth?${params}`);
+});
+
+// GET /api/claim/facebook/callback — exchange code, check page ownership
+router.get("/claim/facebook/callback", async (req, res, next) => {
+  try {
+    const { code, state, error: fbError } = req.query;
+    const claim = req.session.fbClaim;
+
+    if (fbError || !code) {
+      return res.redirect("/?fb_claim=denied");
+    }
+
+    if (!claim || claim.state !== state) {
+      return res.redirect("/?fb_claim=invalid_state");
+    }
+
+    // 1. Exchange code for access token
+    const tokenParams = new URLSearchParams({
+      client_id: env.FB_APP_ID,
+      client_secret: env.FB_APP_SECRET,
+      redirect_uri: FB_REDIRECT_URI,
+      code,
+    });
+
+    const tokenRes = await fetch(
+      `https://graph.facebook.com/v21.0/oauth/access_token?${tokenParams}`
+    );
+    const tokenData = await tokenRes.json();
+
+    if (!tokenData.access_token) {
+      console.error("[claim/fb] Token exchange failed:", tokenData);
+      return res.redirect("/?fb_claim=token_error");
+    }
+
+    // 2. Get user's managed pages
+    const pagesRes = await fetch(
+      `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,link,username&access_token=${tokenData.access_token}`
+    );
+    const pagesData = await pagesRes.json();
+
+    if (!pagesData.data) {
+      console.error("[claim/fb] Pages fetch failed:", pagesData);
+      return res.redirect("/?fb_claim=pages_error");
+    }
+
+    // 3. Also get the user's own profile (for Instagram-linked venues)
+    const profileRes = await fetch(
+      `https://graph.facebook.com/v21.0/me?fields=id,name,email,link&access_token=${tokenData.access_token}`
+    );
+    const profileData = await profileRes.json();
+
+    // 4. Match venue website against user's pages
+    const venueUrl = claim.website.toLowerCase();
+    const match = pagesData.data.find((page) => {
+      const pageLink = (page.link || "").toLowerCase();
+      const pageUsername = (page.username || "").toLowerCase();
+      // Match by page link or username in the venue URL
+      if (pageLink && venueUrl.includes(pageUsername)) return true;
+      if (pageLink && venueUrl.includes(page.id)) return true;
+      // Direct link comparison
+      const venuePath = venueUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+      const pagePath = pageLink.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+      if (venuePath && pagePath && venuePath === pagePath) return true;
+      return false;
+    });
+
+    if (!match) {
+      // No matching page found
+      console.log(
+        `[claim/fb] No page match. Venue URL: ${venueUrl}, User pages:`,
+        pagesData.data.map((p) => ({ name: p.name, link: p.link, username: p.username }))
+      );
+      delete req.session.fbClaim;
+      return res.redirect("/?fb_claim=no_match");
+    }
+
+    // 5. Verified! Create or upgrade the business account
+    const { place_id, venue_name, website } = claim;
+    const websiteDomain = extractDomain(website);
+    const userEmail = profileData.email || null;
+
+    const { data: existingAssortment } = await supabase
+      .from("assortments")
+      .select("id, business_id")
+      .eq("place_id", place_id)
+      .limit(1)
+      .maybeSingle();
+
+    let businessId;
+
+    if (existingAssortment) {
+      businessId = existingAssortment.business_id;
+      await supabase
+        .from("business_info")
+        .update({
+          email: userEmail,
+          verified: true,
+          website_domain: websiteDomain,
+          fb_page_id: match.id,
+        })
+        .eq("id", businessId);
+    } else {
+      const { data: newBiz, error: bizErr } = await supabase
+        .from("business_info")
+        .insert({
+          horeca_name: venue_name || match.name || "Unknown Venue",
+          email: userEmail,
+          password: bcrypt.hashSync("temporary", 10),
+          verified: true,
+          website_domain: websiteDomain,
+          fb_page_id: match.id,
+        })
+        .select("id")
+        .single();
+
+      if (bizErr) {
+        console.error("[claim/fb] Failed to create business:", bizErr);
+        return res.redirect("/?fb_claim=db_error");
+      }
+
+      businessId = newBiz.id;
+
+      await supabase.from("assortments").insert({
+        business_id: businessId,
+        name: venue_name || match.name || "Unknown Venue",
+        place_id,
+        location_address_place_id: place_id,
+        sort_order: 0,
+      });
+    }
+
+    // Log user in
+    const { data: bizData } = await supabase
+      .from("business_info")
+      .select("id, email, horeca_name, logo, product_type")
+      .eq("id", businessId)
+      .single();
+
+    req.session.user = {
+      id: bizData.id,
+      email: bizData.email,
+      horeca_name: bizData.horeca_name,
+      logo: bizData.logo,
+      product_type: bizData.product_type ?? 2,
+    };
+
+    delete req.session.fbClaim;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("[claim/fb] Session save failed:", err);
+        return res.redirect("/?fb_claim=session_error");
+      }
+      // Redirect to claim page with success
+      res.redirect(`/claim?fb_claim=success&place_id=${place_id}&venue_name=${encodeURIComponent(venue_name || "")}`);
+    });
+  } catch (e) {
+    console.error("[claim/facebook/callback]", e);
     next(e);
   }
 });

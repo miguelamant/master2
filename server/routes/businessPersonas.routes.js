@@ -13,18 +13,17 @@ const COLUMNS = [
 ];
 
 async function resolveAssortmentId(req) {
-    const businessId = req.session?.user?.id;
+    const userId = req.session?.user?.id;
     const raw = req.body?.assortmentId ?? req.query?.assortmentId;
     if (raw != null) return Number(raw);
     const { data, error } = await supabase
-        .from('assortments')
-        .select('id')
-        .eq('business_id', businessId)
-        .order('sort_order', { ascending: true })
+        .from('user_venues')
+        .select('assortment_id')
+        .eq('user_id', userId)
         .limit(1)
-        .single();
+        .maybeSingle();
     if (error || !data) throw new Error('No assortment found');
-    return data.id;
+    return data.assortment_id;
 }
 
 // GET current business persona weights

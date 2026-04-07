@@ -148,15 +148,16 @@ router.post("/engine-distributions", isAuthenticated, async (req, res) => {
         barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50, Conservative: data.conservative ?? 50, Normal: data.normal ?? 50, Progressive: data.progressive ?? 50 };
       }
     } else {
-      const businessId = req.session.user.id;
+      // Resolve from user's linked venues
+      const userId = req.session.user.id;
+      const { data: link } = await supabase.from("user_venues").select("assortment_id").eq("user_id", userId).limit(1).maybeSingle();
+      if (!link) return res.status(400).json({ error: "No assortment found for this user" });
       const { data, error } = await supabase
         .from("assortments")
         .select(weightFields)
-        .eq("business_id", businessId)
-        .order("sort_order", { ascending: true })
-        .limit(1)
+        .eq("id", link.assortment_id)
         .single();
-      if (error || !data) return res.status(400).json({ error: "No assortment found for this business" });
+      if (error || !data) return res.status(400).json({ error: "No assortment found" });
       assortmentId = data.id;
       barWeights = { Belgian: data.belgian ?? 50, French: data.french ?? 50, German: data.german ?? 50, Dutch: data.dutch ?? 50, Conservative: data.conservative ?? 50, Progressive: data.progressive ?? 50 };
     }

@@ -103,21 +103,20 @@ function toPostgrestInList(v) {
 
 const router = Router();
 
-/** Resolve the assortment ID from request or fall back to the business's first assortment */
+/** Resolve the assortment ID from request or fall back to user's first linked assortment */
 async function resolveAssortmentId(req) {
   const raw = req.body?.assortmentId ?? req.query?.assortmentId;
   if (raw != null) return Number(raw);
-  // Fall back: fetch the first assortment for this business
-  const businessId = req.session.user.id;
+  // Fall back: fetch the first assortment linked to this user
+  const userId = req.session.user.id;
   const { data, error } = await supabase
-    .from('assortments')
-    .select('id')
-    .eq('business_id', businessId)
-    .order('sort_order', { ascending: true })
+    .from('user_venues')
+    .select('assortment_id')
+    .eq('user_id', userId)
     .limit(1)
-    .single();
-  if (error || !data) throw new Error('No assortment found for business ' + businessId);
-  return data.id;
+    .maybeSingle();
+  if (error || !data) throw new Error('No assortment found for user ' + userId);
+  return data.assortment_id;
 }
 
 /* ===== /api/menu-items (GET & POST) ===== */

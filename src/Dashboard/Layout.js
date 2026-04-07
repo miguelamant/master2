@@ -19,7 +19,7 @@ const ToRemoveComponent = () => (
 // Categories that go through the assortment overview map before analysis
 const ANALYSABLE = new Set(['beers', 'refreshments', 'liquors', 'wines', 'hotdrinks', 'meals', 'snacks', 'cocktails', 'deep_fried_snacks']);
 
-const Layout = ({ children }) => {
+const Layout = ({ children, skipOverview = false }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     // null = show overview map; a number = go straight to analysis for that store
     const [selectedStoreId, setSelectedStoreId] = useState(null);
@@ -59,8 +59,8 @@ const Layout = ({ children }) => {
     if (selectedOption === null) {
         MainContent = <CategoryGrid onSelect={handleCategorySelect} />;
 
-    } else if (ANALYSABLE.has(selectedOption) && selectedStoreId === null) {
-        // ── assortment overview map ──
+    } else if (!skipOverview && ANALYSABLE.has(selectedOption) && selectedStoreId === null) {
+        // ── assortment overview map (only when not in optimize-assortment flow) ──
         MainContent = (
             <AssortmentOverview
                 category={selectedOption}

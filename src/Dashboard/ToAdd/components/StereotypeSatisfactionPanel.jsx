@@ -154,17 +154,19 @@ export default function StereotypeSatisfactionPanel({
         {/* Axis separator */}
         <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
 
-        {/* ── Style axis ── */}
+        {/* ── Taste axis ── */}
         <div style={{
           fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.2,
           color: 'rgba(0,0,0,0.35)', marginBottom: -2,
-        }}>Style</div>
+        }}>Taste</div>
         {renderPersonaRows(styleEntries)}
       </>)}
 
       {!compact && (<>
         {/* Axis separator */}
         <div style={{ height: 1, background: 'rgba(0,0,0,0.10)', margin: '2px 0 4px' }} />
+
+        <div style={{ fontSize: 9, fontStyle: 'italic', color: 'rgba(0,0,0,0.3)', marginBottom: 2 }}>*dummy data</div>
 
         {/* ── Diet axis ── */}
         <div style={{

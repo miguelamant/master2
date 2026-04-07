@@ -4,12 +4,11 @@ import { isAuthenticated } from "../middleware/auth.js";
 
 const router = Router();
 
-// Resolve assortment ID from query, body, or session
 function getAssortmentId(req) {
   return req.query.assortmentId || req.body?.assortmentId || req.session?.activeAssortmentId;
 }
 
-// GET /api/menu-config — fetch (auto-create default if missing)
+// GET /api/menu-config
 router.get("/menu-config", isAuthenticated, async (req, res) => {
   const assortmentId = getAssortmentId(req);
   if (!assortmentId) return res.status(400).json({ error: "assortmentId required" });
@@ -40,18 +39,21 @@ router.get("/menu-config", isAuthenticated, async (req, res) => {
   }
 });
 
-// PUT /api/menu-config — upsert
+// PUT /api/menu-config — upsert any config fields
+const ALLOWED_FIELDS = [
+  'fold_type', 'columns', 'show_euro', 'decimal_sep',
+  'font_family', 'font_size_base', 'bg_color', 'text_color',
+  'header_color', 'accent_color', 'logo_url',
+];
+
 router.put("/menu-config", isAuthenticated, async (req, res) => {
   const assortmentId = getAssortmentId(req);
   if (!assortmentId) return res.status(400).json({ error: "assortmentId required" });
 
-  const { format, columns, show_euro, decimal_sep } = req.body;
-
   const row = { assortment_id: assortmentId };
-  if (format !== undefined)      row.format = format;
-  if (columns !== undefined)     row.columns = columns;
-  if (show_euro !== undefined)   row.show_euro = show_euro;
-  if (decimal_sep !== undefined) row.decimal_sep = decimal_sep;
+  for (const field of ALLOWED_FIELDS) {
+    if (req.body[field] !== undefined) row[field] = req.body[field];
+  }
   row.updated_at = new Date().toISOString();
 
   try {

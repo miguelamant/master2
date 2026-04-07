@@ -557,6 +557,12 @@ for _, r in df.iterrows():
         "Computed Key (debug)": matched_key,
         "Matched Brand": brand,
         "Build Brand Match": build_brand,
+        # ── pass-through for digital twin ──
+        "DT_page_number": r.get("page_number", None),
+        "DT_column_number": r.get("textbox", r.get("column_number", None)),
+        "DT_position_in_column": r.get("position_in_textbox", r.get("position_in_column", None)),
+        "DT_description": r.get("product_description", ""),
+        "DT_serve_format": r.get("serve_format", None),
     })
 
 out = pd.DataFrame(rows)
@@ -607,6 +613,11 @@ final_cols = [
     "Computed Key (debug)",
     "Build Brand Match",
     "Build Tags",
+    "DT_page_number",
+    "DT_column_number",
+    "DT_position_in_column",
+    "DT_description",
+    "DT_serve_format",
 ]
 out = out[final_cols]
 

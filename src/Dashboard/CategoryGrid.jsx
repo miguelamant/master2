@@ -83,6 +83,14 @@ export default function CategoryGrid({ onSelect }) {
                     })}
                 </div>
                 <div className="cg-left-footer">
+                    <div
+                        className="cg-left-item cg-left-item--twin"
+                        onClick={() => onSelect('digital-twin')}
+                        title="Digital Twin"
+                    >
+                        <span className="cg-left-twin-icon">📋</span>
+                        <span className="cg-left-label">Digital Twin</span>
+                    </div>
                     <button
                         className="cg-left-logout"
                         onClick={() => window.location.assign('/')}
@@ -124,6 +132,14 @@ export default function CategoryGrid({ onSelect }) {
                             </div>
                         );
                     })}
+                    <div
+                        className="category-card category-card--twin"
+                        onClick={() => onSelect('digital-twin')}
+                        title="Digital Twin"
+                    >
+                        <span className="card-twin-icon">📋</span>
+                        <span>Digital Twin</span>
+                    </div>
                 </div>
             </div>
         </div>

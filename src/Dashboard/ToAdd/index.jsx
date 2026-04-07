@@ -1619,6 +1619,7 @@ const normalizeCategory = (s) => {
                 toAdd={toAddMode}
                 onModeChange={setToAddMode}
                 groupBy={groupBy}
+                section={effectiveSection}
                 labelFor={makeCategoryLabeler()}
                 businessCity={businessCity}
                 hotForYouSet={new Set(Object.keys(idealCounts))}

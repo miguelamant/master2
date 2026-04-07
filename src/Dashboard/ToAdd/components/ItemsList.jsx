@@ -23,6 +23,7 @@ export default function ItemsList({
                                       onAdd,
                                       onRemove,
                                       groupBy = 'subcategory',
+                                      section,
                                       labelFor = (s) => s,
                                   }) {
     const effectiveToAdd = toAdd !== false;
@@ -159,7 +160,7 @@ export default function ItemsList({
                                             <img src={tasteIcon} alt="" className="item-card__pill-icon" />
                                         </span>
                                     )}
-                                    {abv != null && abv > 0 && (
+                                    {abv != null && abv > 0 && section !== 'refreshments' && (
                                         <span className="item-card__pill item-card__pill--abv" title="ABV">
                                             {abv.toFixed(1)}%
                                         </span>

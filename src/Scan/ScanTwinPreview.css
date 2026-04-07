@@ -1,0 +1,312 @@
+/* ═══════════════════════════════════════════
+   SCAN TWIN PREVIEW — digital menu replica
+   ═══════════════════════════════════════════ */
+
+.st-preview {
+  margin-top: 1rem;
+}
+
+.st-preview__menu {
+  display: flex;
+  gap: 0;
+  position: relative;
+  background: var(--st-bg, #faf8f4);
+  color: var(--st-text, #14213d);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+/* ── Column ─────────────────────────────── */
+
+.st-column {
+  flex: 1;
+  padding: 1.5rem 1.25rem;
+  min-width: 0;
+}
+
+.st-preview__divider {
+  width: 1px;
+  background: rgba(0,0,0,0.10);
+  flex-shrink: 0;
+}
+
+/* ── Textbox (category section) ─────────── */
+
+.st-textbox {
+  margin-bottom: 1.2rem;
+}
+
+.st-textbox:last-child {
+  margin-bottom: 0;
+}
+
+.st-textbox__header {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--st-header, #c4a96a);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1.5px solid var(--st-header, #c4a96a);
+  padding-bottom: 0.25rem;
+  margin: 0 0 0.5rem;
+}
+
+/* ── Row (shared) ───────────────────────── */
+
+.st-row {
+  padding: 0.2rem 0;
+  line-height: 1.4;
+  color: var(--st-text, #14213d);
+}
+
+.st-row__name {
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+
+.st-row__dots {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 1px dotted #ccc;
+  margin: 0 0.3rem;
+  align-self: baseline;
+  position: relative;
+  top: -3px;
+}
+
+.st-row__spacer {
+  flex: 1;
+  min-width: 8px;
+}
+
+.st-row__price {
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.st-row__vol {
+  font-size: 0.78em;
+  color: #888;
+  font-weight: 400;
+}
+
+.st-row__abv {
+  font-size: 0.75em;
+  color: #999;
+  font-weight: 400;
+}
+
+/* ── Single row ─────────────────────────── */
+
+.st-row--single {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+/* ── Single described ───────────────────── */
+
+.st-row--described .st-row__line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.st-row__description {
+  font-size: 0.75em;
+  color: #777;
+  font-style: italic;
+  padding-left: 0.25rem;
+  margin-top: 0.05rem;
+}
+
+/* ── Multi inline ───────────────────────── */
+
+.st-row--multi {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+/* ── Brand variants ─────────────────────── */
+
+.st-row--brand {
+  padding-bottom: 0.15rem;
+}
+
+.st-row__brand-name {
+  font-weight: 700;
+  font-size: 0.85em;
+  margin-bottom: 0.1rem;
+}
+
+.st-row__variant {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  padding-left: 0.75rem;
+  font-size: 0.92em;
+}
+
+.st-row__variant-label {
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Price variants ─────────────────────── */
+
+.st-row--pricevariants {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.st-row__volumes-inline {
+  display: flex;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.st-row__vol-price {
+  font-size: 0.82em;
+  white-space: nowrap;
+}
+
+.st-row__vol-sep {
+  color: #aaa;
+  margin: 0 0.1rem;
+  font-size: 0.82em;
+}
+
+/* ── Supplement ─────────────────────────── */
+
+.st-row--supplement {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  padding-left: 0.75rem;
+}
+
+.st-row__supplement-name {
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.88em;
+  color: #555;
+  flex: 1;
+  min-width: 0;
+}
+
+.st-row__price--supplement {
+  font-weight: 500;
+  font-size: 0.88em;
+  color: #555;
+}
+
+/* ── Note ───────────────────────────────── */
+
+.st-row--note {
+  font-size: 0.78em;
+  color: #777;
+  font-style: italic;
+  padding: 0.25rem 0;
+  line-height: 1.35;
+}
+
+/* ═══════════════════════════════════════════
+   ROW TYPE PICKER
+   ═══════════════════════════════════════════ */
+
+.st-row-picker {
+  position: relative;
+}
+
+.st-row-picker__trigger {
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.12s;
+}
+
+.st-row-picker__trigger:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+.st-row-picker__dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  padding: 4px;
+  min-width: 150px;
+}
+
+.st-row-picker__option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 5px 10px;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.st-row-picker__option:hover {
+  background: #f3f4f6;
+}
+
+.st-row-picker__option--active {
+  background: #4285f4;
+  color: #fff;
+}
+
+.st-row-picker__option--active:hover {
+  background: #3b78e0;
+}
+
+/* ═══════════════════════════════════════════
+   LOGO PLACEHOLDER
+   ═══════════════════════════════════════════ */
+
+.st-logo-placeholder {
+  border: 2px dashed #c4a96a;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(196, 169, 106, 0.08);
+  z-index: 10;
+}
+
+.st-logo-placeholder__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c4a96a;
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════════════════
+   VOLUME HEADERS (column-header volumes)
+   ═══════════════════════════════════════════ */
+
+.st-textbox__vol-headers {
+  float: right;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--st-text, #14213d);
+  opacity: 0.6;
+  letter-spacing: 0.02em;
+}

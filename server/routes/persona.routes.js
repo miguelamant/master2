@@ -12,21 +12,15 @@ const router = Router();
  * Returns { ok:true, layers_matrix: {version,layers,meta} }
  */
 router.post('/business-persona-weights', async (req, res) => {
-    const businessId = req?.session?.user?.id;
-    if (!businessId) return res.status(401).json({ error: 'Not authenticated' });
+    const userId = req?.session?.user?.id;
+    if (!userId) return res.status(401).json({ error: 'Not authenticated' });
 
-    // Resolve assortment ID (from body or default to first assortment)
+    // Resolve assortment ID (from body or user's first linked venue)
     let assortmentId = req.body?.assortmentId ? Number(req.body.assortmentId) : null;
     if (!assortmentId) {
-        const { data: aRow, error: aErr } = await supabase
-            .from('assortments')
-            .select('id')
-            .eq('business_id', businessId)
-            .order('sort_order', { ascending: true })
-            .limit(1)
-            .single();
-        if (aErr || !aRow) return res.status(400).json({ error: 'No assortment found' });
-        assortmentId = aRow.id;
+        const { data: link } = await supabase.from('user_venues').select('assortment_id').eq('user_id', userId).limit(1).maybeSingle();
+        if (!link) return res.status(400).json({ error: 'No assortment found' });
+        assortmentId = link.assortment_id;
     }
 
     const w = req.body?.weights || {};
@@ -48,12 +42,19 @@ router.post('/business-persona-weights', async (req, res) => {
         cleaned[k] = Math.max(0, Math.min(100, cleaned[k]));
     }
 
+    // Verify user has access to this assortment
+    const { data: accessCheck } = await supabase.from('user_venues').select('id').eq('user_id', userId).eq('assortment_id', assortmentId).maybeSingle();
+    if (!accessCheck) return res.status(403).json({ error: 'No access to this assortment' });
+
+    // Resolve business_id for matrix rebuild
+    const { data: assortRow } = await supabase.from('assortments').select('business_id').eq('id', assortmentId).maybeSingle();
+    const businessId = assortRow?.business_id;
+
     // Update the assortment row
     const { error } = await supabase
         .from('assortments')
         .update(cleaned)
-        .eq('id', assortmentId)
-        .eq('business_id', businessId); // safety: ensure this assortment belongs to the business
+        .eq('id', assortmentId);
 
     if (error) {
         console.error('[persona-weights] update failed:', error);

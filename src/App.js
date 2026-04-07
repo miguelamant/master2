@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import './index.css';
 
 // Import all components
@@ -29,6 +29,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import PoiMatchmaking from "./PoiMatchmaking/PoiMatchmaking";
 import ScanPage from "./Scan/ScanPage";
 import ClaimPage from "./Claim/ClaimPage";
+import OptimizeAssortment from "./OptimizeAssortment/OptimizeAssortment";
 import Categorieen from "./Wrapped/Categorieen";
 import TopverkopersEten from "./Wrapped/TopverkopersEten";
 import StijgersDrank from "./Wrapped/StijgersDrank";
@@ -124,7 +125,8 @@ function App() {
                     <Route path="/personas" element={<Personas />} />
                     <Route path="/clienteleanalysis" element={<ClienteleAnalysis />} />
 
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Navigate to="/optimize-assortment" replace />} />
+                    <Route path="/optimize-assortment" element={<OptimizeAssortment />} />
                     <Route path="/poi-matchmaking" element={<PoiMatchmaking />} />
                     <Route path="/scan" element={<ScanPage />} />
                     <Route path="/claim" element={<ClaimPage />} />

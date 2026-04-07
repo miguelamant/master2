@@ -227,3 +227,33 @@
     width: 18px;
     height: 18px;
 }
+
+/* ── digital twin button ── */
+.category-card--twin {
+    border-style: dashed;
+    border-color: rgba(59,130,246,0.35);
+    background: rgba(59,130,246,0.04);
+}
+
+.category-card--twin:hover {
+    border-color: rgba(59,130,246,0.6);
+    background: rgba(59,130,246,0.08);
+}
+
+.card-twin-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.cg-left-item--twin {
+    border-top: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 8px;
+    padding-top: 12px;
+}
+
+.cg-left-twin-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+}

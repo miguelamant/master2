@@ -161,7 +161,10 @@ def main():
     after = len(df)
     log.info("   Cleaned: %d -> %d rows", before, after)
 
-    export = df[["assortment_id", "product_id", "price"]].copy()
+    base_cols = ["assortment_id", "product_id", "price"]
+    dt_cols = ["DT_page_number", "DT_column_number", "DT_position_in_column", "DT_description", "DT_serve_format"]
+    available_dt = [c for c in dt_cols if c in df.columns]
+    export = df[base_cols + available_dt].copy()
 
     log.info("Writing: %s", out_path)
     export.to_excel(out_path, index=False)
@@ -221,6 +224,21 @@ def main():
         r["assortment_id"] = int(r["assortment_id"])
         r["product_id"] = int(r["product_id"])
         r["price"] = round(float(r["price"]), 2)
+        # Map DT pass-through columns to menu_items schema
+        if "DT_page_number" in r and pd.notna(r.get("DT_page_number")):
+            r["page_number"] = int(r["DT_page_number"])
+        if "DT_column_number" in r and pd.notna(r.get("DT_column_number")):
+            r["column_number"] = int(r["DT_column_number"])
+        if "DT_position_in_column" in r and pd.notna(r.get("DT_position_in_column")):
+            r["sort_order"] = int(r["DT_position_in_column"])
+        if "DT_description" in r and r.get("DT_description"):
+            r["description"] = str(r["DT_description"])
+        if "DT_serve_format" in r and r.get("DT_serve_format"):
+            r["serve_format"] = str(r["DT_serve_format"])
+        # Remove DT_ prefixed keys before insert
+        for k in list(r.keys()):
+            if k.startswith("DT_"):
+                del r[k]
 
     inserted = 0
     for i in range(0, len(records), BATCH_SIZE):

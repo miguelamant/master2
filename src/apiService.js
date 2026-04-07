@@ -75,3 +75,14 @@ export async function updateMenuItemsLayout(updates) {
   const { data } = await api.patch('/api/menu-items/layout', { updates });
   return data;
 }
+
+// Digital Twin: extract format + items + styling from menu photos
+export async function extractTwin(files) {
+  const form = new FormData();
+  for (const file of files) form.append('images', file);
+  const { data } = await api.post('/api/scan/extract-twin', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000, // 2 min — vision API can be slow
+  });
+  return data;
+}

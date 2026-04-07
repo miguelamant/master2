@@ -235,3 +235,26 @@
     animation: landing-pulse 4s ease-in-out infinite;
     pointer-events: none;
 }
+
+/* ── login/register switch ── */
+.landing-switch {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.landing-switch-btn {
+    background: none;
+    border: none;
+    color: #14213d;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.landing-switch-btn:hover {
+    color: #000;
+}

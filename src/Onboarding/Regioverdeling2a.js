@@ -152,7 +152,7 @@ export default function Regioverdeling2a() {
           </button>
           <button
             className="pw-back-btn"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/optimize-assortment")}
           >
             ← Back to dashboard
           </button>

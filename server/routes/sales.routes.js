@@ -1,25 +1,13 @@
 ﻿import { Router } from "express";
 import { supabase } from "../integrations/supabase.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { resolveAssortmentId } from "../helpers/resolveAssortment.js";
 
 const router = Router();
 
-async function getDefaultAssortmentId(businessId) {
-  const { data, error } = await supabase
-    .from("assortments")
-    .select("id")
-    .eq("business_id", businessId)
-    .order("sort_order", { ascending: true })
-    .limit(1)
-    .single();
-  if (error || !data) throw new Error("No assortment found for business " + businessId);
-  return data.id;
-}
-
 router.get("/sales", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
   let assortmentId;
-  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
     return res.status(400).json({ error: e.message });
   }
   try {
@@ -65,9 +53,8 @@ router.get("/sales", isAuthenticated, async (req, res) => {
 });
 
 router.get("/sales/last-year", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
   let assortmentId;
-  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
     return res.status(400).json({ error: e.message });
   }
   const lastYear = new Date().getFullYear() - 1;
@@ -114,9 +101,8 @@ router.get("/sales/last-year", isAuthenticated, async (req, res) => {
 });
 
 router.get("/sales/last-90-days", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
   let assortmentId;
-  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
     return res.status(400).json({ error: e.message });
   }
   try {
@@ -147,9 +133,8 @@ router.get("/sales/last-90-days", isAuthenticated, async (req, res) => {
 });
 
 router.get("/sales/growth", isAuthenticated, async (req, res) => {
-  const businessId = req.session.user.id;
   let assortmentId;
-  try { assortmentId = await getDefaultAssortmentId(businessId); } catch (e) {
+  try { assortmentId = await resolveAssortmentId(req); } catch (e) {
     return res.status(400).json({ error: e.message });
   }
   try {

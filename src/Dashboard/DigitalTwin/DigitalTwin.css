@@ -1,14 +1,182 @@
-/* ── Container ── */
+/* ═══════════════════════════════════════════
+   FORMAT PICKER
+   ═══════════════════════════════════════════ */
+.fp-container {
+  padding: 2rem 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.fp-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--oxford-blue);
+  margin: 0 0 0.25rem;
+}
+
+.fp-subtitle {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0;
+}
+
+.fp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.fp-upload-btn {
+  padding: 0.55rem 1.1rem;
+  border: 2px solid var(--sandy-brown, #c4a96a);
+  border-radius: 10px;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--sandy-brown, #c4a96a);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fp-upload-btn:hover {
+  background: var(--sandy-brown, #c4a96a);
+  color: #fff;
+}
+
+.fp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.fp-card {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.22s ease;
+}
+
+.fp-card:hover {
+  border-color: var(--sandy-brown, #c4a96a);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.fp-card__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #faf8f4;
+  padding: 1.2rem 1rem;
+  min-height: 100px;
+}
+
+.fp-thumb {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+}
+
+.fp-card__info {
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fp-card__label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--oxford-blue, #14213d);
+}
+
+.fp-card__desc {
+  font-size: 0.72rem;
+  color: #999;
+}
+
+/* ═══════════════════════════════════════════
+   PREVIEW CONTAINER
+   ═══════════════════════════════════════════ */
 .twin-container {
   padding: 1.5rem 2rem;
   max-width: 100%;
   overflow-x: hidden;
 }
 
-.twin-title {
-  font-size: 1.5rem;
+.twin-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.twin-back {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--oxford-blue);
-  margin: 0 0 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.twin-back:hover {
+  background: #f5f5f5;
+  border-color: rgba(0,0,0,0.2);
+}
+
+.twin-upload-btn {
+  margin-left: auto;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--sandy-brown, #c4a96a);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sandy-brown, #c4a96a);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.twin-upload-btn:hover {
+  background: var(--sandy-brown, #c4a96a);
+  color: #fff;
+}
+
+.twin-export-btn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid #2a9d8f;
+  border-radius: 8px;
+  background: #2a9d8f;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.twin-export-btn:hover:not(:disabled) {
+  background: #238b7e;
+}
+
+.twin-export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.twin-title {
+  font-size: 1.35rem;
+  color: var(--oxford-blue);
+  margin: 0;
 }
 
 .twin-loading {
@@ -18,16 +186,18 @@
   font-size: 1.1rem;
 }
 
-/* ── Config toolbar ── */
+/* ═══════════════════════════════════════════
+   CONFIG TOOLBAR
+   ═══════════════════════════════════════════ */
 .twin-config {
   display: flex;
   flex-wrap: wrap;
   gap: 1.25rem;
   align-items: center;
   padding: 0.75rem 1rem;
-  background: var(--ivory);
+  background: var(--ivory, #faf8f4);
   border-radius: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   margin-bottom: 1.5rem;
 }
 
@@ -51,7 +221,7 @@
   display: flex;
   border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid var(--sandy-brown);
+  border: 1px solid var(--sandy-brown, #c4a96a);
 }
 
 .twin-config__seg {
@@ -66,185 +236,146 @@
 }
 
 .twin-config__seg:not(:last-child) {
-  border-right: 1px solid var(--sandy-brown);
+  border-right: 1px solid var(--sandy-brown, #c4a96a);
 }
 
 .twin-config__seg--active {
-  background: var(--sandy-brown);
-  color: var(--ivory);
+  background: var(--sandy-brown, #c4a96a);
+  color: var(--ivory, #fff);
 }
 
 .twin-config__seg:hover:not(.twin-config__seg--active) {
-  background: rgba(210, 160, 90, 0.15);
+  background: rgba(210,160,90,0.15);
 }
 
-/* ── 3D Scene ── */
-.twin-scene {
-  perspective: 1200px;
-  perspective-origin: 50% 40%;
+/* ═══════════════════════════════════════════
+   FLAT PREVIEW LAYOUT (Vistaprint-style)
+   ═══════════════════════════════════════════ */
+.flat-preview {
   display: flex;
-  justify-content: center;
-  padding: 2rem 1rem 3rem;
-  min-height: 500px;
+  gap: 2rem;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  min-height: 400px;
 }
 
-.twin-book {
+.flat-preview__cards {
+  flex: 1;
   display: flex;
-  transform-style: preserve-3d;
-  transition: transform 0.5s ease;
+  flex-direction: column;
+  gap: 2.5rem;
+  min-width: 0;
 }
 
-/* ── Panel (single page) ── */
+/* ── One side of the paper (front or back) ── */
+.flat-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.flat-side__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+}
+
+.flat-side__panels {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ── Dashed fold line between panels ── */
+.flat-fold-line {
+  display: flex;
+  align-items: stretch;
+  width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.flat-fold-line__dash {
+  width: 0;
+  border-left: 2px dashed #cc3333;
+  position: relative;
+}
+
+/* tiny scissors / fold icon at top of fold line */
+.flat-fold-line__dash::before {
+  content: '✂';
+  position: absolute;
+  top: -14px;
+  left: -7px;
+  font-size: 10px;
+  color: #cc3333;
+  pointer-events: none;
+}
+
+/* ── Small fold diagram sidebar ── */
+.flat-preview__diagram {
+  flex-shrink: 0;
+  width: 180px;
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  background: #faf8f4;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.flat-preview__diagram-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+}
+
+.fold-diagram {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL (single page / surface)
+   ═══════════════════════════════════════════ */
 .twin-panel {
   width: 280px;
   min-height: 400px;
-  background: var(--ivory);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
+  background: var(--twin-bg, var(--ivory, #faf8f4));
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 3px;
   padding: 1.5rem 1.25rem;
-  box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.12);
-  transform-style: preserve-3d;
-  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
+  font-family: var(--twin-font, 'Inter'), sans-serif;
+  font-size: var(--twin-size, 13px);
+  color: var(--twin-text, #14213d);
 }
 
-/* ── FORMAT: Single ── */
-.twin-book--single .twin-panel {
-  transform: rotateY(-3deg);
-  box-shadow: 4px 6px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* ── FORMAT: Bifold ── */
-.twin-book--bifold .twin-panel:nth-child(1) {
-  transform-origin: right center;
-  transform: rotateY(8deg);
-  border-radius: 4px 0 0 4px;
-}
-
-.twin-book--bifold .twin-panel:nth-child(2) {
-  transform-origin: left center;
-  transform: rotateY(-8deg);
-  border-radius: 0 4px 4px 0;
-  box-shadow: inset 8px 0 12px rgba(0, 0, 0, 0.05), 4px 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-/* fold line */
-.twin-book--bifold .twin-panel:nth-child(1)::after {
-  content: '';
+/* page number badge */
+.twin-panel::after {
+  content: 'Page ' attr(data-page);
   position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(to bottom, transparent 5%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.1) 70%, transparent 95%);
+  top: 6px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: #bbb;
   pointer-events: none;
 }
 
-.twin-book--bifold .twin-panel:nth-child(2)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.06), transparent);
-  pointer-events: none;
-}
-
-/* ── FORMAT: Trifold ── */
-.twin-book--trifold .twin-panel:nth-child(1) {
-  transform-origin: right center;
-  transform: rotateY(12deg);
-  border-radius: 4px 0 0 4px;
-}
-
-.twin-book--trifold .twin-panel:nth-child(2) {
-  transform: rotateY(0deg);
-  border-radius: 0;
-  box-shadow: inset 6px 0 10px rgba(0, 0, 0, 0.04), inset -6px 0 10px rgba(0, 0, 0, 0.04), 2px 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.twin-book--trifold .twin-panel:nth-child(3) {
-  transform-origin: left center;
-  transform: rotateY(-12deg);
-  border-radius: 0 4px 4px 0;
-}
-
-/* fold lines for trifold */
-.twin-book--trifold .twin-panel:nth-child(1)::after,
-.twin-book--trifold .twin-panel:nth-child(2)::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(to bottom, transparent 5%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.1) 70%, transparent 95%);
-  pointer-events: none;
-}
-
-.twin-book--trifold .twin-panel:nth-child(2)::before,
-.twin-book--trifold .twin-panel:nth-child(3)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.06), transparent);
-  pointer-events: none;
-}
-
-/* ── FORMAT: Quadfold ── */
-.twin-book--quadfold .twin-panel:nth-child(1) {
-  transform-origin: right center;
-  transform: rotateY(15deg);
-  border-radius: 4px 0 0 4px;
-}
-
-.twin-book--quadfold .twin-panel:nth-child(2) {
-  transform-origin: right center;
-  transform: rotateY(5deg);
-  border-radius: 0;
-}
-
-.twin-book--quadfold .twin-panel:nth-child(3) {
-  transform-origin: left center;
-  transform: rotateY(-5deg);
-  border-radius: 0;
-}
-
-.twin-book--quadfold .twin-panel:nth-child(4) {
-  transform-origin: left center;
-  transform: rotateY(-15deg);
-  border-radius: 0 4px 4px 0;
-}
-
-/* fold lines for quadfold */
-.twin-book--quadfold .twin-panel:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(to bottom, transparent 5%, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.1) 70%, transparent 95%);
-  pointer-events: none;
-}
-
-.twin-book--quadfold .twin-panel:not(:first-child)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.06), transparent);
-  pointer-events: none;
-}
-
-/* ── Panel content ── */
+/* ═══════════════════════════════════════════
+   PANEL CONTENT
+   ═══════════════════════════════════════════ */
 .twin-panel__content {
   column-fill: auto;
 }
@@ -257,9 +388,9 @@
 .twin-panel__cat {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--sandy-brown);
+  color: var(--twin-header, var(--sandy-brown, #c4a96a));
   text-transform: capitalize;
-  border-bottom: 1.5px solid var(--sandy-brown);
+  border-bottom: 1.5px solid var(--twin-accent, var(--sandy-brown, #c4a96a));
   padding-bottom: 0.25rem;
   margin: 0 0 0.5rem;
 }
@@ -272,7 +403,9 @@
   padding: 2rem 0;
 }
 
-/* ── Menu item card ── */
+/* ═══════════════════════════════════════════
+   MENU ITEM CARD
+   ═══════════════════════════════════════════ */
 .twin-item {
   padding: 0.3rem 0;
   border-bottom: 1px dashed #ddd;
@@ -291,7 +424,7 @@
 
 .twin-item__name {
   font-weight: 600;
-  color: var(--oxford-blue);
+  color: var(--twin-text, var(--oxford-blue));
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -307,7 +440,7 @@
 
 .twin-item__price {
   font-weight: 600;
-  color: var(--oxford-blue);
+  color: var(--twin-text, var(--oxford-blue));
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -328,5 +461,207 @@
 
 .twin-item__vol {
   font-size: 0.7rem;
+  color: var(--twin-text, var(--oxford-blue));
+}
+
+/* ═══════════════════════════════════════════
+   TWIN UPLOADER
+   ═══════════════════════════════════════════ */
+.twin-uploader {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.twin-uploader__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.twin-uploader__header h3 {
+  margin: 0;
+  font-size: 1rem;
   color: var(--oxford-blue);
+}
+
+.twin-uploader__close {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+}
+
+.twin-uploader__hint {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0 0 0.75rem;
+}
+
+.twin-uploader__dropzone {
+  border: 2px dashed rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #faf9f7;
+}
+
+.twin-uploader__dropzone:hover {
+  border-color: var(--sandy-brown, #c4a96a);
+  background: rgba(210,160,90,0.04);
+}
+
+.twin-uploader__dropzone-text {
+  font-size: 0.85rem;
+  color: #999;
+  font-weight: 600;
+}
+
+.twin-uploader__previews {
+  display: flex;
+  gap: 10px;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.twin-uploader__preview {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.twin-uploader__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.twin-uploader__preview-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.twin-uploader__preview-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  font-size: 0.55rem;
+  padding: 2px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.twin-uploader__error {
+  color: #cc3333;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.twin-uploader__progress {
+  color: var(--sandy-brown, #c4a96a);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.twin-uploader__actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.twin-uploader__btn {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--sandy-brown, #c4a96a);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.twin-uploader__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.twin-uploader__btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* ═══════════════════════════════════════════
+   FORMAT SWITCHER (bottom of preview)
+   ═══════════════════════════════════════════ */
+.twin-format-switcher {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #faf8f4;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.twin-format-switcher__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+  margin-bottom: 0.5rem;
+}
+
+.twin-format-switcher__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.twin-format-switcher__btn {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.twin-format-switcher__btn:hover {
+  border-color: var(--sandy-brown, #c4a96a);
+  color: var(--sandy-brown, #c4a96a);
+}
+
+.twin-format-switcher__btn--active {
+  background: var(--sandy-brown, #c4a96a);
+  border-color: var(--sandy-brown, #c4a96a);
+  color: #fff;
 }

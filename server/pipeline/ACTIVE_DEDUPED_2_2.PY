@@ -27,7 +27,12 @@ KEEP_COLS = [
     "Format (cl)",
     "Matched Key",
     "Position In Group",
-    "Group Size"
+    "Group Size",
+    "DT_page_number",
+    "DT_column_number",
+    "DT_position_in_column",
+    "DT_description",
+    "DT_serve_format",
 ]
 
 def main():

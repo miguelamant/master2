@@ -138,16 +138,10 @@ router.post("/stereotype-benchmarks", isAuthenticated, async (req, res) => {
     // Resolve assortmentId from body or fall back to session business's first assortment
     let assortmentId = req.body?.assortmentId != null ? Number(req.body.assortmentId) : null;
     if (!assortmentId) {
-      const businessId = req.session.user.id;
-      const { data, error } = await supabase
-        .from('assortments')
-        .select('id')
-        .eq('business_id', businessId)
-        .order('sort_order', { ascending: true })
-        .limit(1)
-        .single();
-      if (error || !data) return res.status(400).json({ error: "No assortment found for this business" });
-      assortmentId = data.id;
+      const userId = req.session.user.id;
+      const { data: link } = await supabase.from('user_venues').select('assortment_id').eq('user_id', userId).limit(1).maybeSingle();
+      if (!link) return res.status(400).json({ error: "No assortment found for this user" });
+      assortmentId = link.assortment_id;
     }
 
     const parentName = section ? PARENT_BY_SECTION[String(section).toLowerCase()] : null;

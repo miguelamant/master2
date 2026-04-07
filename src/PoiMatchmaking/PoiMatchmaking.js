@@ -28,9 +28,8 @@ const buildBadges = (i) => {
   return b;
 };
 
-// ── Side panel content: scores + item list ─────────────────────────────────
-
-function MatchmakingPanel({ storeId }) {
+// ── Shared data hook ──────────────────────────────────────────────────────
+function useMatchmakingData(storeId) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,7 +76,6 @@ function MatchmakingPanel({ storeId }) {
     return Math.round(avg * 10) / 10;
   }, [personaFit, personaWeights]);
 
-  // Group items by subcategory
   const grouped = useMemo(() => {
     const map = {};
     for (const item of items) {
@@ -89,9 +87,74 @@ function MatchmakingPanel({ storeId }) {
     return map;
   }, [items]);
 
+  return { items, loading, grouped, personaFit, personaWeights, satisfactionScore };
+}
+
+// ── Assortment list (rendered inside popup — compact) ────────────────────
+function AssortmentList({ grouped, items, loading }) {
+  return (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 11, fontWeight: 700, color: '#111827' }}>
+          Assortment
+        </span>
+        <span style={{
+          fontFamily: "'Space Grotesk', sans-serif", fontSize: 9, color: '#9ca3af',
+          background: 'rgba(0,0,0,0.04)', padding: '1px 5px', borderRadius: 8,
+        }}>
+          {loading ? '...' : `${items.length} items`}
+        </span>
+      </div>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: 8, color: '#9ca3af', fontSize: 11 }}>Loading...</div>
+      ) : (
+        Object.entries(grouped).map(([subcategory, subItems]) => (
+          <div key={subcategory} style={{ marginTop: 6 }}>
+            <div style={{
+              color: '#0b1220', display: 'inline-flex', alignItems: 'center', gap: 4,
+              fontSize: 10, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif",
+              borderBottom: '1px solid rgba(0,0,0,0.06)', paddingBottom: 2, marginBottom: 2,
+            }}>
+              <TasteIconWithBadges token={normToken(subcategory)} badges={[]} size={13} title={convertDisplayLabel(subcategory)} />
+              <span>{convertDisplayLabel(subcategory)}</span>
+              <span style={{
+                fontSize: 8, color: '#9ca3af', background: 'rgba(0,0,0,0.04)',
+                padding: '0 4px', borderRadius: 6, fontWeight: 600,
+              }}>{subItems.length}</span>
+            </div>
+            {subItems.map((i) => {
+              const abv = i.abv != null ? Number(i.abv) : null;
+              return (
+                <div key={i.id_menu_item} style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '1.5px 0 1.5px 10px', lineHeight: 1.3,
+                }}>
+                  <TasteIconWithBadges
+                    token={normToken(i.subcategory || i.category)}
+                    badges={buildBadges(i)}
+                    size={13}
+                    title={convertItemLabel(i.item_name)}
+                  />
+                  <span style={{ fontSize: 10, color: '#1f2937' }}>
+                    {convertItemLabel(i.item_name)}
+                  </span>
+                  {abv != null && (
+                    <span style={{ fontSize: 8, color: '#94a3b8', whiteSpace: 'nowrap' }}>{abv.toFixed(1)}%</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))
+      )}
+    </>
+  );
+}
+
+// ── Identity distribution panel (rendered in side panel) ─────────────────
+function IdentityPanel({ personaFit, personaWeights, satisfactionScore, items, loading }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }}>
-      {/* Scores */}
       <StereotypeSatisfactionPanel
         personaFit={personaFit}
         personaWeights={personaWeights}
@@ -99,69 +162,14 @@ function MatchmakingPanel({ storeId }) {
         personaDeltas={null}
         disabled={items.length === 0 && !loading}
       />
-
-      {/* Divider */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.08)', margin: '4px 0' }} />
-
-      {/* Item list header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13, fontWeight: 700, color: '#111827' }}>
-          Assortment
-        </span>
-        <span style={{
-          fontFamily: "'Space Grotesk', sans-serif", fontSize: 11, color: '#9ca3af',
-          background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: 10,
-        }}>
-          {loading ? '...' : `${items.length} items`}
-        </span>
-      </div>
-
-      {/* Scrollable item list */}
-      <div className="menu-list-container" style={{ flex: 1, maxHeight: 'none', overflowY: 'auto' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: 20, color: '#9ca3af', fontSize: 13 }}>Loading...</div>
-        ) : (
-          Object.entries(grouped).map(([subcategory, subItems]) => (
-            <section key={subcategory} className="menu-section">
-              <h3 className="menu-category" style={{
-                color: '#0b1220', display: 'inline-flex', alignItems: 'center', gap: 8, margin: 0,
-                fontSize: 12,
-              }}>
-                <TasteIconWithBadges token={normToken(subcategory)} badges={[]} size={18} title={convertDisplayLabel(subcategory)} />
-                <span>{convertDisplayLabel(subcategory)}</span>
-                <span className="count-pill">{subItems.length}</span>
-              </h3>
-              <ul className="menu-list menu-list--indented">
-                {subItems.map((i) => {
-                  const abv = i.abv != null ? Number(i.abv) : null;
-                  return (
-                    <li key={i.id_menu_item} className="menu-item">
-                      <div className="item-left">
-                        <TasteIconWithBadges
-                          token={normToken(i.subcategory || i.category)}
-                          badges={buildBadges(i)}
-                          size={18}
-                          title={convertItemLabel(i.item_name)}
-                        />
-                        <div className="item-text">
-                          <div className="item-name" style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontSize: 12 }}>
-                            {convertItemLabel(i.item_name)}
-                            {abv != null && (
-                              <span style={{ fontSize: 10, color: '#64748b' }}>{abv.toFixed(1)}%</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))
-        )}
-      </div>
     </div>
   );
+}
+
+// ── Wrapper that fetches data once and renders both pieces ───────────────
+function MatchmakingDataProvider({ storeId, children }) {
+  const data = useMatchmakingData(storeId);
+  return children(data);
 }
 
 // ── Main component ──────────────────────────────────────────────────────────
@@ -178,14 +186,6 @@ export default function PoiMatchmaking() {
   const pausedRef  = useRef(false);
 
   const stores = assortments.filter(a => a.lat != null && a.lng != null);
-
-  useEffect(() => {
-    if (!stores[activeIdx] || !mapRef.current) return;
-    mapRef.current.flyTo({
-      center: [stores[activeIdx].lng, stores[activeIdx].lat],
-      zoom: 12, duration: 800,
-    });
-  }, [activeIdx, stores]);
 
   const selectStore = useCallback((store, idx) => {
     setPopupId(store.id);
@@ -278,107 +278,182 @@ export default function PoiMatchmaking() {
         </div>
       </div>
 
-      {/* ── map ── */}
-      <div className={`ao-map-area${panelOpen ? ' ao-map-area--narrow' : ''}`}>
-        <Map
-          ref={mapRef}
-          initialViewState={{ longitude: 4.47, latitude: 50.5, zoom: 7.5 }}
-          style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/light-v11"
-          mapboxAccessToken={MAPBOX_TOKEN}
-          projection="mercator"
-          onClick={() => closePopup()}
-        >
-          <NavigationControl position="top-right" />
-
-          {stores.map((store, idx) => {
-            const isActive = store.id === popupId;
-            const size = isActive ? 44 : 32;
-            return (
-              <Marker
-                key={store.id}
-                longitude={store.lng}
-                latitude={store.lat}
-                anchor="bottom"
-                onClick={e => { e.originalEvent.stopPropagation(); selectStore(store, idx); }}
-              >
-                <div
-                  className={`ao-pin${isActive ? ' ao-pin--active' : ''}`}
-                  style={{ '--pin-color': isActive ? '#6366f1' : '#94a3b8', '--pin-size': `${size}px` }}
+      {/* ── map + side panel wrapped in provider when a store is selected ── */}
+      {panelOpen && popupStore ? (
+        <MatchmakingDataProvider key={popupStore.id} storeId={popupStore.id}>
+          {({ items, loading, grouped, personaFit, personaWeights, satisfactionScore }) => (
+            <>
+              <div className={`ao-map-area ao-map-area--narrow`}>
+                <Map
+                  ref={mapRef}
+                  initialViewState={{ longitude: 4.47, latitude: 50.5, zoom: 7.5 }}
+                  style={{ width: '100%', height: '100%' }}
+                  mapStyle="mapbox://styles/mapbox/light-v11"
+                  mapboxAccessToken={MAPBOX_TOKEN}
+                  projection="mercator"
+                  onClick={() => closePopup()}
                 >
-                  <div className="ao-pin-dot" />
-                  <div className="ao-pin-tail" />
-                </div>
-              </Marker>
-            );
-          })}
+                  <NavigationControl position="top-right" />
+                  {stores.map((store, idx) => {
+                    const isActive = store.id === popupId;
+                    const size = isActive ? 44 : 32;
+                    return (
+                      <Marker
+                        key={store.id}
+                        longitude={store.lng}
+                        latitude={store.lat}
+                        anchor="bottom"
+                        onClick={e => { e.originalEvent.stopPropagation(); selectStore(store, idx); }}
+                      >
+                        <div
+                          className={`ao-pin${isActive ? ' ao-pin--active' : ''}`}
+                          style={{ '--pin-color': isActive ? '#6366f1' : '#94a3b8', '--pin-size': `${size}px` }}
+                        >
+                          <div className="ao-pin-dot" />
+                          <div className="ao-pin-tail" />
+                        </div>
+                      </Marker>
+                    );
+                  })}
 
-          {popupStore && (
-            <Popup
-              longitude={popupStore.lng}
-              latitude={popupStore.lat}
-              anchor="bottom"
-              offset={52}
-              closeButton={true}
-              closeOnClick={false}
-              onClose={closePopup}
-              className="ao-popup"
-            >
-              <div className="ao-popup-inner" onClick={e => e.stopPropagation()}>
-                <div className="ao-popup-name">{popupStore.name}</div>
-                {popupStore.address && (
-                  <div className="ao-popup-address">{popupStore.address}</div>
-                )}
+                  <Popup
+                    longitude={popupStore.lng}
+                    latitude={popupStore.lat}
+                    offset={52}
+                    closeButton={true}
+                    closeOnClick={false}
+                    onClose={closePopup}
+                    className="ao-popup"
+                    maxWidth="360px"
+                  >
+                    <div className="ao-popup-inner" onClick={e => e.stopPropagation()}>
+                      <div className="ao-popup-name">{popupStore.name}</div>
+                      {popupStore.address && (
+                        <div className="ao-popup-address">{popupStore.address}</div>
+                      )}
+                      <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', marginTop: 8, paddingTop: 8, maxHeight: 340, overflowY: 'auto' }}>
+                        <AssortmentList grouped={grouped} items={items} loading={loading} />
+                      </div>
+                    </div>
+                  </Popup>
+                </Map>
+
+                {/* ── marquee ── */}
+                <div
+                  className="ao-marquee-bar"
+                  onMouseEnter={() => { pausedRef.current = true; }}
+                  onMouseLeave={() => { pausedRef.current = false; }}
+                >
+                  <div className="ao-marquee-track" ref={marqueeRef}>
+                    {[...stores, ...stores].map((store, i) => {
+                      const realIdx = i % stores.length;
+                      const isActive = store.id === popupId;
+                      return (
+                        <div
+                          key={`${store.id}-${i < stores.length ? 'a' : 'b'}`}
+                          className={`ao-marquee-card${isActive ? ' ao-marquee-card--active' : ''}`}
+                          onClick={() => selectStore(store, realIdx)}
+                        >
+                          <span className="ao-card-dot" style={{ background: '#6366f1' }} />
+                          <span className="ao-card-name">{store.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="ao-category-label">
+                  <span className="ao-category-dot" />
+                  POI Matchmaking
+                </div>
               </div>
-            </Popup>
-          )}
-        </Map>
 
-        {/* ── marquee ── */}
-        <div
-          className="ao-marquee-bar"
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-        >
-          <div className="ao-marquee-track" ref={marqueeRef}>
-            {[...stores, ...stores].map((store, i) => {
-              const realIdx = i % stores.length;
-              const isActive = store.id === popupId;
-              return (
-                <div
-                  key={`${store.id}-${i < stores.length ? 'a' : 'b'}`}
-                  className={`ao-marquee-card${isActive ? ' ao-marquee-card--active' : ''}`}
-                  onClick={() => selectStore(store, realIdx)}
-                >
-                  <span className="ao-card-dot" style={{ background: '#6366f1' }} />
-                  <span className="ao-card-name">{store.name}</span>
+              {/* ── side panel: identity distribution ── */}
+              <div className="ao-side-panel" style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                <div className="ao-panel-header">
+                  <div>
+                    <div className="ao-popup-name">{popupStore.name}</div>
+                    {popupStore.address && (
+                      <div className="ao-popup-address">{popupStore.address}</div>
+                    )}
+                  </div>
+                  <button className="ao-panel-close" onClick={closePopup}>×</button>
                 </div>
+                <div style={{ flex: 1, overflowY: 'auto', paddingTop: 4 }}>
+                  <IdentityPanel
+                    personaFit={personaFit}
+                    personaWeights={personaWeights}
+                    satisfactionScore={satisfactionScore}
+                    items={items}
+                    loading={loading}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </MatchmakingDataProvider>
+      ) : (
+        <div className="ao-map-area">
+          <Map
+            ref={mapRef}
+            initialViewState={{ longitude: 4.47, latitude: 50.5, zoom: 7.5 }}
+            style={{ width: '100%', height: '100%' }}
+            mapStyle="mapbox://styles/mapbox/light-v11"
+            mapboxAccessToken={MAPBOX_TOKEN}
+            projection="mercator"
+            onClick={() => closePopup()}
+          >
+            <NavigationControl position="top-right" />
+            {stores.map((store, idx) => {
+              const isActive = store.id === popupId;
+              const size = isActive ? 44 : 32;
+              return (
+                <Marker
+                  key={store.id}
+                  longitude={store.lng}
+                  latitude={store.lat}
+                  anchor="bottom"
+                  onClick={e => { e.originalEvent.stopPropagation(); selectStore(store, idx); }}
+                >
+                  <div
+                    className={`ao-pin${isActive ? ' ao-pin--active' : ''}`}
+                    style={{ '--pin-color': isActive ? '#6366f1' : '#94a3b8', '--pin-size': `${size}px` }}
+                  >
+                    <div className="ao-pin-dot" />
+                    <div className="ao-pin-tail" />
+                  </div>
+                </Marker>
               );
             })}
-          </div>
-        </div>
+          </Map>
 
-        <div className="ao-category-label">
-          <span className="ao-category-dot" />
-          POI Matchmaking
-        </div>
-      </div>
-
-      {/* ── side panel: matchmaking scores + items ── */}
-      {panelOpen && popupStore && (
-        <div className="ao-side-panel" style={{ overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div className="ao-panel-header">
-            <div>
-              <div className="ao-popup-name">{popupStore.name}</div>
-              {popupStore.address && (
-                <div className="ao-popup-address">{popupStore.address}</div>
-              )}
+          {/* ── marquee ── */}
+          <div
+            className="ao-marquee-bar"
+            onMouseEnter={() => { pausedRef.current = true; }}
+            onMouseLeave={() => { pausedRef.current = false; }}
+          >
+            <div className="ao-marquee-track" ref={marqueeRef}>
+              {[...stores, ...stores].map((store, i) => {
+                const realIdx = i % stores.length;
+                const isActive = store.id === popupId;
+                return (
+                  <div
+                    key={`${store.id}-${i < stores.length ? 'a' : 'b'}`}
+                    className={`ao-marquee-card${isActive ? ' ao-marquee-card--active' : ''}`}
+                    onClick={() => selectStore(store, realIdx)}
+                  >
+                    <span className="ao-card-dot" style={{ background: '#6366f1' }} />
+                    <span className="ao-card-name">{store.name}</span>
+                  </div>
+                );
+              })}
             </div>
-            <button className="ao-panel-close" onClick={closePopup}>×</button>
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', paddingTop: 4 }}>
-            <MatchmakingPanel key={popupStore.id} storeId={popupStore.id} />
+          <div className="ao-category-label">
+            <span className="ao-category-dot" />
+            POI Matchmaking
           </div>
         </div>
       )}

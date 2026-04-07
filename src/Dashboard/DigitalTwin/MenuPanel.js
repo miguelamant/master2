@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuItemCard from './MenuItemCard';
 
-const MenuPanel = ({ items, columns, showEuro, decimalSep, pageIndex }) => {
+const MenuPanel = ({ items, columns, showEuro, decimalSep, pageIndex, style }) => {
   // Group items by category
   const groups = {};
   for (const item of items) {
@@ -13,7 +13,7 @@ const MenuPanel = ({ items, columns, showEuro, decimalSep, pageIndex }) => {
   const categoryNames = Object.keys(groups).sort();
 
   return (
-    <div className="twin-panel" data-page={pageIndex}>
+    <div className="twin-panel" data-page={pageIndex + 1} style={style}>
       <div
         className="twin-panel__content"
         style={{ columnCount: columns, columnGap: '1.5rem' }}

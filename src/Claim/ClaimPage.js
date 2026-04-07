@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../apiService';
 import LocationPicker from '../Scan/LocationPicker';
 import '../Scan/ScanPage.css';
 import './ClaimPage.css';
 
 const SOCIAL_DOMAINS = ['facebook.com', 'instagram.com', 'twitter.com', 'x.com', 'tiktok.com', 'linkedin.com', 'youtube.com'];
+const FB_DOMAINS = ['facebook.com', 'instagram.com'];
 
 function extractDomain(urlOrEmail) {
   try {
@@ -21,9 +22,13 @@ function extractDomain(urlOrEmail) {
 
 export default function ClaimPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Step tracking
   const [step, setStep] = useState(1);
+
+  // Facebook claim result from OAuth callback
+  const [fbResult, setFbResult] = useState(null);
 
   // Step 1: Venue
   const [location, setLocation] = useState(null);
@@ -53,19 +58,61 @@ export default function ClaimPage() {
     return () => clearTimeout(t);
   }, [cooldown]);
 
-  // Check if already logged in
+  // Handle Facebook OAuth callback result
   useEffect(() => {
+    const fbClaim = searchParams.get('fb_claim');
+    if (!fbClaim) return;
+
+    if (fbClaim === 'success') {
+      // User is now logged in via Facebook verification — go to password step
+      const venueName = searchParams.get('venue_name') || '';
+      const placeId = searchParams.get('place_id') || '';
+      setLocation({ name: venueName, place_id: placeId });
+      setFbResult('success');
+      setStep(4); // go straight to set-password
+      return;
+    }
+
+    // Error cases
+    const messages = {
+      denied: 'Facebook login was cancelled.',
+      invalid_state: 'Session expired. Please try again.',
+      token_error: 'Failed to connect to Facebook. Please try again.',
+      pages_error: 'Could not retrieve your Facebook pages.',
+      no_match: 'None of your Facebook pages match this venue. Make sure you are an admin of the venue\'s Facebook page.',
+      db_error: 'Account creation failed. Please try again.',
+      session_error: 'Session error. Please try again.',
+    };
+    setFbResult(messages[fbClaim] || 'Facebook verification failed.');
+  }, [searchParams]);
+
+  // Check if already logged in (skip if returning from FB OAuth)
+  useEffect(() => {
+    if (searchParams.get('fb_claim')) return;
     api.get('/api/user')
       .then(() => navigate('/scan'))
       .catch(() => {}); // not logged in, stay on claim page
-  }, [navigate]);
+  }, [navigate, searchParams]);
 
   // Domain matching logic
   const websiteDomain = location?.website ? extractDomain(location.website) : null;
   const emailDomain = email.includes('@') ? extractDomain(email) : null;
   const isSocialWebsite = websiteDomain && SOCIAL_DOMAINS.some(d => websiteDomain.endsWith(d));
+  const isFacebookVenue = websiteDomain && FB_DOMAINS.some(d => websiteDomain.endsWith(d));
   const needsDomainMatch = websiteDomain && !isSocialWebsite;
   const domainMatches = !needsDomainMatch || (emailDomain === websiteDomain);
+
+  const API_BASE = process.env.REACT_APP_API_URL ||
+    (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3007');
+
+  const handleFacebookVerify = () => {
+    const params = new URLSearchParams({
+      place_id: location.place_id,
+      venue_name: location.name || '',
+      website: location.website || '',
+    });
+    window.location.href = `${API_BASE}/api/claim/facebook/start?${params}`;
+  };
 
   const handleSendCode = async () => {
     setSending(true);
@@ -188,7 +235,50 @@ export default function ClaimPage() {
             </div>
           </div>
 
-          {step === 2 && (
+          {step === 2 && isFacebookVenue && (
+            <>
+              <div className="claim-domain-hint">
+                This venue's website is a Facebook/Instagram page. Verify by logging into the Facebook account that manages this page.
+              </div>
+
+              {fbResult && fbResult !== 'success' && (
+                <div className="claim-domain-hint claim-domain-hint--error">{fbResult}</div>
+              )}
+
+              <button
+                className="claim-btn claim-btn--facebook"
+                onClick={handleFacebookVerify}
+              >
+                Verify with Facebook
+              </button>
+
+              <div className="claim-divider">
+                <span>or verify by email</span>
+              </div>
+
+              <input
+                type="email"
+                className="claim-email-input"
+                placeholder="Enter your business email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setSendError(null); }}
+              />
+
+              {sendError && (
+                <div className="claim-domain-hint claim-domain-hint--error">{sendError}</div>
+              )}
+
+              <button
+                className="claim-btn"
+                onClick={handleSendCode}
+                disabled={!email || sending}
+              >
+                {sending ? 'Sending...' : 'Send verification code'}
+              </button>
+            </>
+          )}
+
+          {step === 2 && !isFacebookVenue && (
             <>
               <input
                 type="email"
@@ -217,7 +307,7 @@ export default function ClaimPage() {
                 </div>
               )}
 
-              {isSocialWebsite && email && (
+              {isSocialWebsite && !isFacebookVenue && email && (
                 <div className="claim-domain-hint">
                   Social media URL detected — any business email is accepted.
                 </div>
@@ -348,7 +438,7 @@ export default function ClaimPage() {
               </button>
               <button
                 className="claim-btn"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/optimize-assortment')}
               >
                 Go to dashboard
               </button>

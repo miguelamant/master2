@@ -9,6 +9,7 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const { refresh: refreshAssortments } = useAssortment();
 
+    const [mode, setMode] = useState('login'); // 'login' | 'register'
     const [loginData, setLoginData] = useState(() => {
         const params = new URLSearchParams(window.location.search);
         return {
@@ -16,13 +17,18 @@ const LandingPage = () => {
             password: params.get('password') || '',
         };
     });
+    const [registerData, setRegisterData] = useState({ email: '', password: '', name: '' });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        setLoginData((prev) => ({ ...prev, [id]: value }));
+        if (mode === 'login') {
+            setLoginData((prev) => ({ ...prev, [id]: value }));
+        } else {
+            setRegisterData((prev) => ({ ...prev, [id]: value }));
+        }
     };
 
     const handleLogin = async () => {
@@ -43,12 +49,35 @@ const LandingPage = () => {
                 localStorage.setItem('product_type', res.data.product_type ?? 2);
 
                 refreshAssortments();
-                navigate(res.data.product_type === 1 ? '/poi-matchmaking' : '/dashboard');
+                navigate(res.data.product_type === 1 ? '/poi-matchmaking' : '/scan');
             } else {
                 setError('Invalid credentials');
             }
         } catch {
             setError('Unable to connect — try again');
+        }
+        setLoading(false);
+    };
+
+    const handleRegister = async () => {
+        setError(null);
+        if (!registerData.email || !registerData.password) {
+            setError('Email and password are required');
+            return;
+        }
+        setLoading(true);
+        try {
+            const res = await api.post('/api/register', registerData, { withCredentials: true });
+            if (res.data?.success) {
+                refreshAssortments();
+                // New user — go to venue linking (claim page)
+                navigate('/claim');
+            } else {
+                setError(res.data?.message || 'Registration failed');
+            }
+        } catch (e) {
+            const msg = e.response?.data?.message;
+            setError(msg || 'Unable to connect — try again');
         }
         setLoading(false);
     };
@@ -63,12 +92,13 @@ const LandingPage = () => {
     }, []);
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') handleLogin();
+        if (e.key === 'Enter') {
+            mode === 'login' ? handleLogin() : handleRegister();
+        }
     };
 
     return (
         <div className="landing">
-            {/* decorative grid lines */}
             <div className="landing-lines">
                 <span /><span /><span /><span />
             </div>
@@ -81,6 +111,21 @@ const LandingPage = () => {
                 <div className="landing-tagline">Serve your local demand</div>
 
                 <div className="landing-form" onKeyDown={handleKeyDown}>
+                    {mode === 'register' && (
+                        <div className="landing-field">
+                            <label className="landing-label" htmlFor="name">Name</label>
+                            <input
+                                className="landing-input"
+                                type="text"
+                                id="name"
+                                placeholder="Your name"
+                                value={registerData.name}
+                                onChange={handleInputChange}
+                                autoComplete="name"
+                            />
+                        </div>
+                    )}
+
                     <div className="landing-field">
                         <label className="landing-label" htmlFor="email">Email</label>
                         <input
@@ -88,7 +133,7 @@ const LandingPage = () => {
                             type="email"
                             id="email"
                             placeholder="you@company.com"
-                            value={loginData.email}
+                            value={mode === 'login' ? loginData.email : registerData.email}
                             onChange={handleInputChange}
                             autoComplete="email"
                         />
@@ -101,21 +146,42 @@ const LandingPage = () => {
                             type="password"
                             id="password"
                             placeholder="••••••••"
-                            value={loginData.password}
+                            value={mode === 'login' ? loginData.password : registerData.password}
                             onChange={handleInputChange}
-                            autoComplete="current-password"
+                            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                         />
                     </div>
 
                     <button
                         className="landing-submit"
-                        onClick={handleLogin}
+                        onClick={mode === 'login' ? handleLogin : handleRegister}
                         disabled={loading}
                     >
-                        {loading ? 'Signing in…' : 'Sign in'}
+                        {loading
+                            ? (mode === 'login' ? 'Signing in...' : 'Creating account...')
+                            : (mode === 'login' ? 'Sign in' : 'Create account')
+                        }
                     </button>
 
                     {error && <div className="landing-error">{error}</div>}
+
+                    <div className="landing-switch">
+                        {mode === 'login' ? (
+                            <span>
+                                No account yet?{' '}
+                                <button className="landing-switch-btn" onClick={() => { setMode('register'); setError(null); }}>
+                                    Register
+                                </button>
+                            </span>
+                        ) : (
+                            <span>
+                                Already have an account?{' '}
+                                <button className="landing-switch-btn" onClick={() => { setMode('login'); setError(null); }}>
+                                    Sign in
+                                </button>
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="landing-footer">Assortment intelligence</div>

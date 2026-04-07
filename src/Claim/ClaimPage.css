@@ -147,6 +147,32 @@
 }
 .claim-btn--success:hover:not(:disabled) { background: #047857; }
 
+.claim-btn--facebook {
+  background: #1877f2;
+}
+.claim-btn--facebook:hover:not(:disabled) { background: #1565c0; }
+
+/* ── Divider ── */
+.claim-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+.claim-divider::before,
+.claim-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+.claim-divider span {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .claim-resend {
   background: none;
   border: none;
