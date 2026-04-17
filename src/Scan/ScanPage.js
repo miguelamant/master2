@@ -180,18 +180,24 @@ export default function ScanPage() {
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState({});
   const [columnCount, setColumnCount] = useState(null);
+  const [rectifying, setRectifying] = useState(false);
+  const [rectifyResult, setRectifyResult] = useState(null);
   const [detectingCols, setDetectingCols] = useState(false);
   const [detectedCols, setDetectedCols] = useState(null);
+  const [inferring, setInferring] = useState(false);
+  const [foldResult, setFoldResult] = useState(null);
   const [extractError, setExtractError] = useState(null);
   const [visionExtracting, setVisionExtracting] = useState(false);
   const [visionExtractResult, setVisionExtractResult] = useState(null);
   const [exporting, setExporting] = useState(false);
   const [exportDone, setExportDone] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [verifyResult, setVerifyResult] = useState(null);
+  const [calibrationScale, setCalibrationScale] = useState(1);
   const [pushing, setPushing] = useState(false);
   const [pushResult, setPushResult] = useState(null);
   const [pushError, setPushError] = useState(null);
+  const [savingTwin, setSavingTwin] = useState(false);
+  const [saveTwinResult, setSaveTwinResult] = useState(null);
+  const [saveTwinError, setSaveTwinError] = useState(null);
 
   // Auth gate — redirect to /claim if not logged in
   useEffect(() => {
@@ -199,6 +205,40 @@ export default function ScanPage() {
       .then(() => setAuthChecked(true))
       .catch(() => navigate('/claim'));
   }, [navigate]);
+
+  // ── Rectify paper (perspective warp via OpenCV) ────────────────────────
+  const handleRectifyPaper = async () => {
+    if (images.length === 0) return;
+    setRectifying(true);
+    setRectifyResult(null);
+    setExtractError(null);
+
+    let rectifiedCount = 0;
+    let skippedCount = 0;
+    const errors = [];
+
+    for (const img of images) {
+      try {
+        const { data } = await api.post('/api/scan/rectify-paper', { imageUrl: img.imageUrl });
+        if (data.rectified) {
+          setImages(prev => prev.map(i =>
+            i.imageId === img.imageId
+              ? { ...i, imageUrl: data.imageUrl, localPreview: data.imageUrl }
+              : i
+          ));
+          rectifiedCount++;
+        } else {
+          skippedCount++;
+        }
+      } catch (e) {
+        const detail = e.response?.data?.detail || e.message;
+        errors.push(`${img.fileName}: ${detail}`);
+      }
+    }
+
+    setRectifyResult({ rectifiedCount, skippedCount, errors });
+    setRectifying(false);
+  };
 
   // ── Google Vision column detection (all images) ────────────────────────
   const handleDetectCols = async () => {
@@ -227,7 +267,12 @@ export default function ScanPage() {
           priceClusters: data.price_clusters,
           logos: data.logos || [],
           objects: data.objects || [],
+          zoneClassifications: data.zone_classifications || [],
+          headerClassifications: data.header_classifications || [],
           imageSize: data.image_size,
+          medianWordHeight: data.median_word_height,
+          medianLineSpacing: data.median_line_spacing,
+          lineHeightRatio: data.line_height_ratio,
         });
       } catch (e) {
         console.error(`Column detection failed for image ${idx}:`, e);
@@ -236,19 +281,71 @@ export default function ScanPage() {
       }
     }
 
-    // Infer fold type from image count + total columns
-    const totalCols = results.reduce((s, r) => s + r.columns.length, 0);
-    let foldType = 'single';
-    if (images.length === 1) {
-      foldType = totalCols <= 2 ? 'a5-portrait' : totalCols <= 3 ? 'trifold' : 'four-panel';
-    } else if (images.length === 2) {
-      foldType = totalCols <= 4 ? 'bifold' : totalCols <= 6 ? 'trifold' : 'four-panel';
-    } else {
-      foldType = 'a4-booklet';
+    // Enrich columns with zone types (content vs cover)
+    for (const page of results) {
+      const cols = page.columns || [];
+      const debugWords = page.debugWords || [];
+      const zoneClassifications = page.zoneClassifications || [];
+
+      for (const col of cols) {
+        const matchingZone = zoneClassifications.find(zc =>
+          Math.abs(zc.x_start - col.x_start) < 5 && Math.abs(zc.x_end - col.x_end) < 5
+        );
+        if (matchingZone) {
+          col.type = matchingZone.classification === 'menu-items' ? 'content' : matchingZone.classification;
+        } else {
+          const x0 = col.x_start / 100;
+          const x1 = col.x_end / 100;
+          const zoneWords = debugWords.filter(w => {
+            const wMid = (w.x0_pct + w.x1_pct) / 2 / 100;
+            return wMid >= x0 && wMid <= x1;
+          });
+          const priceCount = zoneWords.filter(w => w.isPrice).length;
+          const headerCount = zoneWords.filter(w => w.isHeader).length;
+          const wordCount = zoneWords.length;
+          col.type = priceCount > 2 ? 'content' : (headerCount >= 1 && wordCount < 30) ? 'cover' : (priceCount === 0 && wordCount < 15) ? 'cover' : 'content';
+          col.priceCount = priceCount;
+          col.headerCount = headerCount;
+          col.wordCount = wordCount;
+        }
+      }
     }
 
-    setDetectedCols({ pages: results, foldType, imageCount: images.length, totalColumns: totalCols });
+    const totalCols = results.reduce((s, r) => s + r.columns.length, 0);
+    setDetectedCols({ pages: results, imageCount: images.length, totalColumns: totalCols });
     setDetectingCols(false);
+  };
+
+  // ── Infer fold structure via GPT ──────────────────────────────────────
+  const handleInferStructure = async () => {
+    if (!detectedCols?.pages?.length) return;
+    setInferring(true);
+    setFoldResult(null);
+    setExtractError(null);
+
+    try {
+      const { data } = await api.post('/api/scan/infer-fold', {
+        pages: detectedCols.pages.map(p => ({
+          fileName: p.fileName,
+          columns: (p.columns || []).map(c => ({
+            column: c.column,
+            x_start: c.x_start,
+            x_end: c.x_end,
+            type: c.type || 'content',
+            priceCount: c.priceCount || 0,
+            headerCount: c.headerCount || 0,
+            wordCount: c.wordCount || 0,
+          })),
+          gutterDetails: p.gutterDetails,
+        })),
+      });
+      setFoldResult(data);
+      console.log(`[scan] Fold inference: ${data.fold_type}, ${data.total_panels} panels — ${data.reasoning}`);
+    } catch (e) {
+      console.error('Fold inference failed:', e);
+      setExtractError(`Fold inference failed: ${e.response?.data?.detail || e.message}`);
+    }
+    setInferring(false);
   };
 
   // ── Vision Extract: process all pages ─────────────────────────────────
@@ -265,16 +362,37 @@ export default function ScanPage() {
 
     for (const page of detectedCols.pages) {
       try {
+        // Build column roles from fold result panels
+        // Maps each column number (1-based) to its role: 'content' or 'cover'
+        const columnRoles = [];
+        const foldPage = foldResult?.pages?.find(p => p.page_index === page.pageIndex);
+        if (foldPage?.panels) {
+          const splits = (page.gutterDetails || []).map(s => s.position_pct).sort((a, b) => a - b);
+          const numCols = splits.length + 1;
+          // Default all to content
+          for (let c = 0; c < numCols; c++) columnRoles.push('content');
+          // Mark cover columns from panel assignments
+          for (const panel of foldPage.panels) {
+            if (panel.type === 'cover' || panel.type === 'info') {
+              for (const colNum of (panel.columns || [])) {
+                if (colNum >= 1 && colNum <= numCols) columnRoles[colNum - 1] = panel.type;
+              }
+            }
+          }
+        }
+
         const { data } = await api.post('/api/scan/vision-extract', {
           imageUrl: page.imageUrl,
           splitLines: page.gutterDetails || [],
+          columnRoles: columnRoles.length > 0 ? columnRoles : undefined,
         });
 
-        // Tag each column with page info
-        const pageColumns = (data.panel?.columns || []).map(col => ({
+        // Tag each column with page info and role
+        const pageColumns = (data.panel?.columns || []).map((col, ci) => ({
           ...col,
           pageIndex: page.pageIndex,
           globalColumn: ++globalColIdx,
+          role: columnRoles[ci] || 'content',
         }));
         allPanels.push({ ...data, panel: { ...data.panel, columns: pageColumns }, pageIndex: page.pageIndex, fileName: page.fileName });
 
@@ -302,8 +420,43 @@ export default function ScanPage() {
       }
     }
 
-    // Merge all panels into one result
-    const mergedColumns = allPanels.flatMap(p => p.panel?.columns || []);
+    // Merge all panels into one result, padding cover panels to columns_per_panel
+    let mergedColumns = allPanels.flatMap(p => p.panel?.columns || []);
+
+    const cpp = foldResult?.columns_per_panel || 1;
+    if (cpp > 1 && foldResult?.pages) {
+      const paddedColumns = [];
+      for (const foldPage of foldResult.pages) {
+        for (const panel of (foldPage.panels || [])) {
+          // Find the extracted columns that belong to this panel
+          const panelCols = (panel.columns || []).map(colNum =>
+            mergedColumns.find(c => c.column === colNum && c.pageIndex === foldPage.page_index)
+          ).filter(Boolean);
+
+          // Add the panel's columns
+          paddedColumns.push(...panelCols);
+
+          // Pad cover/info panels to match columns_per_panel
+          if ((panel.type === 'cover' || panel.type === 'info') && panelCols.length < cpp) {
+            const needed = cpp - panelCols.length;
+            for (let p = 0; p < needed; p++) {
+              paddedColumns.push({
+                column: -1, // dummy
+                textboxes: [],
+                pageIndex: foldPage.page_index,
+                globalColumn: ++globalColIdx,
+                role: panel.type,
+              });
+            }
+            console.log(`[scan] Padded ${panel.type} panel ${panel.panel_number} with ${needed} empty column(s)`);
+          }
+        }
+      }
+      // Only use padded if we successfully mapped all columns
+      if (paddedColumns.length >= mergedColumns.length) {
+        mergedColumns = paddedColumns;
+      }
+    }
     const mergedStyling = allPanels[0]?.styling || {};
     const totalTextboxes = mergedColumns.reduce((s, c) => s + c.textboxes.length, 0);
     const totalRows = mergedColumns.reduce((s, c) => s + c.textboxes.reduce((s2, tb) => s2 + (tb.display_rows?.length || 0), 0), 0);
@@ -335,41 +488,6 @@ export default function ScanPage() {
     }
     setCategories(cats);
     setVisionExtracting(false);
-  };
-
-  // ── Verify structure: cross-check GPT extraction against the image ────
-  const handleVerifyStructure = async () => {
-    if (!visionExtractResult || !detectedCols?.pages?.length) return;
-    setVerifying(true);
-    setVerifyResult(null);
-
-    // Verify each page separately, then merge results
-    const allVerifications = [];
-    const extractedCols = visionExtractResult.panel.columns;
-    let colOffset = 0;
-
-    for (const page of detectedCols.pages) {
-      const pageCols = page.columns.length;
-      const pageExtracted = extractedCols.slice(colOffset, colOffset + pageCols);
-      colOffset += pageCols;
-
-      try {
-        const { data } = await api.post('/api/scan/verify-structure', {
-          imageUrl: page.imageUrl,
-          splitLines: page.gutterDetails || [],
-          extractedColumns: pageExtracted,
-        });
-        allVerifications.push(...(data.columns || []).map(c => ({ ...c, page: page.pageIndex + 1 })));
-      } catch (e) {
-        console.error(`Verify failed for page ${page.pageIndex}:`, e);
-        allVerifications.push({ column: colOffset, status: 'error', error: e.message, page: page.pageIndex + 1 });
-      }
-    }
-
-    const allOk = allVerifications.every(v => v.status === 'ok' || v.status === 'skipped');
-    const totalIssues = allVerifications.reduce((s, v) => s + (v.issues?.length || 0), 0);
-    setVerifyResult({ ok: allOk, total_issues: totalIssues, columns: allVerifications });
-    setVerifying(false);
   };
 
   const handleExport = async () => {
@@ -414,6 +532,28 @@ export default function ScanPage() {
     setPushing(false);
   };
 
+  const handleSaveTwin = async () => {
+    if (!visionExtractResult || !location?.place_id) return;
+    setSavingTwin(true);
+    setSaveTwinResult(null);
+    setSaveTwinError(null);
+    try {
+      const { data } = await api.post('/api/scan/save-twin', {
+        placeId: location.place_id,
+        location: location || {},
+        visionExtractResult,
+        styling: visionExtractResult.styling,
+        foldType: visionExtractResult.fold_type || foldResult?.foldType || 'a4-portrait',
+        calibrationScale,
+      });
+      setSaveTwinResult(data);
+    } catch (e) {
+      console.error('Save twin failed:', e);
+      setSaveTwinError(e.response?.data?.detail || e.message || 'Save failed');
+    }
+    setSavingTwin(false);
+  };
+
   if (!authChecked) return null;
 
   const rowTypeBadge = {
@@ -453,17 +593,23 @@ export default function ScanPage() {
         <PhotoUploader images={images} setImages={setImages} />
       </div>
 
-      {/* Step 3: Detect columns (Google Vision) + Extract structure */}
+      {/* Step 3: Detect columns, infer structure, extract */}
       <div className="scan-section">
         <h2 className="scan-section__title">
           <span className="scan-section__step">3</span>
-          Detect columns & extract
+          Detect, infer & extract
         </h2>
-        <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 12px' }}>
-          Detects columns on each uploaded photo separately (1 photo = 1 side of the menu), then extracts items from each column.
-        </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            className="scan-extract-btn"
+            onClick={handleRectifyPaper}
+            disabled={images.length === 0 || rectifying}
+            style={{ background: rectifying ? '#9ca3af' : '#0ea5e9' }}
+          >
+            {rectifying ? 'Rectifying...' : `0. Rectify paper`}
+          </button>
+
           <button
             className="scan-extract-btn"
             onClick={handleDetectCols}
@@ -476,17 +622,36 @@ export default function ScanPage() {
           {detectedCols?.pages?.length > 0 && (
             <button
               className="scan-extract-btn"
+              onClick={handleInferStructure}
+              disabled={inferring}
+              style={{ background: inferring ? '#9ca3af' : '#7c3aed' }}
+            >
+              {inferring ? 'Inferring...' : `2. Infer structure`}
+            </button>
+          )}
+
+          {foldResult && (
+            <button
+              className="scan-extract-btn"
               onClick={handleVisionExtract}
               disabled={visionExtracting}
               style={{ background: visionExtracting ? '#9ca3af' : '#059669' }}
             >
-              {visionExtracting ? 'Extracting structure...' : `2. Extract structure (${detectedCols.totalColumns} columns across ${detectedCols.imageCount} page${detectedCols.imageCount > 1 ? 's' : ''})`}
+              {visionExtracting ? 'Extracting...' : `3. Extract items`}
             </button>
           )}
 
-          {visionExtracting && (
-            <span className="scan-status" style={{ color: '#059669' }}>
-              Sending each column to GPT-4o...
+          {(rectifying || detectingCols || inferring || visionExtracting) && (
+            <span className="scan-status" style={{ color: '#6b7280' }}>
+              {rectifying ? 'Detecting paper outline & warping...' : detectingCols ? 'Running Google Vision...' : inferring ? 'GPT inferring fold type...' : 'Extracting items from each column...'}
+            </span>
+          )}
+
+          {rectifyResult && !rectifying && (
+            <span className="scan-status" style={{ color: rectifyResult.skippedCount || rectifyResult.errors.length ? '#f59e0b' : '#22c55e' }}>
+              Rectified {rectifyResult.rectifiedCount}/{images.length}
+              {rectifyResult.skippedCount > 0 && ` · ${rectifyResult.skippedCount} skipped (no paper outline detected)`}
+              {rectifyResult.errors.length > 0 && ` · ${rectifyResult.errors.length} error(s)`}
             </span>
           )}
 
@@ -500,12 +665,47 @@ export default function ScanPage() {
           )}
         </div>
 
-        {/* Detection info */}
-        {detectedCols?.pages?.length > 0 && (
-          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-            <strong style={{ color: '#7c3aed' }}>Fold: {detectedCols.foldType}</strong>
-            {' · '}{detectedCols.imageCount} photo{detectedCols.imageCount > 1 ? 's' : ''}
-            {' · '}{detectedCols.totalColumns} total columns
+        {/* Fold inference result */}
+        {foldResult && (
+          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 10, padding: 12, background: 'rgba(124,58,237,0.04)', borderRadius: 8, border: '1px solid rgba(124,58,237,0.15)' }}>
+            <div>
+              <strong style={{ color: '#7c3aed' }}>Fold: {foldResult.fold_type}</strong>
+              {' · '}{foldResult.total_panels} panels
+              {foldResult.standard_column_width_pct && ` · col width: ~${foldResult.standard_column_width_pct}%`}
+              {foldResult.columns_per_panel && ` · ${foldResult.columns_per_panel} col/panel`}
+            </div>
+            {foldResult.reasoning && (
+              <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 4, fontStyle: 'italic' }}>
+                {foldResult.reasoning}
+              </div>
+            )}
+            {foldResult.pages && (
+              <div style={{ fontSize: 11, marginTop: 6, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                {foldResult.pages.map((p, pi) => (
+                  <div key={pi}>
+                    <span style={{ fontWeight: 600, color: '#374151' }}>
+                      {pi === 0 ? 'Front' : pi === 1 ? 'Back' : `Page ${pi + 1}`}:
+                    </span>{' '}
+                    {(p.panels || []).map((panel, pj) => {
+                      const colors = { cover: '#06b6d4', info: '#f59e0b', content: '#22c55e' };
+                      return (
+                        <span key={pj} style={{ marginRight: 4 }}>
+                          <span style={{
+                            padding: '1px 6px', borderRadius: 4, fontSize: 10, fontWeight: 600,
+                            background: `${colors[panel.type] || '#9ca3af'}18`,
+                            color: colors[panel.type] || '#9ca3af',
+                            border: `1px solid ${colors[panel.type] || '#9ca3af'}40`,
+                          }}>
+                            P{panel.panel_number}: {panel.type} (col {(panel.columns || []).join(',')})
+                            {panel.fold_after && ' | fold'}
+                          </span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -558,9 +758,9 @@ export default function ScanPage() {
                   })}
                   {/* Debug: word boxes — prices (green), ABV (purple), headers (orange), text (grey) */}
                   {(page.debugWords || []).map((w, wi) => {
-                    const color = w.isPrice ? '#22c55e' : w.isABV ? '#8b5cf6' : w.isHeader ? '#f59e0b' : '#1f2937';
-                    const bg = w.isPrice ? 'rgba(34,197,94,0.15)' : w.isABV ? 'rgba(139,92,246,0.15)' : w.isHeader ? 'rgba(245,158,11,0.18)' : 'transparent';
-                    const border = (w.isPrice || w.isABV || w.isHeader) ? `2px solid ${color}` : `0.5px solid rgba(31,41,55,0.3)`;
+                    const color = w.isPrice ? '#22c55e' : w.isABV ? '#8b5cf6' : w.isLarge ? '#ef4444' : w.isMedium ? '#f59e0b' : '#1f2937';
+                    const bg = w.isPrice ? 'rgba(34,197,94,0.15)' : w.isABV ? 'rgba(139,92,246,0.15)' : w.isLarge ? 'rgba(239,68,68,0.18)' : w.isMedium ? 'rgba(245,158,11,0.18)' : 'transparent';
+                    const border = (w.isPrice || w.isABV || w.isMedium || w.isLarge) ? `2px solid ${color}` : `0.5px solid rgba(31,41,55,0.3)`;
                     return (
                       <div key={`w-${wi}`} title={`"${w.text}" ${w.isPrice ? 'PRICE' : w.isABV ? 'ABV' : w.isHeader ? 'HEADER' : ''} (${w.sizeRatio}x, ${w.height_px}px)`} style={{
                         position: 'absolute',
@@ -618,14 +818,31 @@ export default function ScanPage() {
                 <div style={{ fontSize: 10, color: '#9ca3af', marginTop: 4 }}>
                   <span style={{ color: '#22c55e' }}>■</span> price
                   {' '}<span style={{ color: '#8b5cf6' }}>■</span> ABV
-                  {' '}<span style={{ color: '#f59e0b' }}>■</span> header
-                  {' '}<span style={{ color: '#9ca3af' }}>■</span> text
+                  {' '}<span style={{ color: '#ef4444' }}>■</span> large
+                  {' '}<span style={{ color: '#f59e0b' }}>■</span> medium
+                  {' '}<span style={{ color: '#9ca3af' }}>■</span> small
                   {' '}<span style={{ color: '#06b6d4' }}>□</span> logo
                   {' '}<span style={{ color: '#ec4899' }}>□</span> object
                   {page.priceCount > 0 && <span> · {page.priceCount} prices in {page.priceClusters?.length || 0} clusters</span>}
                   {page.logos?.length > 0 && <span> · {page.logos.length} logo{page.logos.length > 1 ? 's' : ''}</span>}
                   {page.objects?.length > 0 && <span> · {page.objects.length} object{page.objects.length > 1 ? 's' : ''}</span>}
                 </div>
+                {page.zoneClassifications?.length > 0 && (
+                  <div style={{ fontSize: 10, color: '#6b7280', marginTop: 2 }}>
+                    {page.zoneClassifications.map((zc, zi) => (
+                      <div key={zi} style={{ marginBottom: 2 }}>
+                        <span style={{
+                          fontWeight: 700,
+                          color: zc.classification === 'cover' ? '#06b6d4' : zc.classification === 'info' ? '#f59e0b' : zc.classification === 'menu-items' ? '#22c55e' : '#9ca3af',
+                        }}>
+                          {zc.side} zone → {zc.classification}
+                        </span>
+                        <span style={{ color: '#9ca3af' }}> ({zc.word_count} words, {zc.x_start}-{zc.x_end}%)</span>
+                        <span style={{ color: '#6b7280', fontStyle: 'italic' }}> "{zc.sample_text}"</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -756,104 +973,7 @@ export default function ScanPage() {
         <ItemsTable items={items} setItems={setItems} />
       </div>
 
-      {/* Step 4: Verify structure */}
-      {visionExtractResult && (
-        <div className="scan-section">
-          <h2 className="scan-section__title">
-            <span className="scan-section__step">4</span>
-            Verify structure
-          </h2>
-          <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 12px' }}>
-            Cross-checks the extracted items against the original image to catch skipped items, hallucinations, or wrong prices.
-          </p>
-          <button
-            className="scan-extract-btn"
-            onClick={handleVerifyStructure}
-            disabled={verifying}
-            style={{ background: verifying ? '#9ca3af' : '#f59e0b', marginBottom: 12 }}
-          >
-            {verifying ? 'Verifying...' : 'Verify digital twin structure'}
-          </button>
-
-          {verifyResult && (
-            <div style={{ marginTop: 8 }}>
-              {verifyResult.error && (
-                <span className="scan-status scan-status--error">{verifyResult.error}</span>
-              )}
-              {!verifyResult.error && (
-                <>
-                  <div style={{
-                    fontSize: 14, fontWeight: 700, marginBottom: 12,
-                    color: verifyResult.ok ? '#22c55e' : '#ef4444',
-                  }}>
-                    {verifyResult.ok
-                      ? 'All columns verified — no issues found'
-                      : `${verifyResult.total_issues} issue${verifyResult.total_issues !== 1 ? 's' : ''} found`
-                    }
-                  </div>
-                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                    {(verifyResult.columns || []).map((col, i) => (
-                      <div key={i} style={{
-                        border: `1px solid ${col.status === 'ok' ? '#22c55e40' : col.status === 'error' ? '#ef444440' : '#f59e0b40'}`,
-                        borderRadius: 10, padding: 12, minWidth: 220, flex: '1 1 220px',
-                        background: col.status === 'ok' ? 'rgba(34,197,94,0.04)' : col.status === 'error' ? 'rgba(239,68,68,0.04)' : 'rgba(245,158,11,0.04)',
-                      }}>
-                        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
-                          Column {col.column}
-                          <span style={{
-                            marginLeft: 8, fontSize: 11, fontWeight: 600,
-                            color: col.status === 'ok' ? '#22c55e' : '#ef4444',
-                          }}>
-                            {col.status === 'ok' ? 'OK' : col.status === 'error' ? 'ERROR' : col.status === 'skipped' ? 'SKIPPED' : 'MISMATCH'}
-                          </span>
-                        </div>
-                        {col.extracted_count != null && (
-                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-                            Extracted: {col.extracted_count} items · Visible: {col.visible_count} items
-                          </div>
-                        )}
-                        {col.error && (
-                          <div style={{ fontSize: 12, color: '#ef4444' }}>{col.error}</div>
-                        )}
-                        {(col.issues || []).map((issue, j) => {
-                          const colors = { missing: '#ef4444', hallucinated: '#f59e0b', wrong_price: '#3b82f6' };
-                          const labels = { missing: 'MISSING', hallucinated: 'HALLUCINATED', wrong_price: 'WRONG PRICE' };
-                          return (
-                            <div key={j} style={{
-                              fontSize: 12, padding: '4px 8px', marginTop: 4, borderRadius: 6,
-                              background: `${colors[issue.type]}10`,
-                              border: `1px solid ${colors[issue.type]}30`,
-                            }}>
-                              <span style={{ fontWeight: 700, color: colors[issue.type], fontSize: 10 }}>
-                                {labels[issue.type]}
-                              </span>
-                              {' '}{issue.product_name}
-                              {issue.product_price != null && (
-                                <span style={{ color: '#6b7280' }}> — €{(issue.product_price / 100).toFixed(2)}</span>
-                              )}
-                              {issue.correct_price != null && (
-                                <span style={{ color: '#3b82f6' }}> (should be €{(issue.correct_price / 100).toFixed(2)})</span>
-                              )}
-                              {issue.location && (
-                                <div style={{ fontSize: 11, color: '#9ca3af' }}>{issue.location}</div>
-                              )}
-                              {issue.reason && (
-                                <div style={{ fontSize: 11, color: '#9ca3af' }}>{issue.reason}</div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Step 5: Digital Twin preview */}
+      {/* Step 4: Digital Twin preview */}
       {visionExtractResult && (
         <div className="scan-section">
           <h2 className="scan-section__title">
@@ -863,7 +983,28 @@ export default function ScanPage() {
           <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 12px' }}>
             Preview of the menu as a digital replica, rendered from the extracted structure.
           </p>
-          <ScanTwinPreview visionExtractResult={visionExtractResult} onUpdateResult={setVisionExtractResult} />
+          <ScanTwinPreview visionExtractResult={visionExtractResult} onUpdateResult={setVisionExtractResult} foldResult={foldResult} detectedPages={detectedCols?.pages} onCalibrationChange={setCalibrationScale} />
+
+          {/* Save Twin to DB */}
+          <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              className="scan-extract-btn"
+              onClick={handleSaveTwin}
+              disabled={savingTwin || !location?.place_id}
+              style={{ background: savingTwin ? '#9ca3af' : '#7c3aed' }}
+            >
+              {savingTwin ? 'Saving...' : 'Save Twin'}
+            </button>
+            {!location?.place_id && (
+              <span style={{ fontSize: 12, color: '#9ca3af' }}>Select a venue location first</span>
+            )}
+            {saveTwinError && <span className="scan-status scan-status--error">{saveTwinError}</span>}
+            {saveTwinResult?.ok && (
+              <span className="scan-status scan-status--success">
+                Saved: {saveTwinResult.totalSections} sections, {saveTwinResult.totalRows} rows, {saveTwinResult.totalItems} items
+              </span>
+            )}
+          </div>
         </div>
       )}
 

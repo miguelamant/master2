@@ -86,3 +86,9 @@ export async function extractTwin(files) {
   });
   return data;
 }
+
+// Digital Twin: load saved twin structure from DB
+export async function loadTwin(assortmentId) {
+  const { data } = await api.get(`/api/scan/load-twin/${assortmentId}`);
+  return data;
+}

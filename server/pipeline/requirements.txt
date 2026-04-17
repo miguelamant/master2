@@ -2,3 +2,6 @@ pandas
 openpyxl
 supabase
 python-dotenv
+opencv-python-headless
+numpy
+pillow

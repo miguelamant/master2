@@ -49,7 +49,7 @@ const LandingPage = () => {
                 localStorage.setItem('product_type', res.data.product_type ?? 2);
 
                 refreshAssortments();
-                navigate(res.data.product_type === 1 ? '/poi-matchmaking' : '/scan');
+                navigate(res.data.product_type === 1 ? '/poi-matchmaking' : res.data.product_type === 3 ? '/optimize-assortment' : '/scan');
             } else {
                 setError('Invalid credentials');
             }

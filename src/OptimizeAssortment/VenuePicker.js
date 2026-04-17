@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useAssortment } from '../context/AssortmentContext';
+import albertHeijnLogo from '../Dashboard/Icons/albert_heijn.png';
+import colruytLogo from '../Dashboard/Icons/colruyt.png';
+import delhaizeLogo from '../Dashboard/Icons/delhaize.png';
+
+const BRAND_LOGOS = { albert_heijn: albertHeijnLogo, colruyt: colruytLogo, delhaize: delhaizeLogo };
 
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN ||
   'pk.eyJ1IjoibWlndWVsYW1hbnQiLCJhIjoiY21tb29xOTlzMGVweTJvc2IweGEwb2s2ZyJ9.3j5JPLEn0_D6_-5d_OEuxg';
@@ -10,6 +15,7 @@ const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN ||
 const VenuePicker = ({ onSelect, onConfirm, selectedId }) => {
   const navigate = useNavigate();
   const { assortments, loaded } = useAssortment();
+  const logoSrc = BRAND_LOGOS[localStorage.getItem('logo')] || null;
   const [search, setSearch] = useState('');
   const [popupId, setPopupId] = useState(selectedId);
   const mapRef = useRef(null);
@@ -116,7 +122,10 @@ const VenuePicker = ({ onSelect, onConfirm, selectedId }) => {
                   className={`vp-pin${isSelected ? ' vp-pin--active' : ''}`}
                   style={{ '--pin-size': isSelected ? '40px' : '28px' }}
                 >
-                  <div className="vp-pin-dot" />
+                  {logoSrc
+                    ? <img src={logoSrc} alt="" className="vp-pin-logo" />
+                    : <div className="vp-pin-dot" />
+                  }
                   <div className="vp-pin-tail" />
                 </div>
               </Marker>

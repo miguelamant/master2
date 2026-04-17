@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { menuItems, extractTwin, updateMenuConfig, updateMenuItemsLayout } from 'apiService';
+import { menuItems, extractTwin, updateMenuConfig, updateMenuItemsLayout, loadTwin } from 'apiService';
 import { useAssortment } from '../../context/AssortmentContext';
 import { useMenuConfig } from './useMenuConfig';
 import MenuConfigBar from './MenuConfigBar';
 import MenuPreview from './MenuPreview';
+import ScanTwinPreview from '../../Scan/ScanTwinPreview';
 import FormatPicker, { FORMAT_CATALOG } from './FormatPicker';
 import TwinUploader from './TwinUploader';
 import { usePdfExport } from './usePdfExport';
@@ -17,8 +18,25 @@ const DigitalTwin = () => {
   const [selectedFormat, setSelectedFormat] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
   const { exportPdf, exporting } = usePdfExport();
+  const [savedTwin, setSavedTwin] = useState(null);
 
-  // Fetch menu items
+  // Try to load a saved twin structure first
+  useEffect(() => {
+    if (!activeAssortmentId) return;
+    let cancelled = false;
+
+    loadTwin(activeAssortmentId)
+      .then(data => {
+        if (!cancelled && data?.total_items > 0) {
+          setSavedTwin(data);
+        }
+      })
+      .catch(() => { /* No saved twin — fall back to flat view */ });
+
+    return () => { cancelled = true; };
+  }, [activeAssortmentId]);
+
+  // Fetch menu items (fallback for venues without a saved twin)
   useEffect(() => {
     if (!activeAssortmentId) return;
     let cancelled = false;
@@ -198,14 +216,23 @@ const DigitalTwin = () => {
         />
       )}
 
-      <MenuPreview
-        format={selectedFormat}
-        columns={config?.columns ?? 1}
-        showEuro={config?.show_euro ?? true}
-        decimalSep={config?.decimal_sep ?? 'comma'}
-        pages={pages}
-        styling={styling}
-      />
+      {savedTwin ? (
+        <ScanTwinPreview
+          visionExtractResult={savedTwin}
+          onUpdateResult={setSavedTwin}
+          foldResult={{ foldType: savedTwin.fold_type || selectedFormat }}
+          storedCalibrationScale={savedTwin.styling?.calibration_scale}
+        />
+      ) : (
+        <MenuPreview
+          format={selectedFormat}
+          columns={config?.columns ?? 1}
+          showEuro={config?.show_euro ?? true}
+          decimalSep={config?.decimal_sep ?? 'comma'}
+          pages={pages}
+          styling={styling}
+        />
+      )}
 
       {/* Fold type quick-switcher */}
       <div className="twin-format-switcher">

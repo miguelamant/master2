@@ -244,6 +244,21 @@
   box-shadow: 0 0 12px rgba(232,197,71,0.5), 0 2px 8px rgba(0,0,0,0.3);
 }
 
+.vp-pin-logo {
+  width: var(--pin-size, 28px);
+  height: var(--pin-size, 28px);
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.vp-pin--active .vp-pin-logo {
+  box-shadow: 0 0 12px rgba(232,197,71,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  border-color: #e8c547;
+}
+
 .vp-pin-tail {
   width: 0;
   height: 0;
