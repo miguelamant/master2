@@ -16,5 +16,7 @@ export const env = {
     GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD || "",
     FB_APP_ID: process.env.FB_APP_ID || "",
     FB_APP_SECRET: process.env.FB_APP_SECRET || "",
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
     GOOGLE_API_KEY: process.env.REACT_APP_GOOGLE_API_KEY || process.env.GOOGLE_API_KEY || "",
 };

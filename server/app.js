@@ -25,6 +25,7 @@ import engineDistributionsRoutes from "./routes/engineDistributions.routes.js";
 import scanRoutes from "./routes/scan.routes.js";
 import claimRoutes from "./routes/claim.routes.js";
 import menuConfigRoutes from "./routes/menuConfig.routes.js";
+import consumerRoutes from "./routes/consumer.routes.js";
 
 export const app = express();
 
@@ -63,6 +64,7 @@ app.use("/api", engineDistributionsRoutes);
 app.use("/api", scanRoutes);
 app.use("/api", claimRoutes);
 app.use("/api", menuConfigRoutes);
+app.use("/api", consumerRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {

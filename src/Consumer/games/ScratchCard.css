@@ -1,0 +1,296 @@
+/* ── Scratch Card ─────────────────────────────────────────────────────────── */
+
+.sc-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #0a0a0a;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+/* ── header ── */
+.sc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.sc-back {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sc-back-placeholder { width: 36px; flex-shrink: 0; }
+
+.sc-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* ── body ── */
+.sc-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem 2rem;
+  gap: 1.25rem;
+  overflow-y: auto;
+}
+
+.sc-body--play {
+  align-items: center;
+  padding-top: 1.25rem;
+}
+
+/* ── cost banner ── */
+.sc-cost-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(250,149,75,0.08);
+  border: 1px solid rgba(250,149,75,0.2);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+}
+
+.sc-cost-icon { font-size: 2rem; line-height: 1; }
+
+.sc-cost-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fa954b;
+}
+
+.sc-cost-sub {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.1rem;
+}
+
+/* ── odds card ── */
+.sc-odds-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sc-odds-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin: 0 0 0.25rem;
+}
+
+.sc-odds-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.sc-odds-row > span:first-child { flex: 1; }
+
+.sc-odds-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  min-width: 4.5rem;
+  text-align: right;
+}
+
+.sc-odds-prize {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fa954b;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.sc-odds-row--lose .sc-odds-prize { color: rgba(255,255,255,0.3); }
+
+/* ── scratch hint ── */
+.sc-scratch-hint {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+  text-align: center;
+}
+
+/* ── the card ── */
+.sc-card {
+  background: linear-gradient(145deg, #f5e642 0%, #f0d000 60%, #e8c400 100%);
+  border-radius: 20px;
+  padding: 14px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(240,208,0,0.2);
+}
+
+.sc-card-header {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.45);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.sc-card-footer {
+  font-size: 0.62rem;
+  color: rgba(0,0,0,0.3);
+  text-align: center;
+  margin-top: 10px;
+  letter-spacing: 0.04em;
+}
+
+/* ── grid ── */
+.sc-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── cells ── */
+.sc-cell {
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  gap: 3px;
+  aspect-ratio: 1;
+}
+
+.sc-cell-sym {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.sc-cell-lbl {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.sc-cell--prize .sc-cell-lbl { color: #059669; }
+
+/* ── canvas overlay ── */
+.sc-canvas {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* ── result ── */
+.sc-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0.5rem 0;
+  width: 100%;
+  max-width: 320px;
+}
+
+.sc-result-emoji { font-size: 3rem; line-height: 1; }
+
+.sc-result-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sc-result--win .sc-result-title { color: #fbbf24; }
+
+.sc-result-sub {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.sc-result-balance {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* ── buttons ── */
+.sc-btn-primary {
+  width: 100%;
+  max-width: 320px;
+  min-height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: #fa954b;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.sc-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.sc-btn-primary:active { transform: scale(0.98); }
+.sc-btn-primary:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+.sc-error {
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.22);
+  color: #f87171;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.sc-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.28);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.25rem;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sc-link:hover { color: rgba(255,255,255,0.5); }

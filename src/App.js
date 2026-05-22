@@ -37,6 +37,12 @@ import StijgersEten from "./Wrapped/StijgersEten";
 import HotForYou from "./Wrapped/HotForYou";
 import HotForNextSeason from "./Wrapped/HotForNextSeason";
 import LandingPage from "./Landing/LandinginPage";
+import ConsumerAuth from "./Consumer/ConsumerAuth";
+import ConsumerHome from "./Consumer/ConsumerHome";
+import ConsumerCategory from "./Consumer/ConsumerCategory";
+import RateAndScratch from "./Consumer/games/RateAndScratch";
+import Spyder from "./Consumer/games/Spyder";
+import ScratchCard from "./Consumer/games/ScratchCard";
 
 // Import OnboardingProvider for context
 import { OnboardingProvider } from './Onboarding/OnboardingContext';
@@ -131,6 +137,12 @@ function App() {
                     <Route path="/scan" element={<ScanPage />} />
                     <Route path="/claim" element={<ClaimPage />} />
                     <Route path="/welcome" element={<LandingPage />} />
+                    <Route path="/join" element={<ConsumerAuth />} />
+                    <Route path="/consumer/home" element={<ConsumerHome />} />
+                    <Route path="/consumer/category/:id" element={<ConsumerCategory />} />
+                    <Route path="/consumer/game/:categoryId/rate-and-scratch" element={<RateAndScratch />} />
+                    <Route path="/consumer/game/:categoryId/spyder" element={<Spyder />} />
+                    <Route path="/consumer/scratch" element={<ScratchCard />} />
 
                     {/* Wrapped Routes */}
                     {wrappedRoutes.map((route, index) => (

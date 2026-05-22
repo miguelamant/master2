@@ -1,0 +1,326 @@
+/* ─── Consumer Auth ────────────────────────────────────────────────────────── */
+
+.consumer-auth {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh; /* dynamic viewport for mobile */
+    background: #fafafa;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* dot grid background */
+.consumer-auth::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+/* gradient orb */
+.consumer-auth::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(129,140,248,0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ── card ── */
+.consumer-auth-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    padding: 3rem 2rem 2.5rem;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 40px 80px rgba(0,0,0,0.06),
+        0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* ── octopus icon ── */
+.consumer-auth-octopus {
+    width: 48px;
+    height: 48px;
+    opacity: 0.55;
+    margin-bottom: 0.75rem;
+}
+
+/* ── brand ── */
+.consumer-auth-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+    background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.consumer-auth-tagline {
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(0,0,0,0.3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+}
+
+/* ── form ── */
+.consumer-auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.consumer-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.consumer-auth-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.35);
+    padding-left: 2px;
+}
+
+.consumer-auth-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: #f9fafb;
+    color: #111827;
+    /* 16px prevents iOS auto-zoom on focus */
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.consumer-auth-input::placeholder {
+    color: rgba(0,0,0,0.2);
+}
+
+.consumer-auth-input:focus {
+    border-color: rgba(129,140,248,0.5);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(129,140,248,0.1);
+}
+
+/* OTP code input — large centered digits */
+.consumer-auth-otp-input {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* ── submit button ── */
+.consumer-auth-submit {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    background: #111827;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.consumer-auth-submit:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.consumer-auth-submit:active {
+    transform: translateY(0);
+}
+
+.consumer-auth-submit:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+}
+
+/* ── hint text (email confirmation on code step) ── */
+.consumer-auth-hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgba(0,0,0,0.45);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.consumer-auth-hint strong {
+    color: #111827;
+}
+
+/* ── error ── */
+.consumer-auth-error {
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.15);
+    color: #dc2626;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* ── or divider ── */
+.consumer-auth-divider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.25rem 0;
+}
+
+.consumer-auth-divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(0,0,0,0.08);
+}
+
+.consumer-auth-divider-text {
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.3);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+/* ── Google button ── */
+.consumer-auth-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    width: 100%;
+    min-height: 52px;
+    padding: 0.9rem;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 12px;
+    background: #ffffff;
+    color: #374151;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.consumer-auth-google-btn:hover {
+    background: #f9fafb;
+    border-color: rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.consumer-auth-google-btn:active {
+    background: #f3f4f6;
+}
+
+.consumer-auth-google-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* ── resend + back links ── */
+.consumer-auth-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.consumer-auth-divider {
+    color: rgba(0,0,0,0.2);
+}
+
+.consumer-auth-link {
+    background: none;
+    border: none;
+    color: #14213d;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.consumer-auth-link:hover {
+    color: #000;
+}
+
+.consumer-auth-link:disabled {
+    color: #aaa;
+    cursor: default;
+    text-decoration: none;
+}
+
+/* ── footer ── */
+.consumer-auth-footer {
+    margin-top: 2rem;
+    font-size: 0.72rem;
+    color: rgba(0,0,0,0.2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ── pulse ring ── */
+@keyframes consumer-auth-pulse {
+    0%   { transform: scale(1);   opacity: 0.12; }
+    50%  { transform: scale(1.6); opacity: 0; }
+    100% { transform: scale(1);   opacity: 0; }
+}
+
+.consumer-auth-pulse-ring {
+    position: absolute;
+    top: 2.5rem;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.06);
+    animation: consumer-auth-pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}

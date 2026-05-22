@@ -23,3 +23,9 @@ yarn-error.log*
 # system
 .DS_Store
 Thumbs.db
+.mcp.json
+
+# claude code
+.claude/
+.test-cache/
+logs/
