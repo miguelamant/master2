@@ -147,7 +147,7 @@ const ConsumerAuth = () => {
     };
 
     const handleGoogleSignIn = () => {
-        const base = process.env.REACT_APP_API_URL || 'http://localhost:3007';
+        const base = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3007';
         window.location.href = `${base}/api/consumer/google/start`;
     };
 
