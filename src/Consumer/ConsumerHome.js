@@ -20,14 +20,12 @@ const CATEGORIES = [
 
 const ConsumerHome = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
     const [willies, setWillies] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         api.get('/api/user').then((res) => {
             if (res.data?.user?.user_type === 'consumer') {
-                setUser(res.data.user);
                 return api.get('/api/consumer/willies');
             } else {
                 navigate('/join');
