@@ -353,33 +353,13 @@
 }
 
 .ras-willy-earned {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #fa954b;
-    background: rgba(250,149,75,0.1);
-    border: 1px solid rgba(250,149,75,0.25);
-    border-radius: 999px;
-    padding: 0.3rem 0.9rem;
-}
-
-.ras-done-score {
     display: flex;
-    align-items: baseline;
-    gap: 0.2rem;
-    margin: 0.5rem 0 1.25rem;
-}
-
-.ras-done-score-num {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 4rem;
-    font-weight: 800;
-    color: #fa954b;
-    line-height: 1;
-}
-
-.ras-done-score-denom {
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.5rem;
-    font-weight: 600;
-    color: rgba(255,255,255,0.3);
+    font-weight: 800;
+    color: #fa954b;
+    margin: 0.5rem 0 1rem;
 }

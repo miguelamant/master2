@@ -4,6 +4,7 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import { NotFoundException } from '@zxing/library';
 import { api } from 'apiService';
 import { lookupProduct } from '../productCatalog';
+import WillyIcon from '../WillyIcon';
 import './RateAndScratch.css';
 
 const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
@@ -24,6 +25,7 @@ const RateAndScratch = () => {
     const videoRef = useRef(null);
     const readerRef = useRef(null);
     const scanningRef = useRef(false);
+    const lastScanRef = useRef({ gtin: null, at: 0 });
 
     const stopScanner = useCallback(() => {
         if (readerRef.current) {
@@ -45,6 +47,8 @@ const RateAndScratch = () => {
             await reader.decodeFromVideoDevice(undefined, videoRef.current, (result, err) => {
                 if (result) {
                     const code = result.getText();
+                    // Ignore the same barcode for 2s after returning from a previous scan
+                    if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 2000) return;
                     stopScanner();
                     const found = lookupProduct(code);
                     if (found) {
@@ -91,6 +95,7 @@ const RateAndScratch = () => {
     };
 
     const handleScanAnother = () => {
+        lastScanRef.current = { gtin, at: Date.now() };
         setStep(STEPS.SCAN);
         setProduct(null);
         setGtin(null);
@@ -180,18 +185,24 @@ const RateAndScratch = () => {
             {/* ── STEP: DONE ── */}
             {step === STEPS.DONE && product && (
                 <div className="ras-done-step">
-                    <div className="ras-done-emoji">{score >= 9 ? '🤩' : score >= 7 ? '🎉' : score >= 5 ? '👍' : '📝'}</div>
-                    <div className="ras-done-title">
-                        {alreadyRated ? 'Rating updated!' : 'Rating saved!'}
-                    </div>
-                    <div className="ras-done-product">{product.brand} {product.name}</div>
-                    {!alreadyRated && <div className="ras-willy-earned">+1 Willy earned 🐛</div>}
-                    <div className="ras-done-score">
-                        <span className="ras-done-score-num">{score}</span>
-                        <span className="ras-done-score-denom">/10</span>
-                    </div>
-                    <button className="ras-submit" onClick={handleScanAnother}>Rate another product</button>
-                    <button className="ras-link" onClick={() => navigate(`/consumer/category/${categoryId}`)}>Back to category</button>
+                    {alreadyRated ? (
+                        <>
+                            <div className="ras-done-emoji">👍</div>
+                            <div className="ras-done-title">Rating updated!</div>
+                            <div className="ras-done-product">{product.brand} {product.name}</div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="ras-done-title">Thank you!</div>
+                            <div className="ras-willy-earned">
+                                <WillyIcon size={32} />
+                                <span>+1 Willy</span>
+                            </div>
+                            <div className="ras-done-product">{product.brand} {product.name}</div>
+                        </>
+                    )}
+                    <button className="ras-submit" onClick={handleScanAnother}>Next rating</button>
+                    <button className="ras-link" onClick={() => navigate('/consumer/home')}>Back to home</button>
                 </div>
             )}
         </div>
