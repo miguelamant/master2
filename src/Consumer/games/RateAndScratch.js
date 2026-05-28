@@ -9,7 +9,7 @@ import './RateAndScratch.css';
 
 const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
 
-const NATIVE_DETECTOR = typeof BarcodeDetector !== 'undefined';
+const NATIVE_DETECTOR = typeof window.BarcodeDetector !== 'undefined';
 const CAMERA_CONSTRAINTS = { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } };
 
 const RateAndScratch = () => {
@@ -76,7 +76,7 @@ const RateAndScratch = () => {
                 videoRef.current.srcObject = stream;
                 await videoRef.current.play();
 
-                const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] });
+                const detector = new window.BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] });
 
                 const tick = async () => {
                     if (!scanningRef.current) return;
