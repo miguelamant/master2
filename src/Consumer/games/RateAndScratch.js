@@ -64,11 +64,12 @@ const RateAndScratch = () => {
         scanningRef.current = true;
         setScanError(null);
 
-        const handleCode = (code) => {
-            // Ignore the same barcode for 2s after returning from a previous scan
-            if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 2000) return;
+        const handleCode = (code, scanner, durationMs) => {
+            // Ignore the same barcode for 5s — Dynamsoft init latency can eat a shorter window
+            if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 5000) return;
             stopScanner();
             const found = lookupProduct(code);
+            api.post('/api/consumer/log-scan', { scanner, gtin: code, found: !!found, duration_ms: durationMs }).catch(() => {});
             if (found) {
                 setGtin(code);
                 setProduct(found);
@@ -94,10 +95,11 @@ const RateAndScratch = () => {
                 if (!scanningRef.current) return;
                 if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
                     try {
+                        const t0 = Date.now();
                         const result = await router.capture(videoRef.current, 'ReadSingleBarcode');
                         const barcodes = (result.items ?? []).filter(i => i.type === 2);
                         if (barcodes.length > 0) {
-                            handleCode(barcodes[0].text);
+                            handleCode(barcodes[0].text, 'dynamsoft', Date.now() - t0);
                             return;
                         }
                     } catch (_) {}
@@ -132,9 +134,10 @@ const RateAndScratch = () => {
                     if (!scanningRef.current) return;
                     if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
                         try {
+                            const t0 = Date.now();
                             const barcodes = await detector.detect(videoRef.current);
                             if (barcodes.length > 0) {
-                                handleCode(barcodes[0].rawValue);
+                                handleCode(barcodes[0].rawValue, 'native', Date.now() - t0);
                                 return;
                             }
                         } catch (_) {}
@@ -154,7 +157,7 @@ const RateAndScratch = () => {
             const reader = new BrowserMultiFormatReader();
             readerRef.current = reader;
             await reader.decodeFromConstraints(CAMERA_CONSTRAINTS, videoRef.current, (result, err) => {
-                if (result) handleCode(result.getText());
+                if (result) handleCode(result.getText(), 'zxing', null);
                 if (err && !(err instanceof NotFoundException)) console.warn('[scanner]', err);
             });
         } catch (e) {

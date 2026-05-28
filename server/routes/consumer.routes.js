@@ -415,4 +415,15 @@ router.post("/consumer/rate-product", isAuthenticated, async (req, res, next) =>
   }
 });
 
+// ── POST /api/consumer/log-scan ──────────────────────────────────────────────
+// Fire-and-forget from client — no auth required, failures silently ignored
+router.post("/consumer/log-scan", async (req, res) => {
+  try {
+    const { scanner, gtin, found, duration_ms } = req.body ?? {};
+    const user_agent = req.headers['user-agent'] ?? null;
+    await supabase.from("scan_attempts").insert({ scanner, gtin, found, duration_ms, user_agent });
+  } catch (_) {}
+  res.sendStatus(204);
+});
+
 export default router;
