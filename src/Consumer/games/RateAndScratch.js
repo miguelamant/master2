@@ -9,6 +9,9 @@ import './RateAndScratch.css';
 
 const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
 
+const NATIVE_DETECTOR = typeof BarcodeDetector !== 'undefined';
+const CAMERA_CONSTRAINTS = { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } };
+
 const RateAndScratch = () => {
     const { categoryId } = useParams();
     const navigate = useNavigate();
@@ -24,6 +27,8 @@ const RateAndScratch = () => {
 
     const videoRef = useRef(null);
     const readerRef = useRef(null);
+    const streamRef = useRef(null);
+    const rafRef = useRef(null);
     const scanningRef = useRef(false);
     const lastScanRef = useRef({ gtin: null, at: 0 });
 
@@ -31,6 +36,14 @@ const RateAndScratch = () => {
         if (readerRef.current) {
             try { readerRef.current.reset(); } catch (_) {}
             readerRef.current = null;
+        }
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(t => t.stop());
+            streamRef.current = null;
+        }
+        if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
         }
         scanningRef.current = false;
     }, []);
@@ -40,34 +53,61 @@ const RateAndScratch = () => {
         scanningRef.current = true;
         setScanError(null);
 
-        try {
-            const reader = new BrowserMultiFormatReader();
-            readerRef.current = reader;
+        const handleCode = (code) => {
+            // Ignore the same barcode for 2s after returning from a previous scan
+            if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 2000) return;
+            stopScanner();
+            const found = lookupProduct(code);
+            if (found) {
+                setGtin(code);
+                setProduct(found);
+                setStep(STEPS.RATE);
+            } else {
+                setScanError(`Product not found (${code}). Try another.`);
+                scanningRef.current = false;
+                startScanner();
+            }
+        };
 
-            await reader.decodeFromVideoDevice(undefined, videoRef.current, (result, err) => {
-                if (result) {
-                    const code = result.getText();
-                    // Ignore the same barcode for 2s after returning from a previous scan
-                    if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 2000) return;
-                    stopScanner();
-                    const found = lookupProduct(code);
-                    if (found) {
-                        setGtin(code);
-                        setProduct(found);
-                        setStep(STEPS.RATE);
-                    } else {
-                        setScanError(`Product not found (${code}). Try another.`);
-                        scanningRef.current = false;
-                        startScanner();
+        if (NATIVE_DETECTOR) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
+                streamRef.current = stream;
+                videoRef.current.srcObject = stream;
+                await videoRef.current.play();
+
+                const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] });
+
+                const tick = async () => {
+                    if (!scanningRef.current) return;
+                    if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                        try {
+                            const barcodes = await detector.detect(videoRef.current);
+                            if (barcodes.length > 0) {
+                                handleCode(barcodes[0].rawValue);
+                                return;
+                            }
+                        } catch (_) {}
                     }
-                }
-                if (err && !(err instanceof NotFoundException)) {
-                    console.warn('[scanner]', err);
-                }
-            });
-        } catch (e) {
-            setScanError('Camera access denied. Allow camera permission and try again.');
-            scanningRef.current = false;
+                    rafRef.current = requestAnimationFrame(tick);
+                };
+                rafRef.current = requestAnimationFrame(tick);
+            } catch (e) {
+                setScanError('Camera access denied. Allow camera permission and try again.');
+                scanningRef.current = false;
+            }
+        } else {
+            try {
+                const reader = new BrowserMultiFormatReader();
+                readerRef.current = reader;
+                await reader.decodeFromConstraints(CAMERA_CONSTRAINTS, videoRef.current, (result, err) => {
+                    if (result) handleCode(result.getText());
+                    if (err && !(err instanceof NotFoundException)) console.warn('[scanner]', err);
+                });
+            } catch (e) {
+                setScanError('Camera access denied. Allow camera permission and try again.');
+                scanningRef.current = false;
+            }
         }
     }, [stopScanner]);
 
