@@ -16,6 +16,7 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "dynamsoft-barcode-reader-bundle": "^11.4.2001",
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { NotFoundException } from '@zxing/library';
+import { CoreModule, CaptureVisionRouter, LicenseManager } from 'dynamsoft-barcode-reader-bundle';
 import { api } from 'apiService';
 import { lookupProduct } from '../productCatalog';
 import WillyIcon from '../WillyIcon';
@@ -11,6 +12,11 @@ const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
 
 const NATIVE_DETECTOR = typeof window.BarcodeDetector !== 'undefined';
 const CAMERA_CONSTRAINTS = { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } };
+
+// Dynamsoft — preload WASM in background so it's ready when scanner opens
+CoreModule.engineResourcePaths.rootDirectory = 'https://cdn.jsdelivr.net/npm/';
+LicenseManager.initLicense('DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA1NjU3MzE4LU1UQTFOalUzTXpFNExYZGxZaTFVY21saGJGQnliMm8iLCJtYWluU2VydmVyVVJMIjoiaHR0cHM6Ly9tZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwib3JnYW5pemF0aW9uSUQiOiIxMDU2NTczMTgiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwiY2hlY2tDb2RlIjotMTAzOTk0NTcxM30=');
+CoreModule.loadWasm(['DBR']);
 
 const RateAndScratch = () => {
     const { categoryId } = useParams();
@@ -29,10 +35,15 @@ const RateAndScratch = () => {
     const readerRef = useRef(null);
     const streamRef = useRef(null);
     const rafRef = useRef(null);
+    const dynamsoftRouterRef = useRef(null);
     const scanningRef = useRef(false);
     const lastScanRef = useRef({ gtin: null, at: 0 });
 
     const stopScanner = useCallback(() => {
+        if (dynamsoftRouterRef.current) {
+            try { dynamsoftRouterRef.current.dispose(); } catch (_) {}
+            dynamsoftRouterRef.current = null;
+        }
         if (readerRef.current) {
             try { readerRef.current.reset(); } catch (_) {}
             readerRef.current = null;
@@ -69,6 +80,45 @@ const RateAndScratch = () => {
             }
         };
 
+        // Primary: Dynamsoft
+        try {
+            const router = await CaptureVisionRouter.createInstance();
+            dynamsoftRouterRef.current = router;
+
+            const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
+            streamRef.current = stream;
+            videoRef.current.srcObject = stream;
+            await videoRef.current.play();
+
+            const tick = async () => {
+                if (!scanningRef.current) return;
+                if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                    try {
+                        const result = await router.capture(videoRef.current, 'ReadSingleBarcode');
+                        const barcodes = (result.items ?? []).filter(i => i.type === 2);
+                        if (barcodes.length > 0) {
+                            handleCode(barcodes[0].text);
+                            return;
+                        }
+                    } catch (_) {}
+                }
+                rafRef.current = requestAnimationFrame(tick);
+            };
+            rafRef.current = requestAnimationFrame(tick);
+            return;
+        } catch (e) {
+            console.warn('[scanner] Dynamsoft failed, falling back:', e);
+            if (dynamsoftRouterRef.current) {
+                try { dynamsoftRouterRef.current.dispose(); } catch (_) {}
+                dynamsoftRouterRef.current = null;
+            }
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(t => t.stop());
+                streamRef.current = null;
+            }
+        }
+
+        // Fallback: BarcodeDetector
         if (NATIVE_DETECTOR) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
@@ -92,22 +142,24 @@ const RateAndScratch = () => {
                     rafRef.current = requestAnimationFrame(tick);
                 };
                 rafRef.current = requestAnimationFrame(tick);
+                return;
             } catch (e) {
                 setScanError('Camera access denied. Allow camera permission and try again.');
                 scanningRef.current = false;
             }
-        } else {
-            try {
-                const reader = new BrowserMultiFormatReader();
-                readerRef.current = reader;
-                await reader.decodeFromConstraints(CAMERA_CONSTRAINTS, videoRef.current, (result, err) => {
-                    if (result) handleCode(result.getText());
-                    if (err && !(err instanceof NotFoundException)) console.warn('[scanner]', err);
-                });
-            } catch (e) {
-                setScanError('Camera access denied. Allow camera permission and try again.');
-                scanningRef.current = false;
-            }
+        }
+
+        // Last resort: ZXing
+        try {
+            const reader = new BrowserMultiFormatReader();
+            readerRef.current = reader;
+            await reader.decodeFromConstraints(CAMERA_CONSTRAINTS, videoRef.current, (result, err) => {
+                if (result) handleCode(result.getText());
+                if (err && !(err instanceof NotFoundException)) console.warn('[scanner]', err);
+            });
+        } catch (e) {
+            setScanError('Camera access denied. Allow camera permission and try again.');
+            scanningRef.current = false;
         }
     }, [stopScanner]);
 
