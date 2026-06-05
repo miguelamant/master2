@@ -43,6 +43,8 @@ import ConsumerCategory from "./Consumer/ConsumerCategory";
 import RateAndScratch from "./Consumer/games/RateAndScratch";
 import Spyder from "./Consumer/games/Spyder";
 import ScratchCard from "./Consumer/games/ScratchCard";
+import BurgerCatalog from "./Catalog/BurgerCatalog";
+import PlonsremorkPage from "./Plonsremork/PlonsremorkPage";
 
 // Import OnboardingProvider for context
 import { OnboardingProvider } from './Onboarding/OnboardingContext';
@@ -143,6 +145,8 @@ function App() {
                     <Route path="/consumer/game/:categoryId/rate-and-scratch" element={<RateAndScratch />} />
                     <Route path="/consumer/game/:categoryId/spyder" element={<Spyder />} />
                     <Route path="/consumer/scratch" element={<ScratchCard />} />
+                    <Route path="/catalog/burgers" element={<BurgerCatalog />} />
+                    <Route path="/plonsremork" element={<PlonsremorkPage />} />
 
                     {/* Wrapped Routes */}
                     {wrappedRoutes.map((route, index) => (

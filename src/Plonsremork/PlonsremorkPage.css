@@ -1,0 +1,714 @@
+/* ── Variabelen ───────────────────────────────────────────────────────────── */
+.plons-page {
+  --primary: #1b4d6e;
+  --primary-light: #2c6e9e;
+  --accent: #d97706;
+  --accent-light: #f59e0b;
+  --light: #faf9f7;
+  --dark: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --success: #059669;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --selected: #1b4d6e;
+  --selected-range: #dbeafe;
+  --radius: 12px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--dark);
+  background: #fff;
+  scroll-behavior: smooth;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────────────── */
+.plons-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 60px;
+  background: rgba(27, 77, 110, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.plons-nav-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.plons-nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.plons-nav-links a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.plons-nav-links a:hover { color: #fff; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.plons-hero {
+  height: 100vh;
+  min-height: 600px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.plons-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(11,34,54,0.75) 0%, rgba(11,34,54,0.45) 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+}
+
+.plons-hero-content {
+  max-width: 640px;
+  color: #fff;
+}
+
+.plons-hero-sub {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin: 0 0 12px;
+}
+
+.plons-hero-titel {
+  font-size: clamp(48px, 8vw, 80px);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 20px;
+  letter-spacing: -2px;
+}
+
+.plons-hero-omschr {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.88);
+  margin: 0 0 36px;
+  max-width: 520px;
+}
+
+.plons-hero-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── Knoppen ──────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+.btn-primary:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+
+.btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,0.5);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+/* ── Containers & secties ─────────────────────────────────────────────────── */
+.plons-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.plons-sectie {
+  padding: 80px 0;
+}
+
+.sectie-titel {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+  color: var(--dark);
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+
+.sectie-sub {
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0 0 40px;
+}
+
+/* ── Specs ────────────────────────────────────────────────────────────────── */
+.plons-specs { background: var(--light); }
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.spec-kaart {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.spec-icon { font-size: 28px; margin-bottom: 4px; }
+.spec-label { font-size: 15px; font-weight: 700; color: var(--dark); }
+.spec-sub { font-size: 13px; color: var(--muted); }
+
+/* ── Foto galerij ─────────────────────────────────────────────────────────── */
+.plons-fotos { background: #fff; }
+
+.galerij-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.galerij-item {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  background: var(--border);
+}
+
+.galerij-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.galerij-item:hover img { transform: scale(1.04); }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.lightbox-sluit {
+  position: absolute;
+  top: 20px; right: 24px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 40px;
+  padding: 12px 18px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.lightbox-nav:hover { background: rgba(255,255,255,0.25); }
+.lightbox-nav.links { left: 16px; }
+.lightbox-nav.rechts { right: 16px; }
+
+/* ── Stappen ──────────────────────────────────────────────────────────────── */
+.plons-stappen { background: var(--light); }
+
+.stappen-lijst {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 40px;
+  position: relative;
+}
+
+.stap {
+  display: flex;
+  gap: 24px;
+  padding-bottom: 32px;
+  position: relative;
+}
+
+.stap:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.stap-num {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stap-tekst strong {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  padding-top: 8px;
+}
+
+.stap-tekst p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Tarieven ─────────────────────────────────────────────────────────────── */
+.plons-tarieven { background: var(--primary); }
+.plons-tarieven .sectie-titel { color: #fff; }
+.plons-tarieven .sectie-sub { color: rgba(255,255,255,0.7); }
+
+.tarieven-tabel-wrapper {
+  overflow-x: auto;
+  margin-top: 40px;
+}
+
+.tarieven-tabel {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tarieven-tabel th {
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.tarieven-tabel th:first-child { text-align: left; }
+
+.tarieven-tabel td {
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.tarief-icon { font-size: 22px; margin-right: 10px; }
+.tarief-naam { font-size: 16px; font-weight: 700; vertical-align: middle; }
+.tarief-omschr { font-size: 13px; color: rgba(255,255,255,0.55); display: block; margin-top: 4px; padding-left: 32px; }
+
+.prijs-cel {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent-light);
+}
+
+.tarieven-nota {
+  margin-top: 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ── Reserveer ────────────────────────────────────────────────────────────── */
+.plons-reserveer { background: var(--light); }
+
+.reserveer-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  align-items: start;
+}
+
+.reserveer-form-kant .sectie-titel { margin-bottom: 4px; }
+
+.reserveer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.form-rij {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-groep {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-groep label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.form-groep input,
+.form-groep select,
+.form-groep textarea {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--dark);
+  background: #fff;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-groep input:focus,
+.form-groep select:focus,
+.form-groep textarea:focus {
+  border-color: var(--primary);
+}
+
+.form-groep textarea { resize: vertical; }
+
+.geselecteerde-datum-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e0f2fe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #0c4a6e;
+}
+
+.datum-prijs { font-weight: 700; color: var(--accent); }
+
+.btn-submit { width: 100%; padding: 15px; font-size: 16px; }
+
+.fout-bericht {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.succes-bericht {
+  background: #d1fae5;
+  border-radius: var(--radius);
+  padding: 40px 32px;
+  text-align: center;
+  margin-top: 28px;
+}
+
+.succes-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.succes-bericht h3 { margin: 0 0 8px; font-size: 20px; color: #065f46; }
+.succes-bericht p { margin: 0; color: #047857; font-size: 15px; }
+
+/* ── Kalender ─────────────────────────────────────────────────────────────── */
+.reserveer-kalender-kant {
+  position: sticky;
+  top: 80px;
+}
+
+.kalender-label {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.kalender-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+.kalender {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.kalender-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.kalender-titel {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.kalender-nav {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.kalender-nav:hover { background: var(--light); }
+
+.kalender-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.dag-naam {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kalender-grid .dag {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kalender-grid .dag.verleden {
+  color: #d1d5db;
+  cursor: default;
+  background: none;
+}
+
+.kalender-grid .dag.bezet {
+  background: #fee2e2;
+  color: #b91c1c;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.kalender-grid .dag.conflict {
+  color: #9ca3af;
+  cursor: not-allowed;
+  background: none;
+}
+
+.kalender-grid .dag.beschikbaar {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.kalender-grid .dag.beschikbaar:hover {
+  background: #a7f3d0;
+}
+
+.kalender-grid .dag.geselecteerd.start,
+.kalender-grid .dag.geselecteerd.eind {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.kalender-grid .dag.geselecteerd.midden {
+  background: var(--selected-range);
+  color: var(--primary);
+  border-radius: 0;
+}
+
+.kalender-legende {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.kalender-legende span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.legende-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legende-dot.beschikbaar { background: #d1fae5; border: 1px solid #6ee7b7; }
+.legende-dot.bezet { background: #fee2e2; border: 1px solid #fca5a5; }
+.legende-dot.geselecteerd-dot { background: var(--primary); }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.plons-footer {
+  background: var(--dark);
+  color: rgba(255,255,255,0.7);
+  padding: 48px 0 24px;
+}
+
+.footer-inhoud {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.footer-inhoud strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.footer-inhoud p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-inhoud a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+}
+
+.footer-inhoud a:hover { color: #fff; }
+
+.footer-copy {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px;
+  margin: 0;
+}
+
+/* ── Responsief ───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .reserveer-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .reserveer-kalender-kant {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .plons-nav { padding: 0 16px; }
+  .plons-nav-links { gap: 16px; }
+  .plons-nav-links a { font-size: 13px; }
+
+  .plons-hero-overlay { padding: 0 24px; }
+  .plons-sectie { padding: 56px 0; }
+
+  .form-rij { grid-template-columns: 1fr; }
+
+  .galerij-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .tarieven-tabel .tarief-omschr { display: none; }
+}

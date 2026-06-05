@@ -26,6 +26,8 @@ import scanRoutes from "./routes/scan.routes.js";
 import claimRoutes from "./routes/claim.routes.js";
 import menuConfigRoutes from "./routes/menuConfig.routes.js";
 import consumerRoutes from "./routes/consumer.routes.js";
+import catalogRoutes from "./routes/catalog.routes.js";
+import plonsremorkRoutes from "./routes/plonsremork.routes.js";
 
 export const app = express();
 
@@ -65,6 +67,8 @@ app.use("/api", scanRoutes);
 app.use("/api", claimRoutes);
 app.use("/api", menuConfigRoutes);
 app.use("/api", consumerRoutes);
+app.use("/api", catalogRoutes);
+app.use("/api", plonsremorkRoutes);
 
 // Serve React build in production
 if (process.env.NODE_ENV === "production") {
