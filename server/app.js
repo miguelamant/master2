@@ -38,10 +38,11 @@ app.set("trust proxy", 1);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Dev-only CORS (prod is same-origin in the single-service plan)
-if (process.env.NODE_ENV !== "production") {
-    app.use(cors(corsOptions));
-}
+// CORS: needed in dev (separate :3000 frontend) AND in prod for the Capacitor
+// native app, whose webview origin (https://localhost / capacitor://localhost)
+// is cross-origin to this backend. Same-origin web requests are unaffected:
+// unknown origins fall through without CORS headers (see config/cors.js).
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(session(sessionConfig));
