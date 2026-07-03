@@ -111,7 +111,16 @@ router.post("/consumer/request-otp", async (req, res, next) => {
       return res.status(500).json({ success: false, message: "Failed to generate code" });
     }
 
-    await sendConsumerOtp(email, code);
+    try {
+      await sendConsumerOtp(email, code);
+    } catch (mailErr) {
+      console.error("[consumer/request-otp] email send failed:", mailErr);
+      return res.status(502).json({
+        success: false,
+        message: "We couldn't send the code by email. Please try again in a moment.",
+      });
+    }
+
     res.json({ success: true });
   } catch (e) {
     console.error("[consumer/request-otp]", e);

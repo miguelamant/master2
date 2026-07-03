@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">foodbase</string>
+    <string name="title_activity_main">foodbase</string>
+    <string name="package_name">com.foodbase.app</string>
+    <string name="custom_url_scheme">com.foodbase.app</string>
+</resources>

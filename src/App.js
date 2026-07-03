@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import './index.css';
 
 // Import all components
@@ -62,6 +63,10 @@ import Budgetverdeling from "./Onboarding/Budgetverdeling";
 import Ecologyverdeling from "./Onboarding/Ecologyverdeling";
 import Healthyverdeling from "./Onboarding/Healthyverdeling";
 
+// In the native (Capacitor) app the webview loads "/" on launch. The web "/" is the
+// business LandingPage, so on native we send users straight into the consumer flow.
+const isNative = Capacitor.isNativePlatform();
+
 const wrappedRoutes = [
     "/wrapped1",
     "/wrapped2",
@@ -110,7 +115,7 @@ function App() {
         <AssortmentProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/" element={isNative ? <Navigate to="/join" replace /> : <LandingPage />} />
                     <Route path="/welcomepage" element={<WelcomePage />} />
                     <Route path="/contact" element={<ContactPage />} />
 
