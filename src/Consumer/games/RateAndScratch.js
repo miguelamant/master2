@@ -38,6 +38,17 @@ const RateAndScratch = () => {
     const dynamsoftRouterRef = useRef(null);
     const scanningRef = useRef(false);
     const lastScanRef = useRef({ gtin: null, at: 0 });
+    const lastFrameAtRef = useRef(0);
+    const lastAttemptAtRef = useRef(0);
+
+    // Min ms between decode attempts — avoids hammering the WASM decoder on every
+    // rendered frame, which was starving the video compositor on mid-range devices
+    // (visible as brief black flashes) when a barcode is slow/hard to decode.
+    const MIN_ATTEMPT_INTERVAL_MS = 120;
+    // Log if either the rAF cadence or a single decode call takes noticeably longer
+    // than expected, so we can tell which resource (main thread vs. decoder) is stalling.
+    const FRAME_GAP_WARN_MS = 250;
+    const DECODE_WARN_MS = 150;
 
     const stopScanner = useCallback(() => {
         if (dynamsoftRouterRef.current) {
@@ -63,6 +74,8 @@ const RateAndScratch = () => {
         if (scanningRef.current) return;
         scanningRef.current = true;
         setScanError(null);
+        lastFrameAtRef.current = 0;
+        lastAttemptAtRef.current = 0;
 
         const handleCode = (code, scanner, durationMs) => {
             // Ignore the same barcode for 5s — Dynamsoft init latency can eat a shorter window
@@ -93,13 +106,26 @@ const RateAndScratch = () => {
 
             const tick = async () => {
                 if (!scanningRef.current) return;
-                if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                const now = performance.now();
+                const frameGap = now - lastFrameAtRef.current;
+                if (lastFrameAtRef.current && frameGap > FRAME_GAP_WARN_MS) {
+                    console.warn(`[scanner] frame gap ${frameGap.toFixed(0)}ms — rendering stalled`);
+                }
+                lastFrameAtRef.current = now;
+
+                const dueForAttempt = now - lastAttemptAtRef.current >= MIN_ATTEMPT_INTERVAL_MS;
+                if (dueForAttempt && videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                    lastAttemptAtRef.current = now;
                     try {
-                        const t0 = Date.now();
+                        const t0 = performance.now();
                         const result = await router.capture(videoRef.current, 'ReadSingleBarcode');
+                        const decodeMs = performance.now() - t0;
+                        if (decodeMs > DECODE_WARN_MS) {
+                            console.warn(`[scanner] slow decode: ${decodeMs.toFixed(0)}ms`);
+                        }
                         const barcodes = (result.items ?? []).filter(i => i.type === 2);
                         if (barcodes.length > 0) {
-                            handleCode(barcodes[0].text, 'dynamsoft', Date.now() - t0);
+                            handleCode(barcodes[0].text, 'dynamsoft', Math.round(decodeMs));
                             return;
                         }
                     } catch (_) {}
@@ -132,12 +158,25 @@ const RateAndScratch = () => {
 
                 const tick = async () => {
                     if (!scanningRef.current) return;
-                    if (videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                    const now = performance.now();
+                    const frameGap = now - lastFrameAtRef.current;
+                    if (lastFrameAtRef.current && frameGap > FRAME_GAP_WARN_MS) {
+                        console.warn(`[scanner] frame gap ${frameGap.toFixed(0)}ms — rendering stalled`);
+                    }
+                    lastFrameAtRef.current = now;
+
+                    const dueForAttempt = now - lastAttemptAtRef.current >= MIN_ATTEMPT_INTERVAL_MS;
+                    if (dueForAttempt && videoRef.current?.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                        lastAttemptAtRef.current = now;
                         try {
-                            const t0 = Date.now();
+                            const t0 = performance.now();
                             const barcodes = await detector.detect(videoRef.current);
+                            const decodeMs = performance.now() - t0;
+                            if (decodeMs > DECODE_WARN_MS) {
+                                console.warn(`[scanner] slow decode: ${decodeMs.toFixed(0)}ms`);
+                            }
                             if (barcodes.length > 0) {
-                                handleCode(barcodes[0].rawValue, 'native', Date.now() - t0);
+                                handleCode(barcodes[0].rawValue, 'native', Math.round(decodeMs));
                                 return;
                             }
                         } catch (_) {}

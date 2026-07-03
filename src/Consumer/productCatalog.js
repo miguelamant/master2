@@ -21,6 +21,7 @@ const PRODUCTS = {
   "8719325866148": { name: "Peach Bites",         brand: "Fruit Funk", image: "/products/fruitfunk-peach-bites.png" },
   "8720618786845": { name: "Fruit Spaghetti Mango", brand: "Fruit Funk", image: "/products/fruitfunk-spaghetti-mango.png" },
   "8719189354928": { name: "Fruit Stick XXL",     brand: "Bebeto",  image: "/products/fruit-stick-xxl.png" },
+  "3770028156351": { name: "Pink & Blue Bottles", brand: "Rebelle", image: "/products/rebelle-bottles-pink-blue.png" },
 };
 
 export function lookupProduct(gtin) {

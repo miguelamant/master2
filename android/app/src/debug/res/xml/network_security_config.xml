@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEBUG-ONLY network security config (lives under src/debug, so it is NOT
+  compiled into release builds). Trusts the bundled Norton Web/Mail Shield
+  root CA so the app can reach the Render backend over HTTPS when the dev
+  machine / emulator network is being MITM'd by Norton SSL scanning.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/norton_ca" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
