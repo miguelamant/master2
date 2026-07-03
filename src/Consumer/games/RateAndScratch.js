@@ -13,6 +13,10 @@ const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
 const NATIVE_DETECTOR = typeof window.BarcodeDetector !== 'undefined';
 const CAMERA_CONSTRAINTS = { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } };
 
+// Set once Dynamsoft fails (e.g. expired trial license) so later scanner (re)starts
+// this session skip straight to the fallback instead of retrying a call known to fail.
+let dynamsoftUnavailable = false;
+
 // Dynamsoft — preload WASM in background so it's ready when scanner opens
 CoreModule.engineResourcePaths.rootDirectory = 'https://cdn.jsdelivr.net/npm/';
 LicenseManager.initLicense('DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA1NjU3MzE4LU1UQTFOalUzTXpFNExYZGxZaTFVY21saGJGQnliMm8iLCJtYWluU2VydmVyVVJMIjoiaHR0cHM6Ly9tZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwib3JnYW5pemF0aW9uSUQiOiIxMDU2NTczMTgiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwiY2hlY2tDb2RlIjotMTAzOTk0NTcxM30=');
@@ -77,25 +81,29 @@ const RateAndScratch = () => {
         lastFrameAtRef.current = 0;
         lastAttemptAtRef.current = 0;
 
+        // Returns true when the scan loop should stop (product matched); false means
+        // keep the camera stream running and keep decoding — a "not found" result must
+        // NOT tear down/reacquire the camera, since that stop+start cycle of the real
+        // hardware is what caused the visible black flash on repeated unmatched scans.
         const handleCode = (code, scanner, durationMs) => {
-            // Ignore the same barcode for 5s — Dynamsoft init latency can eat a shorter window
-            if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 5000) return;
-            stopScanner();
+            if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 5000) return false;
+            lastScanRef.current = { gtin: code, at: Date.now() };
             const found = lookupProduct(code);
             api.post('/api/consumer/log-scan', { scanner, gtin: code, found: !!found, duration_ms: durationMs }).catch(() => {});
             if (found) {
+                stopScanner();
                 setGtin(code);
                 setProduct(found);
                 setStep(STEPS.RATE);
-            } else {
-                setScanError(`Product not found (${code}). Try another.`);
-                scanningRef.current = false;
-                startScanner();
+                return true;
             }
+            setScanError(`Product not found (${code}). Try another.`);
+            return false;
         };
 
         // Primary: Dynamsoft
         try {
+            if (dynamsoftUnavailable) throw new Error('Dynamsoft previously unavailable this session');
             const router = await CaptureVisionRouter.createInstance();
             dynamsoftRouterRef.current = router;
 
@@ -124,8 +132,7 @@ const RateAndScratch = () => {
                             console.warn(`[scanner] slow decode: ${decodeMs.toFixed(0)}ms`);
                         }
                         const barcodes = (result.items ?? []).filter(i => i.type === 2);
-                        if (barcodes.length > 0) {
-                            handleCode(barcodes[0].text, 'dynamsoft', Math.round(decodeMs));
+                        if (barcodes.length > 0 && handleCode(barcodes[0].text, 'dynamsoft', Math.round(decodeMs))) {
                             return;
                         }
                     } catch (_) {}
@@ -135,6 +142,7 @@ const RateAndScratch = () => {
             rafRef.current = requestAnimationFrame(tick);
             return;
         } catch (e) {
+            dynamsoftUnavailable = true;
             console.warn('[scanner] Dynamsoft failed, falling back:', e);
             if (dynamsoftRouterRef.current) {
                 try { dynamsoftRouterRef.current.dispose(); } catch (_) {}
@@ -175,8 +183,7 @@ const RateAndScratch = () => {
                             if (decodeMs > DECODE_WARN_MS) {
                                 console.warn(`[scanner] slow decode: ${decodeMs.toFixed(0)}ms`);
                             }
-                            if (barcodes.length > 0) {
-                                handleCode(barcodes[0].rawValue, 'native', Math.round(decodeMs));
+                            if (barcodes.length > 0 && handleCode(barcodes[0].rawValue, 'native', Math.round(decodeMs))) {
                                 return;
                             }
                         } catch (_) {}
