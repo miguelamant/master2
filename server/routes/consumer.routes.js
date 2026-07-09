@@ -435,4 +435,28 @@ router.post("/consumer/log-scan", async (req, res) => {
   res.sendStatus(204);
 });
 
+// ── GET /api/consumer/products ───────────────────────────────────────────────
+// Public barcode catalog — no auth required, fetched once by the scanner on mount
+router.get("/consumer/products", async (req, res, next) => {
+  try {
+    const { data, error } = await supabase
+      .from("scan_products")
+      .select("gtin, name, brand, image_url");
+
+    if (error) {
+      console.error("[consumer/products]", error);
+      return res.status(500).json({ success: false, message: "Failed to load products" });
+    }
+
+    const products = {};
+    for (const p of data) {
+      products[p.gtin] = { name: p.name, brand: p.brand, image: p.image_url };
+    }
+
+    res.json({ success: true, products });
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default router;

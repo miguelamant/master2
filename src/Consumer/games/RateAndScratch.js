@@ -4,7 +4,6 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import { NotFoundException } from '@zxing/library';
 import { CoreModule, CaptureVisionRouter, LicenseManager } from 'dynamsoft-barcode-reader-bundle';
 import { api } from 'apiService';
-import { lookupProduct } from '../productCatalog';
 import WillyIcon from '../WillyIcon';
 import './RateAndScratch.css';
 
@@ -34,6 +33,8 @@ const RateAndScratch = () => {
     const [error, setError] = useState(null);
     const [scanError, setScanError] = useState(null);
     const [alreadyRated, setAlreadyRated] = useState(false);
+    const [catalog, setCatalog] = useState(null);
+    const [catalogError, setCatalogError] = useState(false);
 
     const videoRef = useRef(null);
     const readerRef = useRef(null);
@@ -88,7 +89,7 @@ const RateAndScratch = () => {
         const handleCode = (code, scanner, durationMs) => {
             if (code === lastScanRef.current.gtin && Date.now() - lastScanRef.current.at < 5000) return false;
             lastScanRef.current = { gtin: code, at: Date.now() };
-            const found = lookupProduct(code);
+            const found = catalog[code] ?? null;
             api.post('/api/consumer/log-scan', { scanner, gtin: code, found: !!found, duration_ms: durationMs }).catch(() => {});
             if (found) {
                 stopScanner();
@@ -210,12 +211,23 @@ const RateAndScratch = () => {
             setScanError('Camera access denied. Allow camera permission and try again.');
             scanningRef.current = false;
         }
-    }, [stopScanner]);
+    }, [stopScanner, catalog]);
+
+    const loadCatalog = useCallback(() => {
+        setCatalogError(false);
+        api.get('/api/consumer/products')
+            .then(res => setCatalog(res.data.products))
+            .catch(() => setCatalogError(true));
+    }, []);
 
     useEffect(() => {
-        if (step === STEPS.SCAN) startScanner();
+        loadCatalog();
+    }, [loadCatalog]);
+
+    useEffect(() => {
+        if (step === STEPS.SCAN && catalog) startScanner();
         return () => stopScanner();
-    }, [step, startScanner, stopScanner]);
+    }, [step, catalog, startScanner, stopScanner]);
 
     const handleSubmit = async () => {
         if (score === null) return;
@@ -254,7 +266,20 @@ const RateAndScratch = () => {
             </header>
 
             {/* ── STEP: SCAN ── */}
-            {step === STEPS.SCAN && (
+            {step === STEPS.SCAN && catalogError && (
+                <div className="ras-scan-step">
+                    <div className="ras-scan-error">Couldn't load products. Check your connection and try again.</div>
+                    <button className="ras-submit" onClick={loadCatalog}>Retry</button>
+                </div>
+            )}
+
+            {step === STEPS.SCAN && !catalogError && !catalog && (
+                <div className="ras-scan-step">
+                    <p className="ras-scan-hint">Loading products…</p>
+                </div>
+            )}
+
+            {step === STEPS.SCAN && catalog && (
                 <div className="ras-scan-step">
                     <div className="ras-viewfinder">
                         <video ref={videoRef} className="ras-video" autoPlay muted playsInline />
