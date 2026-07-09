@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Spyder.css';
 
 const DECKS = [
@@ -22,7 +22,6 @@ function defaultRoles(n) {
 }
 
 export default function Spyder() {
-  const { categoryId } = useParams();
   const navigate = useNavigate();
 
   const [phase, setPhase]             = useState('setup');
@@ -142,7 +141,7 @@ export default function Spyder() {
     return (
       <div className="spy-root">
         <header className="spy-header">
-          <button className="spy-back" onClick={() => navigate(`/consumer/category/${categoryId}`)}>←</button>
+          <button className="spy-back" onClick={() => navigate('/consumer/games')}>←</button>
           <span className="spy-title">Spyder</span>
         </header>
         <div className="spy-body">
@@ -424,7 +423,7 @@ export default function Spyder() {
             Word pair: <strong>{deck?.civilian}</strong> / <strong>{deck?.special}</strong>
           </div>
           <button className="spy-btn-primary" onClick={reset}>Play Again</button>
-          <button className="spy-link" onClick={() => navigate(`/consumer/category/${categoryId}`)}>
+          <button className="spy-link" onClick={() => navigate('/consumer/games')}>
             Back to games
           </button>
         </div>

@@ -326,7 +326,7 @@ router.get("/consumer/google/callback", async (req, res, next) => {
         console.error("[consumer/google/callback] Session save failed:", err);
         return res.redirect(`${FRONTEND_ORIGIN}/join?google_error=session_error`);
       }
-      res.redirect(`${FRONTEND_ORIGIN}/consumer/home`);
+      res.redirect(`${FRONTEND_ORIGIN}/consumer`);
     });
   } catch (e) {
     console.error("[consumer/google/callback]", e);
@@ -420,6 +420,29 @@ router.post("/consumer/rate-product", isAuthenticated, async (req, res, next) =>
     res.json({ success: true, already_rated: false });
   } catch (e) {
     console.error("[consumer/rate-product]", e);
+    next(e);
+  }
+});
+
+// ── GET /api/consumer/rating/:gtin ───────────────────────────────────────────
+router.get("/consumer/rating/:gtin", isAuthenticated, async (req, res, next) => {
+  try {
+    const userId = req.session.user?.id;
+    const { data, error } = await supabase
+      .from("product_ratings")
+      .select("score")
+      .eq("user_id", userId)
+      .eq("gtin", req.params.gtin)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[consumer/rating]", error);
+      return res.status(500).json({ success: false, message: "Failed to load rating" });
+    }
+
+    res.json({ success: true, score: data?.score ?? null });
+  } catch (e) {
+    console.error("[consumer/rating]", e);
     next(e);
   }
 });
