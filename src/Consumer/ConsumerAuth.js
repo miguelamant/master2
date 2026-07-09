@@ -104,7 +104,7 @@ const ConsumerAuth = () => {
         try {
             const res = await api.post('/api/consumer/set-password', { password });
             if (res.data?.success) {
-                navigate('/consumer/home');
+                navigate('/consumer');
             } else {
                 setError(res.data?.message || 'Something went wrong');
             }
@@ -121,7 +121,7 @@ const ConsumerAuth = () => {
         try {
             const res = await api.post('/api/consumer/login', { email, password });
             if (res.data?.success) {
-                navigate('/consumer/home');
+                navigate('/consumer');
             } else {
                 setError(res.data?.message || 'Invalid credentials');
             }
@@ -299,7 +299,7 @@ const ConsumerAuth = () => {
                         {error && <div className="consumer-auth-error">{error}</div>}
 
                         <div className="consumer-auth-actions">
-                            <button className="consumer-auth-link" onClick={() => navigate('/consumer/home')}>
+                            <button className="consumer-auth-link" onClick={() => navigate('/consumer')}>
                                 Skip for now
                             </button>
                         </div>

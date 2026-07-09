@@ -154,7 +154,7 @@ export default function ScratchCard() {
     return (
       <div className="sc-root">
         <header className="sc-header">
-          <button className="sc-back" onClick={() => navigate('/consumer/home')}>←</button>
+          <button className="sc-back" onClick={() => navigate('/consumer/games')}>←</button>
           <span className="sc-title">Scratch Card</span>
         </header>
         <div className="sc-body">
@@ -190,7 +190,7 @@ export default function ScratchCard() {
           <button className="sc-btn-primary" onClick={startScratch} disabled={phase === 'loading'}>
             {phase === 'loading' ? 'Getting your card…' : 'Invest 5 Willies →'}
           </button>
-          <button className="sc-link" onClick={() => navigate('/consumer/home')}>Back</button>
+          <button className="sc-link" onClick={() => navigate('/consumer/games')}>Back</button>
         </div>
       </div>
     );
@@ -260,7 +260,7 @@ export default function ScratchCard() {
             {newBalance !== null && (
               <div className="sc-result-balance">Balance: {newBalance} <WillyIcon size={16} /></div>
             )}
-            <button className="sc-btn-primary" onClick={() => navigate('/consumer/home')}>
+            <button className="sc-btn-primary" onClick={() => navigate('/consumer/games')}>
               Back to home
             </button>
           </div>

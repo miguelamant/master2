@@ -1,0 +1,97 @@
+/* ── Consumer Shell ────────────────────────────────────────────────────────── */
+
+.cs-root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: #f5f5f5;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── header ── */
+.cs-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cs-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #111827 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.cs-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.cs-credits {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #fff7ed;
+    border: 1.5px solid rgba(250, 149, 75, 0.3);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem 0.3rem 0.45rem;
+    cursor: default;
+    user-select: none;
+}
+
+.cs-credits-count {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #c05621;
+    line-height: 1;
+}
+
+.cs-credits-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #c05621;
+    opacity: 0.7;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+.cs-signout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: none;
+    color: rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, color 0.15s;
+}
+
+.cs-signout:hover {
+    background: #e5e7eb;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* ── main ── */
+.cs-main {
+    flex: 1;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+}

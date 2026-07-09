@@ -1,0 +1,73 @@
+/* ── Bottom Nav ────────────────────────────────────────────────────────────── */
+
+.bn-root {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.bn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    flex: 1;
+    padding: 0.35rem 0.25rem;
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.4);
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s;
+}
+
+.bn-item-active {
+    color: #fa954b;
+}
+
+.bn-icon {
+    display: flex;
+}
+
+.bn-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* ── elevated scan button ── */
+.bn-item-primary {
+    flex: 0 0 auto;
+    width: 58px;
+    margin: 0 0.5rem;
+}
+
+.bn-item-primary .bn-icon {
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fa954b 0%, #f97316 100%);
+    color: #ffffff;
+    margin-top: -22px;
+    box-shadow: 0 6px 16px rgba(250, 149, 75, 0.45);
+    transition: transform 0.15s;
+}
+
+.bn-item-primary:active .bn-icon {
+    transform: scale(0.93);
+}
+
+.bn-item-primary.bn-item-active .bn-icon {
+    box-shadow: 0 6px 20px rgba(250, 149, 75, 0.65);
+}

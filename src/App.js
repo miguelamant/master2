@@ -39,9 +39,11 @@ import HotForYou from "./Wrapped/HotForYou";
 import HotForNextSeason from "./Wrapped/HotForNextSeason";
 import LandingPage from "./Landing/LandinginPage";
 import ConsumerAuth from "./Consumer/ConsumerAuth";
-import ConsumerHome from "./Consumer/ConsumerHome";
-import ConsumerCategory from "./Consumer/ConsumerCategory";
-import RateAndScratch from "./Consumer/games/RateAndScratch";
+import ConsumerShell from "./Consumer/ConsumerShell";
+import Discover from "./Consumer/Discover";
+import Search from "./Consumer/Search";
+import Scan from "./Consumer/Scan";
+import Games from "./Consumer/Games";
 import Spyder from "./Consumer/games/Spyder";
 import ScratchCard from "./Consumer/games/ScratchCard";
 import BurgerCatalog from "./Catalog/BurgerCatalog";
@@ -145,10 +147,14 @@ function App() {
                     <Route path="/claim" element={<ClaimPage />} />
                     <Route path="/welcome" element={<LandingPage />} />
                     <Route path="/join" element={<ConsumerAuth />} />
-                    <Route path="/consumer/home" element={<ConsumerHome />} />
-                    <Route path="/consumer/category/:id" element={<ConsumerCategory />} />
-                    <Route path="/consumer/game/:categoryId/rate-and-scratch" element={<RateAndScratch />} />
-                    <Route path="/consumer/game/:categoryId/spyder" element={<Spyder />} />
+                    <Route path="/consumer" element={<ConsumerShell />}>
+                        <Route index element={<Navigate to="discover" replace />} />
+                        <Route path="discover" element={<Discover />} />
+                        <Route path="search" element={<Search />} />
+                        <Route path="scan" element={<Scan />} />
+                        <Route path="games" element={<Games />} />
+                    </Route>
+                    <Route path="/consumer/game/spyder" element={<Spyder />} />
                     <Route path="/consumer/scratch" element={<ScratchCard />} />
                     <Route path="/catalog/burgers" element={<BurgerCatalog />} />
                     <Route path="/plonsremork" element={<PlonsremorkPage />} />

@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { NotFoundException } from '@zxing/library';
 import { CoreModule, CaptureVisionRouter, LicenseManager } from 'dynamsoft-barcode-reader-bundle';
 import { api } from 'apiService';
-import WillyIcon from '../WillyIcon';
-import './RateAndScratch.css';
-
-const STEPS = { SCAN: 'scan', RATE: 'rate', DONE: 'done' };
+import ProductSheet from './ProductSheet';
+import './Scan.css';
 
 const NATIVE_DETECTOR = typeof window.BarcodeDetector !== 'undefined';
 const CAMERA_CONSTRAINTS = { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } };
@@ -21,20 +18,11 @@ CoreModule.engineResourcePaths.rootDirectory = 'https://cdn.jsdelivr.net/npm/';
 LicenseManager.initLicense('DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA1NjU3MzE4LU1UQTFOalUzTXpFNExYZGxZaTFVY21saGJGQnliMm8iLCJtYWluU2VydmVyVVJMIjoiaHR0cHM6Ly9tZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwib3JnYW5pemF0aW9uSUQiOiIxMDU2NTczMTgiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20vIiwiY2hlY2tDb2RlIjotMTAzOTk0NTcxM30=');
 CoreModule.loadWasm(['DBR']);
 
-const RateAndScratch = () => {
-    const { categoryId } = useParams();
-    const navigate = useNavigate();
-
-    const [step, setStep] = useState(STEPS.SCAN);
-    const [product, setProduct] = useState(null);
-    const [gtin, setGtin] = useState(null);
-    const [score, setScore] = useState(null);
-    const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState(null);
+const Scan = () => {
     const [scanError, setScanError] = useState(null);
-    const [alreadyRated, setAlreadyRated] = useState(false);
     const [catalog, setCatalog] = useState(null);
     const [catalogError, setCatalogError] = useState(false);
+    const [matchedProduct, setMatchedProduct] = useState(null); // { gtin, product }
 
     const videoRef = useRef(null);
     const readerRef = useRef(null);
@@ -93,9 +81,7 @@ const RateAndScratch = () => {
             api.post('/api/consumer/log-scan', { scanner, gtin: code, found: !!found, duration_ms: durationMs }).catch(() => {});
             if (found) {
                 stopScanner();
-                setGtin(code);
-                setProduct(found);
-                setStep(STEPS.RATE);
+                setMatchedProduct({ gtin: code, product: found });
                 return true;
             }
             setScanError(`Product not found (${code}). Try another.`);
@@ -225,154 +211,58 @@ const RateAndScratch = () => {
     }, [loadCatalog]);
 
     useEffect(() => {
-        if (step === STEPS.SCAN && catalog) startScanner();
+        if (catalog && !matchedProduct) startScanner();
         return () => stopScanner();
-    }, [step, catalog, startScanner, stopScanner]);
+    }, [catalog, matchedProduct, startScanner, stopScanner]);
 
-    const handleSubmit = async () => {
-        if (score === null) return;
-        setSubmitting(true);
-        setError(null);
-        try {
-            const res = await api.post('/api/consumer/rate-product', { gtin, score });
-            if (res.data?.success) {
-                setAlreadyRated(res.data?.already_rated ?? false);
-                setStep(STEPS.DONE);
-            } else {
-                setError(res.data?.message || 'Something went wrong');
-            }
-        } catch (e) {
-            setError(e.response?.data?.message || 'Unable to save — try again');
+    const handleSheetClose = () => {
+        if (matchedProduct) {
+            lastScanRef.current = { gtin: matchedProduct.gtin, at: Date.now() };
         }
-        setSubmitting(false);
-    };
-
-    const handleScanAnother = () => {
-        lastScanRef.current = { gtin, at: Date.now() };
-        setStep(STEPS.SCAN);
-        setProduct(null);
-        setGtin(null);
-        setScore(null);
-        setError(null);
-        setAlreadyRated(false);
+        setMatchedProduct(null);
     };
 
     return (
-        <div className="ras-root">
-            {/* header */}
-            <header className="ras-header">
-                <button className="ras-back" onClick={() => navigate(`/consumer/category/${categoryId}`)}>←</button>
-                <span className="ras-title">Rate &amp; Scratch</span>
-            </header>
-
-            {/* ── STEP: SCAN ── */}
-            {step === STEPS.SCAN && catalogError && (
-                <div className="ras-scan-step">
-                    <div className="ras-scan-error">Couldn't load products. Check your connection and try again.</div>
-                    <button className="ras-submit" onClick={loadCatalog}>Retry</button>
+        <div className="scan-root">
+            {catalogError && (
+                <div className="scan-step">
+                    <div className="scan-error">Couldn't load products. Check your connection and try again.</div>
+                    <button className="scan-retry" onClick={loadCatalog}>Retry</button>
                 </div>
             )}
 
-            {step === STEPS.SCAN && !catalogError && !catalog && (
-                <div className="ras-scan-step">
-                    <p className="ras-scan-hint">Loading products…</p>
+            {!catalogError && !catalog && (
+                <div className="scan-step">
+                    <p className="scan-hint">Loading products…</p>
                 </div>
             )}
 
-            {step === STEPS.SCAN && catalog && (
-                <div className="ras-scan-step">
-                    <div className="ras-viewfinder">
-                        <video ref={videoRef} className="ras-video" autoPlay muted playsInline />
-                        <div className="ras-scan-frame">
-                            <span className="ras-scan-corner tl" />
-                            <span className="ras-scan-corner tr" />
-                            <span className="ras-scan-corner bl" />
-                            <span className="ras-scan-corner br" />
-                            <div className="ras-scan-line" />
+            {!catalogError && catalog && (
+                <div className="scan-step">
+                    <div className="scan-viewfinder">
+                        <video ref={videoRef} className="scan-video" autoPlay muted playsInline />
+                        <div className="scan-frame">
+                            <span className="scan-corner tl" />
+                            <span className="scan-corner tr" />
+                            <span className="scan-corner bl" />
+                            <span className="scan-corner br" />
+                            <div className="scan-line" />
                         </div>
                     </div>
-                    <p className="ras-scan-hint">Point at the barcode on the back of the package</p>
-                    {scanError && <div className="ras-scan-error">{scanError}</div>}
+                    <p className="scan-hint">Point at the barcode on the back of the package</p>
+                    {scanError && <div className="scan-error">{scanError}</div>}
                 </div>
             )}
 
-            {/* ── STEP: RATE ── */}
-            {step === STEPS.RATE && product && (
-                <div className="ras-rate-step">
-                    <div className="ras-product-card">
-                        <img src={product.image} alt={product.name} className="ras-product-img" />
-                        <div className="ras-product-brand">{product.brand}</div>
-                        <div className="ras-product-name">{product.name}</div>
-                    </div>
-
-                    <p className="ras-rate-prompt">How would you rate the taste?</p>
-
-                    <div className="ras-slider-wrap">
-                        <div className="ras-score-display">
-                            {score !== null
-                                ? <><span className="ras-score-num">{score % 1 === 0 ? score + '.0' : score}</span><span className="ras-score-denom">/10</span></>
-                                : <span className="ras-score-placeholder">—</span>
-                            }
-                        </div>
-                        <input
-                            type="range"
-                            className="ras-slider"
-                            min="1"
-                            max="10"
-                            step="0.5"
-                            value={score ?? 5.5}
-                            onChange={(e) => setScore(parseFloat(e.target.value))}
-                        />
-                        <div className="ras-slider-labels">
-                            <span>1</span><span>5</span><span>10</span>
-                        </div>
-                    </div>
-
-                    {score !== null && (
-                        <div className="ras-score-label">
-                            {score <= 3 ? '😕 Not great' : score <= 5 ? '😐 Decent' : score <= 7 ? '😊 Good' : score <= 8.5 ? '🎉 Very good' : '🤩 Amazing!'}
-                        </div>
-                    )}
-
-                    {error && <div className="ras-error">{error}</div>}
-
-                    <button
-                        className="ras-submit"
-                        onClick={handleSubmit}
-                        disabled={score === null || submitting}
-                    >
-                        {submitting ? 'Saving...' : 'Submit rating'}
-                    </button>
-
-                    <button className="ras-link" onClick={handleScanAnother}>Scan a different product</button>
-                </div>
-            )}
-
-            {/* ── STEP: DONE ── */}
-            {step === STEPS.DONE && product && (
-                <div className="ras-done-step">
-                    {alreadyRated ? (
-                        <>
-                            <div className="ras-done-emoji">👍</div>
-                            <div className="ras-done-title">Rating updated!</div>
-                            <div className="ras-done-product">{product.brand} {product.name}</div>
-                        </>
-                    ) : (
-                        <>
-                            <div className="ras-done-title">Thank you!</div>
-                            <div className="ras-willy-earned">
-                                <WillyIcon size={32} />
-                                <span>+1 Willy</span>
-                            </div>
-                            <div className="ras-done-product">{product.brand} {product.name}</div>
-                        </>
-                    )}
-                    <button className="ras-submit" onClick={handleScanAnother}>Next rating</button>
-                    <button className="ras-link" onClick={() => navigate('/consumer/home')}>Back to home</button>
-                </div>
+            {matchedProduct && (
+                <ProductSheet
+                    gtin={matchedProduct.gtin}
+                    product={matchedProduct.product}
+                    onClose={handleSheetClose}
+                />
             )}
         </div>
     );
 };
 
-export default RateAndScratch;
+export default Scan;
