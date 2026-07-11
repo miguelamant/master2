@@ -214,33 +214,15 @@
     opacity: 0.9;
 }
 
-/* ── comparison placeholder ── */
-.ps-compare {
-    margin-top: 1rem;
-    padding: 0.85rem 1rem;
+/* ── rating comparison ── */
+.ps-rating-compare {
+    margin-top: 0.35rem;
+    padding: 0.7rem 0.85rem;
     background: #f9fafb;
-    border: 1px dashed rgba(0, 0, 0, 0.12);
-    border-radius: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-}
-
-.ps-compare-badge {
-    align-self: flex-start;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: rgba(0, 0, 0, 0.4);
-    background: rgba(0, 0, 0, 0.06);
-    border-radius: 999px;
-    padding: 0.15rem 0.55rem;
-}
-
-.ps-compare-text {
-    font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.45);
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.55);
     line-height: 1.35;
 }
 
