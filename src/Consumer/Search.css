@@ -34,34 +34,69 @@
     color: #111827;
 }
 
-.srch-chips {
+.srch-back {
     display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    margin-bottom: 1.1rem;
-}
-
-.srch-chip {
-    flex-shrink: 0;
-    background: #ffffff;
-    border: 1.5px solid rgba(0, 0, 0, 0.08);
-    border-radius: 999px;
-    padding: 0.4rem 0.9rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.55);
+    align-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: none;
+    padding: 0.3rem 0.1rem;
+    margin-bottom: 0.75rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
     cursor: pointer;
-    white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.srch-chip-active {
-    background: #fa954b;
-    border-color: #fa954b;
-    color: #ffffff;
+.srch-back svg {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.srch-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.srch-cat-tile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.15s;
+}
+
+.srch-cat-tile:active {
+    transform: scale(0.98);
+}
+
+.srch-cat-emoji {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.srch-cat-label {
+    flex: 1;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.srch-cat-chevron {
+    color: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
 }
 
 .srch-hint,
@@ -84,18 +119,18 @@
 .srch-results {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    gap: 0.6rem;
 }
 
 .srch-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     background: #ffffff;
     border: none;
-    border-radius: 16px;
-    padding: 1rem 0.75rem;
+    border-radius: 14px;
+    padding: 0.7rem 0.55rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     text-align: center;
@@ -109,9 +144,9 @@
 }
 
 .srch-card-img {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
     object-fit: cover;
     background: #f3f4f6;
 }
@@ -122,7 +157,7 @@
 }
 
 .srch-card-brand {
-    font-size: 0.65rem;
+    font-size: 0.58rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.4);
     text-transform: uppercase;
@@ -131,10 +166,26 @@
 
 .srch-card-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #111827;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.srch-card-rating {
+    margin-top: 0.15rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #16a34a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.srch-card-rating-empty {
+    color: rgba(0, 0, 0, 0.35);
+    font-weight: 500;
 }

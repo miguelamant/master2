@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from 'apiService';
 import WillyIcon from './WillyIcon';
+import { getRatingPercent } from './ratingStats';
 import './ProductSheet.css';
 
 const ProductSheet = ({ gtin, product, onClose }) => {
@@ -49,6 +50,11 @@ const ProductSheet = ({ gtin, product, onClose }) => {
 
     const formatScore = (s) => (s % 1 === 0 ? s + '.0' : s);
 
+    const ratingPct = getRatingPercent(gtin);
+    const ratingCompareText = ratingPct !== null
+        ? `${ratingPct}% of people rate this as highly as the leading reference product`
+        : 'No public ratings';
+
     return (
         <div className="ps-backdrop" onClick={handleBackdropClick}>
             <div className={`ps-sheet${expanded ? ' ps-sheet-expanded' : ''}`}>
@@ -72,6 +78,9 @@ const ProductSheet = ({ gtin, product, onClose }) => {
                                     ? `You rated this ${formatScore(previousScore)}/10`
                                     : 'Not rated yet'}
                         </div>
+                        {!loadingPrevious && previousScore !== null && (
+                            <div className="ps-rating-compare">{ratingCompareText}</div>
+                        )}
                         <button className="ps-cta" onClick={() => setExpanded(true)}>
                             {previousScore !== null ? 'Update rating' : 'Rate it'}
                         </button>
@@ -113,11 +122,6 @@ const ProductSheet = ({ gtin, product, onClose }) => {
                         <button className="ps-cta" onClick={handleSubmit} disabled={score === null || submitting}>
                             {submitting ? 'Saving…' : 'Submit rating'}
                         </button>
-
-                        <div className="ps-compare">
-                            <span className="ps-compare-badge">Coming soon</span>
-                            <span className="ps-compare-text">% of people who rate this as highly as the leading reference product</span>
-                        </div>
                     </div>
                 )}
 
@@ -137,6 +141,7 @@ const ProductSheet = ({ gtin, product, onClose }) => {
                                 </div>
                             </>
                         )}
+                        <div className="ps-rating-compare">{ratingCompareText}</div>
                         <button className="ps-cta" onClick={onClose}>Done</button>
                     </div>
                 )}

@@ -148,7 +148,7 @@ function App() {
                     <Route path="/welcome" element={<LandingPage />} />
                     <Route path="/join" element={<ConsumerAuth />} />
                     <Route path="/consumer" element={<ConsumerShell />}>
-                        <Route index element={<Navigate to="discover" replace />} />
+                        <Route index element={<Navigate to="search" replace />} />
                         <Route path="discover" element={<Discover />} />
                         <Route path="search" element={<Search />} />
                         <Route path="scan" element={<Scan />} />
