@@ -13,6 +13,12 @@ const ProductSheet = ({ gtin, product, onClose }) => {
     const [error, setError] = useState(null);
     const [result, setResult] = useState(null);
 
+    const reference = product.reference;
+    const [showReferenceStep, setShowReferenceStep] = useState(false);
+    const [refScore, setRefScore] = useState(null);
+    const [refSubmitting, setRefSubmitting] = useState(false);
+    const [refError, setRefError] = useState(null);
+
     useEffect(() => {
         let cancelled = false;
         api.get(`/api/consumer/rating/${gtin}`)
@@ -35,6 +41,12 @@ const ProductSheet = ({ gtin, product, onClose }) => {
             const res = await api.post('/api/consumer/rate-product', { gtin, score });
             if (res.data?.success) {
                 setResult({ alreadyRated: res.data?.already_rated ?? false });
+                if (reference) {
+                    api.get(`/api/consumer/rating/${reference.gtin}`)
+                        .then((r) => setRefScore(r.data?.score ?? null))
+                        .catch(() => {});
+                    setShowReferenceStep(true);
+                }
             } else {
                 setError(res.data?.message || 'Something went wrong');
             }
@@ -42,6 +54,23 @@ const ProductSheet = ({ gtin, product, onClose }) => {
             setError(e.response?.data?.message || 'Unable to save — try again');
         }
         setSubmitting(false);
+    };
+
+    const handleReferenceSubmit = async () => {
+        if (refScore === null || !reference) return;
+        setRefSubmitting(true);
+        setRefError(null);
+        try {
+            const res = await api.post('/api/consumer/rate-product', { gtin: reference.gtin, score: refScore });
+            if (res.data?.success) {
+                setShowReferenceStep(false);
+            } else {
+                setRefError(res.data?.message || 'Something went wrong');
+            }
+        } catch (e) {
+            setRefError(e.response?.data?.message || 'Unable to save — try again');
+        }
+        setRefSubmitting(false);
     };
 
     const handleBackdropClick = (e) => {
@@ -125,7 +154,50 @@ const ProductSheet = ({ gtin, product, onClose }) => {
                     </div>
                 )}
 
-                {result && (
+                {result && showReferenceStep && reference && (
+                    <div className="ps-expanded ps-ref-step">
+                        <div className="ps-ref-label">Now rate the reference</div>
+                        <div className="ps-ref-product">
+                            {reference.image && <img src={reference.image} alt={reference.name} className="ps-ref-image" />}
+                            <div className="ps-title">
+                                <div className="ps-brand">{reference.brand}</div>
+                                <div className="ps-name">{reference.name}</div>
+                            </div>
+                        </div>
+                        <p className="ps-rate-prompt">How would you rate the taste?</p>
+
+                        <div className="ps-slider-wrap">
+                            <div className="ps-score-display">
+                                {refScore !== null
+                                    ? <><span className="ps-score-num">{formatScore(refScore)}</span><span className="ps-score-denom">/10</span></>
+                                    : <span className="ps-score-placeholder">—</span>}
+                            </div>
+                            <input
+                                type="range"
+                                className="ps-slider"
+                                min="1"
+                                max="10"
+                                step="0.5"
+                                value={refScore ?? 5.5}
+                                onChange={(e) => setRefScore(parseFloat(e.target.value))}
+                            />
+                            <div className="ps-slider-labels">
+                                <span>1</span><span>5</span><span>10</span>
+                            </div>
+                        </div>
+
+                        {refError && <div className="ps-error">{refError}</div>}
+
+                        <div className="ps-ref-actions">
+                            <button className="ps-skip" onClick={() => setShowReferenceStep(false)}>Skip</button>
+                            <button className="ps-cta" onClick={handleReferenceSubmit} disabled={refScore === null || refSubmitting}>
+                                {refSubmitting ? 'Saving…' : 'Submit rating'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {result && !showReferenceStep && (
                     <div className="ps-done">
                         {result.alreadyRated ? (
                             <>
