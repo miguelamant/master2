@@ -464,16 +464,29 @@ router.get("/consumer/products", async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("scan_products")
-      .select("gtin, name, brand, image_url");
+      .select("gtin, name, brand, image_url, is_reference, reference_gtin");
 
     if (error) {
       console.error("[consumer/products]", error);
       return res.status(500).json({ success: false, message: "Failed to load products" });
     }
 
+    const byGtin = {};
+    for (const p of data) byGtin[p.gtin] = p;
+
+    // Reference products (e.g. the mainstream full-sugar equivalent) are comparison
+    // targets only — not part of the public catalog, so they're excluded here and
+    // attached inline as `.reference` on the products that point to them.
     const products = {};
     for (const p of data) {
-      products[p.gtin] = { name: p.name, brand: p.brand, image: p.image_url };
+      if (p.is_reference) continue;
+      const ref = p.reference_gtin ? byGtin[p.reference_gtin] : null;
+      products[p.gtin] = {
+        name: p.name,
+        brand: p.brand,
+        image: p.image_url,
+        reference: ref ? { gtin: ref.gtin, name: ref.name, brand: ref.brand, image: ref.image_url } : null,
+      };
     }
 
     res.json({ success: true, products });
