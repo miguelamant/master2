@@ -1,27 +1,30 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { api } from 'apiService';
 import ProductSheet from './ProductSheet';
-import { getRatingPercent } from './ratingStats';
+import { PLACEHOLDER_IMAGE, withImageFallback } from './placeholderImage';
 import './Search.css';
 
+const CATEGORY_IMAGE_BASE = 'https://yohfpzrbcnztpknkchte.supabase.co/storage/v1/object/public/product-images/categories';
+
 const CATEGORIES = [
-    { id: 'better-for-you-candy', label: 'Better For You Candy', emoji: '🍬' },
-    { id: 'natural-energy-drinks', label: 'Natural Energy Drinks', emoji: '⚡' },
+    { id: 'better-for-you-candy', label: 'Better For You Candy', image: `${CATEGORY_IMAGE_BASE}/better-for-you-candy.jpg` },
+    { id: 'natural-energy-drinks', label: 'Natural Energy Drinks', image: `${CATEGORY_IMAGE_BASE}/natural-energy-drinks.jpg` },
+    { id: 'hamburgers', label: 'Hamburgers', image: `${CATEGORY_IMAGE_BASE}/hamburgers.jpg` },
+    { id: 'deep-fried-snacks', label: 'Deep Fried Snacks', image: `${CATEGORY_IMAGE_BASE}/deep-fried-snacks.jpg` },
+    { id: 'beers', label: 'Beers', image: `${CATEGORY_IMAGE_BASE}/beers.jpg` },
+    { id: 'non-alcoholic-wines', label: 'Non-Alcoholic Wines', image: `${CATEGORY_IMAGE_BASE}/non-alcoholic-wines.jpg` },
 ];
 
 // No per-product category column exists yet — every product in scan_products today
-// is candy, so "Better For You Candy" shows everything and "Natural Energy Drinks"
-// is an honest empty state until products are tagged with a real category.
-const categoryHasNoProducts = (categoryId) => categoryId === 'natural-energy-drinks';
+// is candy, so "Better For You Candy" shows everything and the rest are honest
+// empty states until products are tagged with a real category.
+const categoryHasNoProducts = (categoryId) => categoryId !== 'better-for-you-candy';
 
-const RatingBadge = ({ gtin }) => {
-    const pct = getRatingPercent(gtin);
-    return (
-        <div className={`srch-card-rating${pct === null ? ' srch-card-rating-empty' : ''}`}>
-            {pct !== null ? `${pct}% as loved as the reference` : 'No public ratings'}
-        </div>
-    );
-};
+const RatingBadge = ({ pct }) => (
+    <div className={`srch-card-rating${pct === null ? ' srch-card-rating-empty' : ''}`}>
+        {pct !== null ? `${pct}%` : 'No data'}
+    </div>
+);
 
 const Search = () => {
     const [products, setProducts] = useState(null);
@@ -89,12 +92,11 @@ const Search = () => {
             {!error && products && showCategoryPicker && (
                 <div className="srch-categories">
                     {CATEGORIES.map((c) => (
-                        <button key={c.id} className="srch-cat-tile" onClick={() => setCategory(c.id)}>
-                            <span className="srch-cat-emoji">{c.emoji}</span>
-                            <span className="srch-cat-label">{c.label}</span>
-                            <svg className="srch-cat-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
+                        <button key={c.id} className="srch-card srch-cat-card" onClick={() => setCategory(c.id)}>
+                            <img src={c.image || PLACEHOLDER_IMAGE} onError={withImageFallback} alt={c.label} className="srch-card-img" loading="lazy" />
+                            <div className="srch-card-text">
+                                <div className="srch-card-name">{c.label}</div>
+                            </div>
                         </button>
                     ))}
                 </div>
@@ -120,11 +122,11 @@ const Search = () => {
                             className="srch-card"
                             onClick={() => setSelected({ gtin: p.gtin, product: p })}
                         >
-                            <img src={p.image} alt={p.name} className="srch-card-img" loading="lazy" />
+                            <img src={p.image || PLACEHOLDER_IMAGE} onError={withImageFallback} alt={p.name} className="srch-card-img" loading="lazy" />
                             <div className="srch-card-text">
                                 <div className="srch-card-brand">{p.brand}</div>
                                 <div className="srch-card-name">{p.name}</div>
-                                <RatingBadge gtin={p.gtin} />
+                                <RatingBadge pct={p.rating_pct ?? null} />
                             </div>
                         </button>
                     ))}

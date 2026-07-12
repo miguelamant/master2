@@ -5,6 +5,7 @@ import { supabase } from "../integrations/supabase.js";
 import { sendConsumerOtp } from "../services/email.service.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { env } from "../config/env.js";
+import { CONSUMER_SESSION_MAX_AGE_MS } from "../config/session.js";
 
 const router = Router();
 
@@ -75,6 +76,7 @@ async function upsertConsumerSession(req, email, name = null) {
     user_type: "consumer",
     business_id: null,
   };
+  req.session.cookie.maxAge = CONSUMER_SESSION_MAX_AGE_MS;
 
   return { user, isNew };
 }
@@ -239,6 +241,7 @@ router.post("/consumer/login", async (req, res, next) => {
       user_type: "consumer",
       business_id: null,
     };
+    req.session.cookie.maxAge = CONSUMER_SESSION_MAX_AGE_MS;
 
     req.session.save((err) => {
       if (err) return res.status(500).json({ success: false, message: "Session error" });
@@ -471,6 +474,26 @@ router.get("/consumer/products", async (req, res, next) => {
       return res.status(500).json({ success: false, message: "Failed to load products" });
     }
 
+    const { data: ratings, error: ratingsError } = await supabase
+      .from("product_ratings")
+      .select("gtin, score");
+
+    if (ratingsError) {
+      console.error("[consumer/products] ratings", ratingsError);
+      return res.status(500).json({ success: false, message: "Failed to load products" });
+    }
+
+    // Below this, a single enthusiastic (or unhappy) rater would look like consensus —
+    // show "no public data" instead until both sides have a real sample.
+    const MIN_RATINGS = 3;
+
+    const ratingStats = {};
+    for (const r of ratings) {
+      const s = ratingStats[r.gtin] ?? (ratingStats[r.gtin] = { sum: 0, count: 0 });
+      s.sum += r.score;
+      s.count += 1;
+    }
+
     const byGtin = {};
     for (const p of data) byGtin[p.gtin] = p;
 
@@ -481,11 +504,22 @@ router.get("/consumer/products", async (req, res, next) => {
     for (const p of data) {
       if (p.is_reference) continue;
       const ref = p.reference_gtin ? byGtin[p.reference_gtin] : null;
+
+      let ratingPct = null;
+      const productStats = ratingStats[p.gtin];
+      const refStats = ref ? ratingStats[ref.gtin] : null;
+      if (ref && productStats?.count >= MIN_RATINGS && refStats?.count >= MIN_RATINGS) {
+        const avgProduct = productStats.sum / productStats.count;
+        const avgRef = refStats.sum / refStats.count;
+        ratingPct = avgRef > 0 ? Math.round(Math.min(100, (avgProduct / avgRef) * 100)) : null;
+      }
+
       products[p.gtin] = {
         name: p.name,
         brand: p.brand,
         image: p.image_url,
         reference: ref ? { gtin: ref.gtin, name: ref.name, brand: ref.brand, image: ref.image_url } : null,
+        rating_pct: ratingPct,
       };
     }
 
