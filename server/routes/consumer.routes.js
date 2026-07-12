@@ -5,6 +5,7 @@ import { supabase } from "../integrations/supabase.js";
 import { sendConsumerOtp } from "../services/email.service.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { env } from "../config/env.js";
+import { CONSUMER_SESSION_MAX_AGE_MS } from "../config/session.js";
 
 const router = Router();
 
@@ -75,6 +76,7 @@ async function upsertConsumerSession(req, email, name = null) {
     user_type: "consumer",
     business_id: null,
   };
+  req.session.cookie.maxAge = CONSUMER_SESSION_MAX_AGE_MS;
 
   return { user, isNew };
 }
@@ -239,6 +241,7 @@ router.post("/consumer/login", async (req, res, next) => {
       user_type: "consumer",
       business_id: null,
     };
+    req.session.cookie.maxAge = CONSUMER_SESSION_MAX_AGE_MS;
 
     req.session.save((err) => {
       if (err) return res.status(500).json({ success: false, message: "Session error" });
