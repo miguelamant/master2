@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from 'apiService';
 import WillyIcon from './WillyIcon';
-import { getRatingPercent } from './ratingStats';
+import { PLACEHOLDER_IMAGE, withImageFallback } from './placeholderImage';
 import './ProductSheet.css';
+
+const PEEK_PX = 320; // collapsed "peek" height — must comfortably fit .ps-collapsed content
 
 const ProductSheet = ({ gtin, product, onClose }) => {
     const [expanded, setExpanded] = useState(false);
@@ -18,6 +20,18 @@ const ProductSheet = ({ gtin, product, onClose }) => {
     const [refScore, setRefScore] = useState(null);
     const [refSubmitting, setRefSubmitting] = useState(false);
     const [refError, setRefError] = useState(null);
+
+    // Drag-to-expand (Yuka-style bottom sheet)
+    const sheetRef = useRef(null);
+    const dragInfo = useRef({ dragging: false, startY: 0, startExpanded: false, travel: 0, delta: 0 });
+    const [dragY, setDragY] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        const id = requestAnimationFrame(() => setMounted(true));
+        return () => cancelAnimationFrame(id);
+    }, []);
 
     useEffect(() => {
         let cancelled = false;
@@ -77,146 +91,217 @@ const ProductSheet = ({ gtin, product, onClose }) => {
         if (e.target === e.currentTarget) onClose();
     };
 
+    const handleDragStart = (e) => {
+        const sheetHeight = sheetRef.current?.offsetHeight ?? 0;
+        dragInfo.current = {
+            dragging: true,
+            startY: e.clientY,
+            startExpanded: expanded,
+            travel: Math.max(sheetHeight - PEEK_PX, 80),
+            delta: 0,
+        };
+        setIsDragging(true);
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+    };
+
+    const handleDragMove = (e) => {
+        if (!dragInfo.current.dragging) return;
+        const raw = e.clientY - dragInfo.current.startY;
+        const { startExpanded, travel } = dragInfo.current;
+        const clamped = startExpanded
+            ? Math.min(Math.max(raw, -20), travel + 140)
+            : Math.min(Math.max(raw, -travel - 20), 140);
+        dragInfo.current.delta = clamped;
+        setDragY(clamped);
+    };
+
+    const handleDragEnd = () => {
+        if (!dragInfo.current.dragging) return;
+        const { startExpanded, travel, delta } = dragInfo.current;
+        dragInfo.current.dragging = false;
+        setIsDragging(false);
+        setDragY(0);
+
+        if (Math.abs(delta) < 6) {
+            if (!result) setExpanded((v) => !v);
+            return;
+        }
+
+        if (startExpanded) {
+            if (delta > travel * 0.75) onClose();
+            else if (delta > travel * 0.35 && !result) setExpanded(false);
+        } else if (delta < -travel * 0.3) {
+            setExpanded(true);
+        } else if (delta > 50) {
+            onClose();
+        }
+    };
+
     const formatScore = (s) => (s % 1 === 0 ? s + '.0' : s);
 
-    const ratingPct = getRatingPercent(gtin);
+    const ratingPct = product.rating_pct ?? null;
     const ratingCompareText = ratingPct !== null
         ? `${ratingPct}% of people rate this as highly as the leading reference product`
-        : 'No public ratings';
+        : 'No public data';
 
     return (
         <div className="ps-backdrop" onClick={handleBackdropClick}>
-            <div className={`ps-sheet${expanded ? ' ps-sheet-expanded' : ''}`}>
+            <div
+                ref={sheetRef}
+                className={`ps-sheet${expanded ? ' ps-sheet-expanded' : ''}${isDragging ? ' ps-sheet-dragging' : ''}`}
+                style={{
+                    '--peek-px': `${PEEK_PX}px`,
+                    '--drag-y': `${dragY}px`,
+                    ...(mounted ? {} : { transform: 'translateY(100%)' }),
+                }}
+            >
                 <button className="ps-close" onClick={onClose} aria-label="Close">✕</button>
 
-                <div className="ps-header" onClick={() => !result && setExpanded((v) => !v)}>
+                <div
+                    className="ps-drag-zone"
+                    onPointerDown={handleDragStart}
+                    onPointerMove={handleDragMove}
+                    onPointerUp={handleDragEnd}
+                    onPointerCancel={handleDragEnd}
+                >
                     <div className="ps-handle" />
-                    <img src={product.image} alt={product.name} className="ps-image" />
-                    <div className="ps-title">
-                        <div className="ps-brand">{product.brand}</div>
-                        <div className="ps-name">{product.name}</div>
+                    <div className="ps-header">
+                        <img
+                            src={product.image || PLACEHOLDER_IMAGE}
+                            onError={withImageFallback}
+                            alt={product.name}
+                            className="ps-image"
+                        />
+                        <div className="ps-title">
+                            <div className="ps-brand">{product.brand}</div>
+                            <div className="ps-name">{product.name}</div>
+                        </div>
                     </div>
                 </div>
 
-                {!expanded && !result && (
-                    <div className="ps-collapsed">
-                        <div className="ps-prev-rating">
-                            {loadingPrevious
-                                ? '…'
-                                : previousScore !== null
-                                    ? `You rated this ${formatScore(previousScore)}/10`
-                                    : 'Not rated yet'}
-                        </div>
-                        {!loadingPrevious && previousScore !== null && (
+                <div className="ps-sheet-scroll">
+                    {!expanded && !result && (
+                        <div className="ps-collapsed">
+                            <div className="ps-prev-rating">
+                                {loadingPrevious
+                                    ? '…'
+                                    : previousScore !== null
+                                        ? `You rated this ${formatScore(previousScore)}/10`
+                                        : 'Not rated yet'}
+                            </div>
                             <div className="ps-rating-compare">{ratingCompareText}</div>
-                        )}
-                        <button className="ps-cta" onClick={() => setExpanded(true)}>
-                            {previousScore !== null ? 'Update rating' : 'Rate it'}
-                        </button>
-                    </div>
-                )}
-
-                {expanded && !result && (
-                    <div className="ps-expanded">
-                        <p className="ps-rate-prompt">How would you rate the taste?</p>
-
-                        <div className="ps-slider-wrap">
-                            <div className="ps-score-display">
-                                {score !== null
-                                    ? <><span className="ps-score-num">{formatScore(score)}</span><span className="ps-score-denom">/10</span></>
-                                    : <span className="ps-score-placeholder">—</span>}
-                            </div>
-                            <input
-                                type="range"
-                                className="ps-slider"
-                                min="1"
-                                max="10"
-                                step="0.5"
-                                value={score ?? 5.5}
-                                onChange={(e) => setScore(parseFloat(e.target.value))}
-                            />
-                            <div className="ps-slider-labels">
-                                <span>1</span><span>5</span><span>10</span>
-                            </div>
-                        </div>
-
-                        {score !== null && (
-                            <div className="ps-score-label">
-                                {score <= 3 ? '😕 Not great' : score <= 5 ? '😐 Decent' : score <= 7 ? '😊 Good' : score <= 8.5 ? '🎉 Very good' : '🤩 Amazing!'}
-                            </div>
-                        )}
-
-                        {error && <div className="ps-error">{error}</div>}
-
-                        <button className="ps-cta" onClick={handleSubmit} disabled={score === null || submitting}>
-                            {submitting ? 'Saving…' : 'Submit rating'}
-                        </button>
-                    </div>
-                )}
-
-                {result && showReferenceStep && reference && (
-                    <div className="ps-expanded ps-ref-step">
-                        <div className="ps-ref-label">Now rate the reference</div>
-                        <div className="ps-ref-product">
-                            {reference.image && <img src={reference.image} alt={reference.name} className="ps-ref-image" />}
-                            <div className="ps-title">
-                                <div className="ps-brand">{reference.brand}</div>
-                                <div className="ps-name">{reference.name}</div>
-                            </div>
-                        </div>
-                        <p className="ps-rate-prompt">How would you rate the taste?</p>
-
-                        <div className="ps-slider-wrap">
-                            <div className="ps-score-display">
-                                {refScore !== null
-                                    ? <><span className="ps-score-num">{formatScore(refScore)}</span><span className="ps-score-denom">/10</span></>
-                                    : <span className="ps-score-placeholder">—</span>}
-                            </div>
-                            <input
-                                type="range"
-                                className="ps-slider"
-                                min="1"
-                                max="10"
-                                step="0.5"
-                                value={refScore ?? 5.5}
-                                onChange={(e) => setRefScore(parseFloat(e.target.value))}
-                            />
-                            <div className="ps-slider-labels">
-                                <span>1</span><span>5</span><span>10</span>
-                            </div>
-                        </div>
-
-                        {refError && <div className="ps-error">{refError}</div>}
-
-                        <div className="ps-ref-actions">
-                            <button className="ps-skip" onClick={() => setShowReferenceStep(false)}>Skip</button>
-                            <button className="ps-cta" onClick={handleReferenceSubmit} disabled={refScore === null || refSubmitting}>
-                                {refSubmitting ? 'Saving…' : 'Submit rating'}
+                            <button className="ps-cta" onClick={() => setExpanded(true)}>
+                                {previousScore !== null ? 'Update rating' : 'Rate it'}
                             </button>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {result && !showReferenceStep && (
-                    <div className="ps-done">
-                        {result.alreadyRated ? (
-                            <>
-                                <div className="ps-done-emoji">👍</div>
-                                <div className="ps-done-title">Rating updated!</div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="ps-done-title">Thank you!</div>
-                                <div className="ps-willy-earned">
-                                    <WillyIcon size={28} />
-                                    <span>+1 Willy</span>
+                    {expanded && !result && (
+                        <div className="ps-expanded">
+                            <p className="ps-rate-prompt">How would you rate the taste?</p>
+
+                            <div className="ps-slider-wrap">
+                                <div className="ps-score-display">
+                                    {score !== null
+                                        ? <><span className="ps-score-num">{formatScore(score)}</span><span className="ps-score-denom">/10</span></>
+                                        : <span className="ps-score-placeholder">—</span>}
                                 </div>
-                            </>
-                        )}
-                        <div className="ps-rating-compare">{ratingCompareText}</div>
-                        <button className="ps-cta" onClick={onClose}>Done</button>
-                    </div>
-                )}
+                                <input
+                                    type="range"
+                                    className="ps-slider"
+                                    min="1"
+                                    max="10"
+                                    step="0.5"
+                                    value={score ?? 5.5}
+                                    onChange={(e) => setScore(parseFloat(e.target.value))}
+                                />
+                                <div className="ps-slider-labels">
+                                    <span>1</span><span>5</span><span>10</span>
+                                </div>
+                            </div>
+
+                            {score !== null && (
+                                <div className="ps-score-label">
+                                    {score <= 3 ? '😕 Not great' : score <= 5 ? '😐 Decent' : score <= 7 ? '😊 Good' : score <= 8.5 ? '🎉 Very good' : '🤩 Amazing!'}
+                                </div>
+                            )}
+
+                            {error && <div className="ps-error">{error}</div>}
+
+                            <button className="ps-cta" onClick={handleSubmit} disabled={score === null || submitting}>
+                                {submitting ? 'Saving…' : 'Submit rating'}
+                            </button>
+                        </div>
+                    )}
+
+                    {result && showReferenceStep && reference && (
+                        <div className="ps-expanded ps-ref-step">
+                            <div className="ps-ref-label">Now rate the reference</div>
+                            <div className="ps-ref-product">
+                                <img
+                                    src={reference.image || PLACEHOLDER_IMAGE}
+                                    onError={withImageFallback}
+                                    alt={reference.name}
+                                    className="ps-ref-image"
+                                />
+                                <div className="ps-title">
+                                    <div className="ps-brand">{reference.brand}</div>
+                                    <div className="ps-name">{reference.name}</div>
+                                </div>
+                            </div>
+                            <p className="ps-rate-prompt">How would you rate the taste?</p>
+
+                            <div className="ps-slider-wrap">
+                                <div className="ps-score-display">
+                                    {refScore !== null
+                                        ? <><span className="ps-score-num">{formatScore(refScore)}</span><span className="ps-score-denom">/10</span></>
+                                        : <span className="ps-score-placeholder">—</span>}
+                                </div>
+                                <input
+                                    type="range"
+                                    className="ps-slider"
+                                    min="1"
+                                    max="10"
+                                    step="0.5"
+                                    value={refScore ?? 5.5}
+                                    onChange={(e) => setRefScore(parseFloat(e.target.value))}
+                                />
+                                <div className="ps-slider-labels">
+                                    <span>1</span><span>5</span><span>10</span>
+                                </div>
+                            </div>
+
+                            {refError && <div className="ps-error">{refError}</div>}
+
+                            <div className="ps-ref-actions">
+                                <button className="ps-skip" onClick={() => setShowReferenceStep(false)}>Skip</button>
+                                <button className="ps-cta" onClick={handleReferenceSubmit} disabled={refScore === null || refSubmitting}>
+                                    {refSubmitting ? 'Saving…' : 'Submit rating'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {result && !showReferenceStep && (
+                        <div className="ps-done">
+                            {result.alreadyRated ? (
+                                <>
+                                    <div className="ps-done-emoji">👍</div>
+                                    <div className="ps-done-title">Rating updated!</div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="ps-done-title">Thank you!</div>
+                                    <div className="ps-willy-earned">
+                                        <WillyIcon size={28} />
+                                        <span>+1 Willy</span>
+                                    </div>
+                                </>
+                            )}
+                            <button className="ps-cta" onClick={onClose}>Done</button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

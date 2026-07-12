@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { api } from 'apiService';
 import ProductSheet from './ProductSheet';
-import { getRatingPercent } from './ratingStats';
+import { PLACEHOLDER_IMAGE, withImageFallback } from './placeholderImage';
 import './Search.css';
 
 const CATEGORY_IMAGE_BASE = 'https://yohfpzrbcnztpknkchte.supabase.co/storage/v1/object/public/product-images/categories';
@@ -20,14 +20,11 @@ const CATEGORIES = [
 // empty states until products are tagged with a real category.
 const categoryHasNoProducts = (categoryId) => categoryId !== 'better-for-you-candy';
 
-const RatingBadge = ({ gtin }) => {
-    const pct = getRatingPercent(gtin);
-    return (
-        <div className={`srch-card-rating${pct === null ? ' srch-card-rating-empty' : ''}`}>
-            {pct !== null ? `${pct}% as loved as the reference` : 'No public ratings'}
-        </div>
-    );
-};
+const RatingBadge = ({ pct }) => (
+    <div className={`srch-card-rating${pct === null ? ' srch-card-rating-empty' : ''}`}>
+        {pct !== null ? `${pct}%` : 'No data'}
+    </div>
+);
 
 const Search = () => {
     const [products, setProducts] = useState(null);
@@ -96,7 +93,7 @@ const Search = () => {
                 <div className="srch-categories">
                     {CATEGORIES.map((c) => (
                         <button key={c.id} className="srch-card srch-cat-card" onClick={() => setCategory(c.id)}>
-                            <img src={c.image} alt={c.label} className="srch-card-img" loading="lazy" />
+                            <img src={c.image || PLACEHOLDER_IMAGE} onError={withImageFallback} alt={c.label} className="srch-card-img" loading="lazy" />
                             <div className="srch-card-text">
                                 <div className="srch-card-name">{c.label}</div>
                             </div>
@@ -125,11 +122,11 @@ const Search = () => {
                             className="srch-card"
                             onClick={() => setSelected({ gtin: p.gtin, product: p })}
                         >
-                            <img src={p.image} alt={p.name} className="srch-card-img" loading="lazy" />
+                            <img src={p.image || PLACEHOLDER_IMAGE} onError={withImageFallback} alt={p.name} className="srch-card-img" loading="lazy" />
                             <div className="srch-card-text">
                                 <div className="srch-card-brand">{p.brand}</div>
                                 <div className="srch-card-name">{p.name}</div>
-                                <RatingBadge gtin={p.gtin} />
+                                <RatingBadge pct={p.rating_pct ?? null} />
                             </div>
                         </button>
                     ))}
